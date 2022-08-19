@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "875535945689",
+    "project_id": "watts-ee746",
+    "storage_bucket": "watts-ee746.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875535945689:android:56741013c8ff5d2cf453c8",
+        "android_client_info": {
+          "package_name": "com.dabloons.wattsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875535945689-bin2f92quji3ohjb6hqjoljslhdukdhg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dabloons.wattsapp",
+            "certificate_hash": "b323b5f2dac714c9902741018ef979cb4c9c9f67"
+          }
+        },
+        {
+          "client_id": "875535945689-vl10hdauj5j53krj4npmekibcua16csa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF8HKdkzP2nVpiXxXC4YqGdOzk68QPLIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875535945689-vl10hdauj5j53krj4npmekibcua16csa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

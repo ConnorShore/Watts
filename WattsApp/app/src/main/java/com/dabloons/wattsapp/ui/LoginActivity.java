@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.databinding.ActivityLoginBinding;
 import com.dabloons.wattsapp.databinding.ActivityMainBinding;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -25,6 +26,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private static final int RC_MAIN_ACTIVITY = 1;
     private static final int RC_SIGN_IN = 2;
 
+    private UserManager userManager = UserManager.getInstance();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +36,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     public void initializeListeners() {
         binding.buttonLogin.setOnClickListener(view -> {
-            this.startSignInActivity();
+            if(!userManager.isCurrentUserLogged())
+                this.startSignInActivity();
+            else
+                this.startMainActivity();
         });
     }
 
@@ -65,6 +71,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         if (requestCode == RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
+                this.userManager.createUser();
                 UIMessageUtil.showShortToastMessage(this, "Login successful!");
                 this.startMainActivity();
             } else {

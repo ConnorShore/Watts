@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/page_1"
-        android:enabled="true"
         android:icon="@drawable/ic_home_48px"
+        android:enabled="true"
         android:title=""/>
     <item
         android:id="@+id/page_2"
-        android:enabled="true"
         android:icon="@drawable/ic_menu_48px"
+        android:enabled="true"
         android:title=""/>
 </menu>

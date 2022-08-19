@@ -1,16 +1,14 @@
 package com.dabloons.wattsapp.ui;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.databinding.ActivityLoginBinding;
-import com.dabloons.wattsapp.databinding.ActivityMainBinding;
 import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.ui.main.MainActivity;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -101,7 +99,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     }
 
     @Override
-    ActivityLoginBinding getViewBinding() {
+    protected ActivityLoginBinding getViewBinding() {
         return ActivityLoginBinding.inflate(getLayoutInflater());
     }
 }

@@ -15,11 +15,16 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                'appAuthRedirectScheme': 'com.dabloons.wattsapp'
+        ]
     }
 
     buildFeatures {
         viewBinding = true
     }
+
 
     dataBinding {
         enabled = true
@@ -66,4 +71,6 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'net.openid:appauth:0.11.1'
 }

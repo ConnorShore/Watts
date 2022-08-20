@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.dabloons.wattsapp">
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -9,6 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WattsApp">
+        <activity
+            android:name=".ui.main.OauthFailureActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.main.OauthSuccessActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -22,6 +31,20 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true" />
+
+        <activity
+            android:name="net.openid.appauth.RedirectUriReceiverActivity"
+            tools:node="replace"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+    
+                <data android:scheme="${appAuthRedirectScheme}"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

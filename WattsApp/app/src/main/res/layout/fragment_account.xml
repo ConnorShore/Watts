@@ -46,13 +46,14 @@
 
         <!-- BUTTON SIGN OUT -->
         <Button
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:id="@+id/signOutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/button_sign_out_account"
             android:textColor="#fff"
             android:textSize="@dimen/default_text_size"
-            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/purple_500"
             android:layout_margin="@dimen/default_margin"
             android:padding="@dimen/default_margin"/>
 
@@ -64,7 +65,8 @@
             android:text="@string/button_delete_account"
             android:textColor="#fff"
             android:textSize="@dimen/default_text_size"
-            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/purple_500"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_margin="@dimen/default_margin"
             android:padding="@dimen/default_margin"/>
 

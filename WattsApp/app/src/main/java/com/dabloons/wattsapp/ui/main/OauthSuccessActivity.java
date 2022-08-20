@@ -28,7 +28,6 @@ public class OauthSuccessActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_oauth_success);
 
         AuthorizationResponse resp = AuthorizationResponse.fromIntent(getIntent());
         AuthorizationException ex = AuthorizationException.fromIntent(getIntent());

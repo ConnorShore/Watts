@@ -22,8 +22,6 @@ public class OAuth2Manager {
 
     private static volatile OAuth2Manager instance;
 
-    private static final int RC_AUTH = 100;
-
     private String hueAuthEndpoint = "https://api.meethue.com/v2/oauth2/authorize";
     private String hueTokenEndpoint = "https://api.meethue.com/v2/oauth2/token";
 

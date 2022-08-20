@@ -85,12 +85,12 @@ public final class UserRepository {
         }
     }
 
-    // Delete the User from Firestore
-    public void deleteUserFromFirestore() {
+    public Task<Void> deleteUserFromFirestore() {
         String uid = this.getCurrentUserUID();
-        if(uid != null){
-            this.getUsersCollection().document(uid).delete();
-        }
+        if(uid == null)
+            return null;
+
+        return this.getUsersCollection().document(uid).delete();
     }
 
     public Task<Void> signOut(Context context){

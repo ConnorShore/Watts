@@ -42,10 +42,11 @@ public class UserManager {
     }
 
     public Task<Void> deleteUser(Context context){
-        // Delete the user account from the Auth
-        return userRepository.deleteUser(context).addOnCompleteListener(task -> {
-            // Once done, delete the user data from Firestore
-            userRepository.deleteUserFromFirestore();
+        // Delete the user account from the Firestore
+        String uid = this.getCurrentUser().getUid();
+        return userRepository.deleteUserFromFirestore().addOnCompleteListener(task -> {
+            // Once done, delete the user data from Auth
+            userRepository.deleteUser(context);
         });
     }
 

@@ -7,7 +7,13 @@
         android:title=""/>
     <item
         android:id="@+id/page_2"
-        android:icon="@drawable/ic_menu_48px"
+        android:icon="@drawable/ic_cloud_48px"
         android:enabled="true"
         android:title=""/>
+    <item
+        android:id="@+id/page_3"
+        android:icon="@drawable/ic_account_circle_48px"
+        android:enabled="true"
+        android:title=""/>
+
 </menu>

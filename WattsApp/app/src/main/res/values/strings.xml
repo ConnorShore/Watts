@@ -2,4 +2,6 @@
     <string name="app_name">WattsApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="button_sign_out_account">Sign Out</string>
+    <string name="button_delete_account">Delete Account</string>
 </resources>

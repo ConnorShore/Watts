@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.databinding.ActivityMainBinding;
 import com.dabloons.wattsapp.ui.BaseActivity;
+import com.dabloons.wattsapp.ui.main.fragment.AccountFragment;
 import com.dabloons.wattsapp.ui.main.fragment.HomeFragment;
 import com.dabloons.wattsapp.ui.main.fragment.TestFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -18,6 +19,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
 
     private HomeFragment homeFragment;
     private TestFragment testFragment;
+    private AccountFragment accountFragment;
 
     private BottomNavigationView bottomMenu;
 
@@ -32,6 +34,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
 
         homeFragment = new HomeFragment();
         testFragment = new TestFragment();
+        accountFragment = new AccountFragment();
 
         bottomMenu = findViewById(R.id.bottom_navigation);
 
@@ -50,7 +53,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
             case R.id.page_2:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, testFragment).commit();
                 return true;
+
+            case R.id.page_3:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, accountFragment).commit();
+                return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

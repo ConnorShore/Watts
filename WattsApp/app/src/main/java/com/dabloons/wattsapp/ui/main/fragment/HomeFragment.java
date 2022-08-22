@@ -1,17 +1,30 @@
 package com.dabloons.wattsapp.ui.main.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.model.RoomModel;
+import com.dabloons.wattsapp.ui.main.OnItemClickListener;
+import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
 
-public class HomeFragment extends Fragment {
+import java.util.ArrayList;
+
+public class HomeFragment extends Fragment implements OnItemClickListener {
+
+    private RecyclerView roomRV;
+
+    // Arraylist for storing data
+    private ArrayList<RoomModel> roomModelList;
 
     public HomeFragment() {
 
@@ -23,6 +36,43 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        super.onCreate(savedInstanceState);
+
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
+
+        roomRV = v.findViewById(R.id.idRVCourse);
+
+        // here we have created new array list and added data to it.
+        roomModelList = new ArrayList<>();
+        roomModelList.add(new RoomModel("Living Room"));
+        roomModelList.add(new RoomModel("Bed Room"));
+        roomModelList.add(new RoomModel("Kitchen"));
+        roomModelList.add(new RoomModel("Living Room"));
+        roomModelList.add(new RoomModel("Bed Room"));
+        roomModelList.add(new RoomModel("Kitchen"));
+        roomModelList.add(new RoomModel("Living Room"));
+        roomModelList.add(new RoomModel("Bed Room"));
+        roomModelList.add(new RoomModel("Kitchen"));
+
+
+        // we are initializing our adapter class and passing our arraylist to it.
+         RoomAdapter roomAdapter = new RoomAdapter(this.getContext(), roomModelList);
+
+        // below line is for setting a layout manager for our recycler view.
+        // here we are creating vertical list so we will provide orientation as vertical
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+
+        // in below two lines we are setting layoutmanager and adapter to our recycler view.
+        roomRV.setLayoutManager(linearLayoutManager);
+        roomRV.setAdapter(roomAdapter);
+        roomAdapter.setClickListener(this);
+
+        return  v;
+    }
+
+
+    @Override
+    public void onClick(View view, int position) {
+        System.out.println("");
     }
 }

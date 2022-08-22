@@ -1,52 +1,65 @@
 package com.dabloons.wattsapp.service;
 
 import com.dabloons.wattsapp.manager.UserManager;
-import com.dabloons.wattsapp.model.integration.IntegrationType;
-import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
-import com.google.android.gms.tasks.Task;
+import com.google.gson.JsonObject;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import io.reactivex.Observable;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.*;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
-public interface PhillipsHueService {
+public class PhillipsHueService extends HttpService {
 
+    private static volatile PhillipsHueService instance;
 
-    // TODO: USer OkHttp instead of rrequests
-    OkHttpClient.Builder httpClient = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-        @Override
-        public Response intercept(Chain chain) {
-            Task<Response> res = UserManager.getInstance().getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).continueWith(task -> {
-                PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth) task.getResult();
+    private static final String BASE_URL = "https://api.meethue.com/route/api/";
+    private static final UserManager userManager = UserManager.getInstance();
 
-                Request request = chain.request().newBuilder()
-                        .addHeader("Content-Type", "application/json")
-                        .addHeader("Authorization", "Bearer " + auth.getAccessToken())
-                        .build();
-                return chain.proceed(request);
-            });
+    public PhillipsHueService() {
+        super();
+    }
+
+    public void linkButton(String accessToken, Callback callback) {
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("linkbutton", true);
+
+        RequestBody body = createRequestBody(jsonObj);
+        makeRequestWithBodyAsync("0/config", RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+    }
+
+    public void getUsername(String accessToken, Callback callback) {
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("devicetype", userManager.getCurrentUser().getUid());
+
+        RequestBody body = createRequestBody(jsonObj);
+        makeRequestWithBodyAsync("", RequestType.POST, body, getStandardHeaders(accessToken), callback);
+    }
+
+    private Map<String, String> getStandardHeaders(String accessToken) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + accessToken);
+        headers.put("Content-Type", "application/json");
+        return headers;
+    }
+
+    @Override
+    public void setBaseUrl() {
+        this.baseUrl = BASE_URL;
+    }
+
+    public static PhillipsHueService getInstance() {
+        PhillipsHueService result = instance;
+        if (result != null) {
+            return result;
         }
-    });
-
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://api.meethue.com/route/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(httpClient.build())
-            .build();
-
-    @PUT("0/config")
-    Call<Void> linkButton(@Body String body);
-
-    @POST
-    Call<String> getUsername(@Body String body);
+        synchronized(PhillipsHueService.class) {
+            if (instance == null) {
+                instance = new PhillipsHueService();
+            }
+            return instance;
+        }
+    }
 }

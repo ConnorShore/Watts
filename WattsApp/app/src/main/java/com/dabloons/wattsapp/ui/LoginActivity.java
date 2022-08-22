@@ -89,8 +89,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     }
 
     private void startMainActivity() {
-        Intent gameActivity = new Intent(this, MainActivity.class);
-        startActivityForResult(gameActivity, RC_MAIN_ACTIVITY);
+        Intent mainActivity = new Intent(this, MainActivity.class);
+        startActivityForResult(mainActivity, RC_MAIN_ACTIVITY);
     }
 
     @Override

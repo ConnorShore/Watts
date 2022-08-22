@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
+import com.dabloons.wattsapp.service.HttpService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
-import com.dabloons.wattsapp.service.streams.PhillipsHueStreams;
+import com.google.gson.JsonObject;
 
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
@@ -19,19 +22,22 @@ import java.io.IOException;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class PhillipsHueOAuthManager extends OAuthManager {
 
     private static volatile PhillipsHueOAuthManager instance;
 
     private static final UserAuthRepository userAuthRepository = UserAuthRepository.getInstance();
+    private static final PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
 
     // TODO: Move these to config
     private final String HUE_CLIENT_ID = "MHXlFaIMPE52gfnlM0nJ1fzYWOLe8fAv";
     private final String HUE_CLIENT_SECRET = "onksb0tv1Vz30vDl";
 
     private final Uri HUE_REDIRECT_URI = Uri.parse("com.dabloons.wattsapp:/oauth2redirect");
-    private final Uri HUE_USERNAME_URI = Uri.parse("https://api.meethue.com/route/api/0/config");
 
     public PhillipsHueOAuthManager() {
         // TODO: MAke config
@@ -75,10 +81,9 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                 // TODO: Need to move the repository calls to managers
                 // TODO: NEed to make sure database writes work
                 // TODO: Move to OkHttp for web requests
-                userAuthRepository.addPhillipsHueIntegrationToUser(resp.accessToken, resp.refreshToken);
-//                String username = aquireUserName();
-//                userAuthRepository.updatePropertyString("username", username, IntegrationType.PHILLIPS_HUE);
-                this.endOauthConnection();
+                String accessToken = resp.accessToken;
+                String refreshToken = resp.refreshToken;
+                aquireUserNameAndSaveData(accessToken, refreshToken);
             } else {
                 // authorization failed, check ex for more details
                 System.out.println();
@@ -87,15 +92,34 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         });
     }
 
-    private String aquireUserName() {
-        try {
-            PhillipsHueStreams.linkButton().execute();
-            String username = PhillipsHueStreams.getUsername().execute().body();
-            return username;
-        } catch (IOException e) {
-            Log.e("PhillipsHueOAUthManager", "IO EXception getting username: " + e.getMessage());
-        }
-        return null;
+    private void aquireUserNameAndSaveData(String accessToken, String refreshToken) {
+        phillipsHueService.linkButton(accessToken, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e("PhillipsHueOAuthManager", "Failed to link button: " + e.getMessage());
+                endOauthConnection();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                phillipsHueService.getUsername(accessToken, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e("PhillipsHueOAuthManager", "Failed to get username: " + e.getMessage());
+                        endOauthConnection();
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseData = response.body().string();
+                        JsonObject resObj = new JsonObject();
+                        JsonObject successObj = resObj.getAsJsonObject("success");
+                        String username = successObj.get("username").toString();
+                        endOauthConnection();
+                    }
+                });
+            }
+        });
     }
 
     /**

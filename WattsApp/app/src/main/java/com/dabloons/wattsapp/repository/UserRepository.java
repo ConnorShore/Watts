@@ -128,12 +128,12 @@ public final class UserRepository {
      */
 
 
-    public void addPhillipsHueIntegrationToUser(String authToken, String refreshToken) {
+    public void addPhillipsHueIntegrationToUser(String authToken, String refreshToken, String username) {
         FirebaseUser user = getCurrentUser();
         if(user == null) return;
 
         PhillipsHueIntegrationAuth authProps =
-                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), user.getUid(), null, authToken, refreshToken);
+                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), user.getUid(), username, authToken, refreshToken);
 
         Task<DocumentSnapshot> authData = getAuthData(IntegrationType.PHILLIPS_HUE);
         authData.addOnSuccessListener(snapshot -> {

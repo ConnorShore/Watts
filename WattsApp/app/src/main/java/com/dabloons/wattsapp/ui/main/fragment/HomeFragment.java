@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class HomeFragment extends Fragment implements OnItemClickListener {
 
@@ -41,11 +43,11 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         roomRV = v.findViewById(R.id.idRVCourse);
 
         // here we have created new array list and added data to it.
+        String userId = UserManager.getInstance().getCurrentUser().getUid();
         roomModelList = new ArrayList<>();
-//        roomModelList.add(new Room("Living Room"));
-//        roomModelList.add(new Room("Bed Room"));
-//        roomModelList.add(new Room("Kitchen"));
-//        roomModelList.add(new Room("Living Room"));
+        roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Living Room2"));
+        roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Bed Room"));
+        roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Kitchen"));
 //        roomModelList.add(new Room("Bed Room"));
 //        roomModelList.add(new Room("Kitchen"));
 //        roomModelList.add(new Room("Living Room"));

@@ -21,6 +21,8 @@ import java.util.UUID;
 
 public class HomeFragment extends Fragment implements OnItemClickListener {
 
+    private final String LOG_TAG = "HomeFragment";
+
     private RecyclerView roomRV;
 
     // Arraylist for storing data
@@ -45,18 +47,13 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         // here we have created new array list and added data to it.
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         roomModelList = new ArrayList<>();
-        roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Living Room2"));
+        roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Living Room"));
         roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Bed Room"));
         roomModelList.add(new Room(UUID.randomUUID().toString(), userId, "Kitchen"));
-//        roomModelList.add(new Room("Bed Room"));
-//        roomModelList.add(new Room("Kitchen"));
-//        roomModelList.add(new Room("Living Room"));
-//        roomModelList.add(new Room("Bed Room"));
-//        roomModelList.add(new Room("Kitchen"));
 
 
         // we are initializing our adapter class and passing our arraylist to it.
-         RoomAdapter roomAdapter = new RoomAdapter(this.getContext(), roomModelList);
+        RoomAdapter roomAdapter = new RoomAdapter(this.getContext(), roomModelList);
 
         // below line is for setting a layout manager for our recycler view.
         // here we are creating vertical list so we will provide orientation as vertical

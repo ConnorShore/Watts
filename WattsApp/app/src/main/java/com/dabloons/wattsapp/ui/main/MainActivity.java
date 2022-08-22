@@ -17,6 +17,8 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements NavigationBarView.OnItemSelectedListener{
 
+    private final String LOG_TAG = "MainActivity";
+
     private HomeFragment homeFragment;
     private ConnectFragment connectFragment;
     private AccountFragment accountFragment;

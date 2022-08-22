@@ -21,7 +21,8 @@ import util.UIMessageUtil;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
-    // Request codes
+    private final String LOG_TAG = "LoginActivity";
+
     private UserManager userManager = UserManager.getInstance();
 
     @Override

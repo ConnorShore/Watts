@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class OAuthConnectionManager {
 
+    private final String LOG_TAG = "OAuthConnectionManager";
+
     private static volatile OAuthConnectionManager instance;
 
     private Map<IntegrationType, Boolean> oAuthConnectionMap;
@@ -21,7 +23,6 @@ public class OAuthConnectionManager {
 
     public void endConnection(IntegrationType type) {
         this.oAuthConnectionMap.put(type, false);
-
     }
 
     public IntegrationType getCurrentConnection() {

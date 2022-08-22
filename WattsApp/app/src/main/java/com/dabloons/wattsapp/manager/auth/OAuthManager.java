@@ -22,6 +22,8 @@ import javax.annotation.Nullable;
 
 public abstract class OAuthManager {
 
+    private final String LOG_TAG = "OAuthManager";
+
     private AuthState authState;
     private AuthorizationServiceConfiguration serviceConfig;
     private AuthorizationService authService;

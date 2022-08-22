@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 {
 
+    private final String LOG_TAG = "RoomAdapter";
+
     private Context context;
     private ArrayList<Room> mRoomModelArrayList;
     private OnItemClickListener clickListener;

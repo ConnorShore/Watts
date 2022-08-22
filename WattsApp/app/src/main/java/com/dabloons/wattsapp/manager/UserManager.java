@@ -14,7 +14,11 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Map;
 
 public class UserManager {
+
+    private final String LOG_TAG = "UserManager";
+
     private static volatile UserManager instance;
+
     private UserRepository userRepository;
     private UserAuthRepository userAuthRepository;
 

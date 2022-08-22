@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.RequestBody;
 
 public class PhillipsHueService extends HttpService {
+
+    private final String LOG_TAG = "PhillipsHueService";
 
     private static volatile PhillipsHueService instance;
 

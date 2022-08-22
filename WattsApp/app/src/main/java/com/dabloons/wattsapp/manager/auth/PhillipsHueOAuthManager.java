@@ -24,13 +24,13 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 public class PhillipsHueOAuthManager extends OAuthManager {
+
+    private final String LOG_TAG = "PhillipsHueOAuthManager";
 
     private static volatile PhillipsHueOAuthManager instance;
 
@@ -58,7 +58,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         }
         else {
             // authorization failed, check ex for more details
-            System.out.println();
+            Log.e(LOG_TAG, ex.error);
             this.endOauthConnection();
         }
     }
@@ -68,7 +68,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         AuthorizationResponse resp = AuthorizationResponse.fromIntent(intent);
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         updateAuthState(resp, ex);
-        Log.e("PhillipsHueOAuthManager", "OAuth Response Failed: " + ex.error);
+        Log.e(LOG_TAG, "OAuth Response Failed: " + ex.error);
     }
 
     /**
@@ -94,19 +94,20 @@ public class PhillipsHueOAuthManager extends OAuthManager {
     }
 
     private void aquireUserNameAndSaveData(String accessToken, String refreshToken, Intent intent) {
+
         phillipsHueService.linkButton(accessToken, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e("PhillipsHueOAuthManager", "Failed to link button: " + e.getMessage());
-                endOauthConnection();
+                Log.e(LOG_TAG, "Failed to link button: " + e.getMessage());
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+
                 phillipsHueService.getUsername(accessToken, new Callback() {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                        Log.e("PhillipsHueOAuthManager", "Failed to get username: " + e.getMessage());
+                        Log.e(LOG_TAG, "Failed to get username: " + e.getMessage());
                         endOauthConnection();
                     }
 
@@ -117,7 +118,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                             JSONArray jsonObj = new JSONArray(responseData);
                             JSONObject successObj = jsonObj.getJSONObject(0);
                             String username = successObj.getJSONObject("success").getString("username");
-                            UserAuthRepository.getInstance().addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
+                            userAuthRepository.addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
                                     .addOnSuccessListener(v -> {
                                         endOauthConnection();
                                         launchMainActivity();
@@ -126,7 +127,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
 
                                     });
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e(LOG_TAG, "Failed to decode json response: " + e.getMessage());
                         }
                     }
                 });

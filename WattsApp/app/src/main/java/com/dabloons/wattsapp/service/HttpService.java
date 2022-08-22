@@ -1,29 +1,20 @@
 package com.dabloons.wattsapp.service;
 
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 
-import com.dabloons.wattsapp.repository.UserRepository;
-import com.google.api.Http;
 import com.google.gson.JsonObject;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Map;
 
-import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public abstract class HttpService {
+
+    private final String LOG_TAG = "HttpService";
 
     public enum RequestType {
         POST,
@@ -87,13 +78,5 @@ public abstract class HttpService {
         }
 
         return requestBuilder;
-    }
-
-    public OkHttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
-    public String getBaseUrl() {
-        return this.baseUrl;
     }
 }

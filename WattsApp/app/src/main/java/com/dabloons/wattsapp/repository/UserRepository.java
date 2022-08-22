@@ -4,9 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import com.dabloons.wattsapp.model.integration.IntegrationAuth;
-import com.dabloons.wattsapp.model.integration.IntegrationType;
-import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,18 +13,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.dabloons.wattsapp.model.User;
 
-import java.util.UUID;
-
 public final class UserRepository {
+
+    private final String LOG_TAG = "UserRepository";
 
     private static volatile UserRepository instance;
 
     private static final String USER_COLLECTION_NAME = "users";
-    private static final String AUTH_COLLECTION_NAME = "auth";
     private static final String FIELD_USERNAME = "username";
-
-    private static final String DOCUMENT_PHILLIPS_HUE = "phillips_hue";
-    private static final String DOCUMENT_NANOLEAF = "nanoleaf";
 
     private UserRepository() { }
 
@@ -43,10 +36,6 @@ public final class UserRepository {
             return instance;
         }
     }
-
-    /*
-    USER SPECIFIC METHODS
-     */
 
     // Create User in Firestore
     public void createUser() {
@@ -116,31 +105,5 @@ public final class UserRepository {
     // Get the User Collection Reference
     private CollectionReference getUsersCollection(){
         return FirebaseFirestore.getInstance().collection(USER_COLLECTION_NAME);
-    }
-
-
-    /*
-    INTEGRATION AUTH Methods
-     */
-
-    // Update User Username
-    public Task<Void> setUsername(String username) {
-        String uid = this.getCurrentUserUID();
-        if(uid != null){
-            return this.getUsersCollection().document(uid).update(FIELD_USERNAME, username);
-        }else{
-            return null;
-        }
-    }
-
-    private String getIntegrationDocument(IntegrationType type) {
-        switch(type) {
-            case PHILLIPS_HUE:
-                return DOCUMENT_PHILLIPS_HUE;
-            case NANOLEAF:
-                return DOCUMENT_NANOLEAF;
-            default:
-                return null;
-        }
     }
 }

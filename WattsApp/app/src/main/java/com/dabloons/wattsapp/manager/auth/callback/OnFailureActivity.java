@@ -11,6 +11,8 @@ import com.dabloons.wattsapp.model.integration.IntegrationType;
 
 public class OnFailureActivity extends AppCompatActivity {
 
+    private final String LOG_TAG = "OnFailureActivity";
+
     public OnFailureActivity() { }
 
     @Override
@@ -24,7 +26,7 @@ public class OnFailureActivity extends AppCompatActivity {
                 break;
             case NANOLEAF:
             default:
-                Log.e("OnSuccessActivity", "Failed to get integration type");
+                Log.e(LOG_TAG, "Failed to get integration type");
         }
     }
 }

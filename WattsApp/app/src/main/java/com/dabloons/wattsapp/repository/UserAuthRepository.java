@@ -1,17 +1,9 @@
 package com.dabloons.wattsapp.repository;
 
-import android.content.Context;
-import android.util.Log;
-
-import androidx.annotation.Nullable;
-
-import com.dabloons.wattsapp.model.User;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,6 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.UUID;
 
 public final class UserAuthRepository {
+
+    private final String LOG_TAG = "UserAuthRepository";
 
     private static volatile UserAuthRepository instance;
 
@@ -51,7 +45,7 @@ public final class UserAuthRepository {
         PhillipsHueIntegrationAuth authProps =
                 new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), username, accessToken, refreshToken);
 
-        return addIntegrationAuth(IntegrationType.PHILLIPS_HUE, authProps);
+        return setIntegrationAuth(IntegrationType.PHILLIPS_HUE, authProps);
     }
 
     public Task<Void> removeIntegration(IntegrationType type) {
@@ -79,7 +73,7 @@ public final class UserAuthRepository {
         return this.getUserAuthCollection().document(doc).get();
     }
 
-    public Task<Void> addIntegrationAuth(IntegrationType type, IntegrationAuth props) {
+    public Task<Void> setIntegrationAuth(IntegrationType type, IntegrationAuth props) {
         String doc = getIntegrationDocument(type);
         return this.getUserAuthCollection().document(doc).set(props);
     }
@@ -94,7 +88,6 @@ public final class UserAuthRepository {
                 return null;
         }
     }
-
 
     // Get the Auth collection reference
     private CollectionReference getUserAuthCollection() {

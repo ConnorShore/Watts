@@ -13,6 +13,8 @@ import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
 
 public class ConnectFragment extends Fragment {
 
+    private final String LOG_TAG = "ConnectFragment";
+
     private PhillipsHueOAuthManager oAuthManager = PhillipsHueOAuthManager.getInstance();
 
     public ConnectFragment() {

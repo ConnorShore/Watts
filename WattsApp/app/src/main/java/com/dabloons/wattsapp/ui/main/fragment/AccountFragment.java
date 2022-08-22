@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -15,6 +13,8 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.UserManager;
 
 public class AccountFragment extends Fragment {
+
+    private final String LOG_TAG = "AccountFragment";
 
     private UserManager userManager = UserManager.getInstance();
 

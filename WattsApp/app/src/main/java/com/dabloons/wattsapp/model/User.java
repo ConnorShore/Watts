@@ -1,10 +1,5 @@
 package com.dabloons.wattsapp.model;
 
-import com.dabloons.wattsapp.model.integration.IntegrationAuth;
-
-import java.util.ArrayList;
-import java.util.List;
-
 public class User {
 
     private String uid;

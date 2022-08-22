@@ -37,16 +37,7 @@ public abstract class HttpService {
     protected String baseUrl;
 
     public HttpService() {
-        try {
-            HandlerThread thread = new HandlerThread("okhttpclient_init");
-            thread.start();
-            Handler handler = new Handler(thread.getLooper());
-            handler.post(() -> {
-                httpClient = new OkHttpClient();
-            });
-        } catch(Exception e) {
-            System.out.println("WTF");
-        }
+        httpClient = new OkHttpClient();
         setBaseUrl();
     }
 

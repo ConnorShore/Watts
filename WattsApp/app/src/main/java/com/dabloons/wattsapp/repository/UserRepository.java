@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.firebase.ui.auth.AuthUI;
@@ -81,11 +82,6 @@ public final class UserRepository {
         }
     }
 
-    public Task<DocumentSnapshot> getAuthData(IntegrationType type) {
-        String doc = getIntegrationDocument(type);
-        return this.getUserAuthCollection().document(doc).get();
-    }
-
     // Update User Username
     public Task<Void> updateUsername(String username) {
         String uid = this.getCurrentUserUID();
@@ -127,20 +123,6 @@ public final class UserRepository {
     INTEGRATION AUTH Methods
      */
 
-
-    public void addPhillipsHueIntegrationToUser(String authToken, String refreshToken, String username) {
-        FirebaseUser user = getCurrentUser();
-        if(user == null) return;
-
-        PhillipsHueIntegrationAuth authProps =
-                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), user.getUid(), username, authToken, refreshToken);
-
-        Task<DocumentSnapshot> authData = getAuthData(IntegrationType.PHILLIPS_HUE);
-        authData.addOnSuccessListener(snapshot -> {
-            this.getUserAuthCollection().document(DOCUMENT_PHILLIPS_HUE).set(authProps);
-        });
-    }
-
     // Update User Username
     public Task<Void> setUsername(String username) {
         String uid = this.getCurrentUserUID();
@@ -151,8 +133,6 @@ public final class UserRepository {
         }
     }
 
-    public Task<String> getAuthCode(IntegrationType type) { return null; }
-
     private String getIntegrationDocument(IntegrationType type) {
         switch(type) {
             case PHILLIPS_HUE:
@@ -162,15 +142,5 @@ public final class UserRepository {
             default:
                 return null;
         }
-    }
-
-
-    // Get the Auth collection reference
-    private CollectionReference getUserAuthCollection() {
-        String uid = this.getCurrentUserUID();
-        return FirebaseFirestore.getInstance()
-                .collection(USER_COLLECTION_NAME)
-                .document(uid)
-                .collection(AUTH_COLLECTION_NAME);
     }
 }

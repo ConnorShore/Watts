@@ -1,22 +1,26 @@
 package com.dabloons.wattsapp.manager.auth;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
-import com.dabloons.wattsapp.service.HttpService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
-import com.google.gson.JsonObject;
+import com.dabloons.wattsapp.ui.main.MainActivity;
 
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.ClientAuthentication;
 import net.openid.appauth.ClientSecretBasic;
-import net.openid.appauth.TokenResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -50,7 +54,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         updateAuthState(resp, ex);
         if (resp != null) {
-            aquireTokens(resp);
+            aquireTokens(resp, intent);
         }
         else {
             // authorization failed, check ex for more details
@@ -71,19 +75,16 @@ public class PhillipsHueOAuthManager extends OAuthManager {
      * Helpers
      */
 
-    private void aquireTokens(AuthorizationResponse response) {
+    private void aquireTokens(AuthorizationResponse response, Intent intent) {
         // authorization completed
         ClientAuthentication auth = new ClientSecretBasic(getClientSecret());
         this.getAuthService().performTokenRequest(response.createTokenExchangeRequest(), auth, (resp, ex1) -> {
             updateAuthState(resp, ex1);
             if (resp != null) {
                 // exchange succeeded
-                // TODO: Need to move the repository calls to managers
-                // TODO: NEed to make sure database writes work
-                // TODO: Move to OkHttp for web requests
                 String accessToken = resp.accessToken;
                 String refreshToken = resp.refreshToken;
-                aquireUserNameAndSaveData(accessToken, refreshToken);
+                aquireUserNameAndSaveData(accessToken, refreshToken, intent);
             } else {
                 // authorization failed, check ex for more details
                 System.out.println();
@@ -92,7 +93,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         });
     }
 
-    private void aquireUserNameAndSaveData(String accessToken, String refreshToken) {
+    private void aquireUserNameAndSaveData(String accessToken, String refreshToken, Intent intent) {
         phillipsHueService.linkButton(accessToken, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -112,10 +113,21 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseData = response.body().string();
-                        JsonObject resObj = new JsonObject();
-                        JsonObject successObj = resObj.getAsJsonObject("success");
-                        String username = successObj.get("username").toString();
-                        endOauthConnection();
+                        try {
+                            JSONArray jsonObj = new JSONArray(responseData);
+                            JSONObject successObj = jsonObj.getJSONObject(0);
+                            String username = successObj.getJSONObject("success").getString("username");
+                            UserAuthRepository.getInstance().addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
+                                    .addOnSuccessListener(v -> {
+                                        endOauthConnection();
+                                        launchMainActivity();
+                                    })
+                                    .addOnFailureListener(v -> {
+
+                                    });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
@@ -157,5 +169,11 @@ public class PhillipsHueOAuthManager extends OAuthManager {
             }
             return instance;
         }
+    }
+
+    private void launchMainActivity() {
+        Context context = WattsApplication.getAppContext();
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
     }
 }

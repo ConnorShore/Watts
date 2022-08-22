@@ -16,14 +16,12 @@ import com.firebase.ui.auth.IdpResponse;
 import java.util.Arrays;
 import java.util.List;
 
+import util.RequestCodes;
 import util.UIMessageUtil;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     // Request codes
-    private static final int RC_MAIN_ACTIVITY = 1;
-    private static final int RC_SIGN_IN = 2;
-
     private UserManager userManager = UserManager.getInstance();
 
     @Override
@@ -58,7 +56,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         .setIsSmartLockEnabled(false, true)
 //                        .setLogo(R.drawable.ic_logo_auth)
                         .build(),
-                RC_SIGN_IN);
+                RequestCodes.RC_SIGN_IN);
     }
 
     // Method that handles response after SignIn Activity close
@@ -66,7 +64,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         IdpResponse response = IdpResponse.fromResultIntent(data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RequestCodes.RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
                 this.userManager.createUser();
@@ -90,7 +88,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     private void startMainActivity() {
         Intent mainActivity = new Intent(this, MainActivity.class);
-        startActivityForResult(mainActivity, RC_MAIN_ACTIVITY);
+        startActivityForResult(mainActivity, RequestCodes.RC_MAIN_ACTIVITY);
     }
 
     @Override

@@ -6,6 +6,7 @@ public abstract class IntegrationAuth {
     private IntegrationType integrationType;
 
     public IntegrationAuth(String uid, IntegrationType integrationType) {
+        this.uid = uid;
         this.integrationType = integrationType;
     }
 

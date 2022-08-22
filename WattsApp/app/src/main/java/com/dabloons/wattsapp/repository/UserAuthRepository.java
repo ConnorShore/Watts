@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -24,7 +25,6 @@ public final class UserAuthRepository {
 
     private static final String USER_COLLECTION_NAME = "users";
     private static final String AUTH_COLLECTION_NAME = "auth";
-    private static final String FIELD_USERNAME = "username";
 
     private static final String DOCUMENT_PHILLIPS_HUE = "phillips_hue";
     private static final String DOCUMENT_NANOLEAF = "nanoleaf";
@@ -44,17 +44,14 @@ public final class UserAuthRepository {
         }
     }
 
-    public void addPhillipsHueIntegrationToUser(String authToken, String refreshToken) {
+    public Task<Void> addPhillipsHueIntegrationToUser(String accessToken, String refreshToken, String username) {
         FirebaseUser user = UserRepository.getInstance().getCurrentUser();
-        if(user == null) return;
+        if(user == null) return null;
 
         PhillipsHueIntegrationAuth authProps =
-                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), user.getUid(), null, authToken, refreshToken);
+                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), username, accessToken, refreshToken);
 
-        Task<DocumentSnapshot> authData = UserRepository.getInstance().getAuthData(IntegrationType.PHILLIPS_HUE);
-        authData.addOnSuccessListener(snapshot -> {
-            this.getUserAuthCollection().document(DOCUMENT_PHILLIPS_HUE).set(authProps);
-        });
+        return addIntegrationAuth(IntegrationType.PHILLIPS_HUE, authProps);
     }
 
     public Task<Void> removeIntegration(IntegrationType type) {
@@ -82,8 +79,13 @@ public final class UserAuthRepository {
         return this.getUserAuthCollection().document(doc).get();
     }
 
+    public Task<Void> addIntegrationAuth(IntegrationType type, IntegrationAuth props) {
+        String doc = getIntegrationDocument(type);
+        return this.getUserAuthCollection().document(doc).set(props);
+    }
+
     private String getIntegrationDocument(IntegrationType type) {
-        switch(type) {
+        switch (type) {
             case PHILLIPS_HUE:
                 return DOCUMENT_PHILLIPS_HUE;
             case NANOLEAF:
@@ -94,17 +96,13 @@ public final class UserAuthRepository {
     }
 
 
-    // Get the User Collection Reference
-    private CollectionReference getUsersCollection(){
-        return FirebaseFirestore.getInstance().collection(USER_COLLECTION_NAME);
-    }
-
     // Get the Auth collection reference
     private CollectionReference getUserAuthCollection() {
         String uid = UserRepository.getInstance().getCurrentUserUID();
-        return FirebaseFirestore.getInstance()
+        CollectionReference ref = FirebaseFirestore.getInstance()
                 .collection(USER_COLLECTION_NAME)
                 .document(uid)
                 .collection(AUTH_COLLECTION_NAME);
+        return ref;
     }
 }

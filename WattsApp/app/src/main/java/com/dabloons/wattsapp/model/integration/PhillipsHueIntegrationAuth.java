@@ -2,25 +2,15 @@ package com.dabloons.wattsapp.model.integration;
 
 public class PhillipsHueIntegrationAuth extends IntegrationAuth {
 
-    private String userID;
     private String username;
     private String accessToken;
     private String refreshToken;
 
-    public PhillipsHueIntegrationAuth(String uid, String userID, String username, String accessToken, String refreshToken) {
+    public PhillipsHueIntegrationAuth(String uid, String username, String accessToken, String refreshToken) {
         super(uid, IntegrationType.PHILLIPS_HUE);
-        this.userID = userID;
         this.username = username;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
     }
 
     public String getUsername() {

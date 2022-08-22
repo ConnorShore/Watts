@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dabloons.wattsapp.R;
-import com.dabloons.wattsapp.auth.OAuth2Manager;
+import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
 
 public class ConnectFragment extends Fragment {
 
-    private OAuth2Manager oAuth2Manager = OAuth2Manager.getInstance();
+    private PhillipsHueOAuthManager oAuthManager = PhillipsHueOAuthManager.getInstance();
 
     public ConnectFragment() {
         // Required empty public constructor
@@ -24,7 +24,7 @@ public class ConnectFragment extends Fragment {
         // Inflate the layout for this fragment
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
         result.findViewById(R.id.button_connect_phillips_hue).setOnClickListener(view -> {
-            oAuth2Manager.aquireAuthorizationCode(this.getActivity());
+            oAuthManager.aquireAuthorizationCode(this.getActivity());
         });
         return result;
     }

@@ -12,12 +12,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WattsApp">
+
         <activity
-            android:name=".ui.main.OauthFailureActivity"
+            android:name=".manager.auth.callback.OnFailureActivity"
             android:exported="false" />
+
         <activity
-            android:name=".ui.main.OauthSuccessActivity"
+            android:name=".manager.auth.callback.OnSuccessActivity"
             android:exported="false" />
+
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -44,7 +47,5 @@
                 <data android:scheme="${appAuthRedirectScheme}"/>
             </intent-filter>
         </activity>
-
     </application>
-
 </manifest>

@@ -77,7 +77,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                 if (response == null) {
                     UIMessageUtil.showShortToastMessage(this, "Login aborted.");
                 } else if (response.getError()!= null) {
-                    if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK){
+                    if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK ||
+                            response.getError().getErrorCode() == ErrorCodes.INVALID_EMAIL_LINK_ERROR) {
                         UIMessageUtil.showShortToastMessage(this, "No internet connection");
                     } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                         UIMessageUtil.showShortToastMessage(this, "Unknown error");

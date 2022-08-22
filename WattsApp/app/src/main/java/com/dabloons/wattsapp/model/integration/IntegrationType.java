@@ -1,4 +1,4 @@
-package com.dabloons.wattsapp.model;
+package com.dabloons.wattsapp.model.integration;
 
 public enum IntegrationType {
     NONE,

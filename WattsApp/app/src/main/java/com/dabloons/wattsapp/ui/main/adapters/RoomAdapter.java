@@ -4,14 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
-import com.dabloons.wattsapp.model.RoomModel;
+import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -20,10 +19,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 {
 
     private Context context;
-    private ArrayList<RoomModel> mRoomModelArrayList;
+    private ArrayList<Room> mRoomModelArrayList;
     private OnItemClickListener clickListener;
 
-    public RoomAdapter(Context context, ArrayList<RoomModel> roomModelArrayList) {
+    public RoomAdapter(Context context, ArrayList<Room> roomModelArrayList) {
         this.context = context;
         this.mRoomModelArrayList = roomModelArrayList;
     }
@@ -38,8 +37,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
-        RoomModel model = mRoomModelArrayList.get(position);
-        holder.integrationName.setText(model.getIntegrationName());
+        Room model = mRoomModelArrayList.get(position);
+        holder.integrationName.setText(model.getName());
     }
 
     @Override

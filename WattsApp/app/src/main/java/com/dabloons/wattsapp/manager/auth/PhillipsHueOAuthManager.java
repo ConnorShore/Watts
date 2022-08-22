@@ -4,21 +4,34 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.dabloons.wattsapp.model.IntegrationType;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.repository.UserAuthRepository;
+import com.dabloons.wattsapp.service.PhillipsHueService;
+import com.dabloons.wattsapp.service.streams.PhillipsHueStreams;
 
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.ClientAuthentication;
 import net.openid.appauth.ClientSecretBasic;
+import net.openid.appauth.TokenResponse;
+
+import java.io.IOException;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 
 public class PhillipsHueOAuthManager extends OAuthManager {
 
     private static volatile PhillipsHueOAuthManager instance;
 
+    private static final UserAuthRepository userAuthRepository = UserAuthRepository.getInstance();
+
     // TODO: Move these to config
     private final String HUE_CLIENT_ID = "MHXlFaIMPE52gfnlM0nJ1fzYWOLe8fAv";
     private final String HUE_CLIENT_SECRET = "onksb0tv1Vz30vDl";
+
     private final Uri HUE_REDIRECT_URI = Uri.parse("com.dabloons.wattsapp:/oauth2redirect");
+    private final Uri HUE_USERNAME_URI = Uri.parse("https://api.meethue.com/route/api/0/config");
 
     public PhillipsHueOAuthManager() {
         // TODO: MAke config
@@ -31,24 +44,9 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         updateAuthState(resp, ex);
         if (resp != null) {
-            // authorization completed
-            Uri redirectUri = intent.getData();
-            ClientAuthentication auth = new ClientSecretBasic(getClientSecret());
-            this.getAuthService().performTokenRequest(
-                    resp.createTokenExchangeRequest(),
-                    auth,
-                    (resp1, ex1) -> {
-                        updateAuthState(resp1, ex1);
-                        if (resp1 != null) {
-                            // exchange succeeded
-                            System.out.println();
-                        } else {
-                            // authorization failed, check ex for more details
-                            System.out.println();
-                        }
-                        this.endOauthConnection();
-                    });
-        } else {
+            aquireTokens(resp);
+        }
+        else {
             // authorization failed, check ex for more details
             System.out.println();
             this.endOauthConnection();
@@ -62,6 +60,47 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         updateAuthState(resp, ex);
         Log.e("PhillipsHueOAuthManager", "OAuth Response Failed: " + ex.error);
     }
+
+    /**
+     * Helpers
+     */
+
+    private void aquireTokens(AuthorizationResponse response) {
+        // authorization completed
+        ClientAuthentication auth = new ClientSecretBasic(getClientSecret());
+        this.getAuthService().performTokenRequest(response.createTokenExchangeRequest(), auth, (resp, ex1) -> {
+            updateAuthState(resp, ex1);
+            if (resp != null) {
+                // exchange succeeded
+                // TODO: Need to move the repository calls to managers
+                // TODO: NEed to make sure database writes work
+                // TODO: Move to OkHttp for web requests
+                userAuthRepository.addPhillipsHueIntegrationToUser(resp.accessToken, resp.refreshToken);
+//                String username = aquireUserName();
+//                userAuthRepository.updatePropertyString("username", username, IntegrationType.PHILLIPS_HUE);
+                this.endOauthConnection();
+            } else {
+                // authorization failed, check ex for more details
+                System.out.println();
+                this.endOauthConnection();
+            }
+        });
+    }
+
+    private String aquireUserName() {
+        try {
+            PhillipsHueStreams.linkButton().execute();
+            String username = PhillipsHueStreams.getUsername().execute().body();
+            return username;
+        } catch (IOException e) {
+            Log.e("PhillipsHueOAUthManager", "IO EXception getting username: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Overrides (and instance)
+     */
 
     @Override
     public String getClientID() {

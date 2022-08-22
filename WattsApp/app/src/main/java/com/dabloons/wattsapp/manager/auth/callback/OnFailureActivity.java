@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dabloons.wattsapp.manager.auth.OAuthConnectionManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
-import com.dabloons.wattsapp.model.IntegrationType;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 
 public class OnFailureActivity extends AppCompatActivity {
 

@@ -1,31 +1,38 @@
 package com.dabloons.wattsapp.model;
 
-import java.util.List;
+public class Room {
 
-public abstract class Room extends IntegrationEntity {
+    private String uid;
+    private String userId;
+    private String name;
 
-    protected List<Light> lights;
-    protected List<Scene> scenes;
-
-    public Room(String uid, IntegrationType integrationType, List<Light> lights, List<Scene> scenes) {
-        super(uid, integrationType);
-        this.lights = lights;
-        this.scenes = scenes;
+    public Room(String uid, String userId, String name) {
+        this.uid = uid;
+        this.userId = userId;
+        this.name = name;
     }
 
-    public List<Light> getLights() {
-        return lights;
+    public String getUid() {
+        return uid;
     }
 
-    public void setLights(List<Light> lights) {
-        this.lights = lights;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
-    public List<Scene> getScenes() {
-        return scenes;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setScenes(List<Scene> scenes) {
-        this.scenes = scenes;
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

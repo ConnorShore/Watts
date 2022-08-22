@@ -7,7 +7,7 @@ import android.net.Uri;
 
 import com.dabloons.wattsapp.manager.auth.callback.OnFailureActivity;
 import com.dabloons.wattsapp.manager.auth.callback.OnSuccessActivity;
-import com.dabloons.wattsapp.model.IntegrationType;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 
 import net.openid.appauth.AuthState;
 import net.openid.appauth.AuthorizationException;

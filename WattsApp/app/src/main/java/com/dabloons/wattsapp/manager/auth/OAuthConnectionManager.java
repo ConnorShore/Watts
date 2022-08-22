@@ -1,6 +1,6 @@
 package com.dabloons.wattsapp.manager.auth;
 
-import com.dabloons.wattsapp.model.IntegrationType;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 
 import java.util.HashMap;
 import java.util.Map;

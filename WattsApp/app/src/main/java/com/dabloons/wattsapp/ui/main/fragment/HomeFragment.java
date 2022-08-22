@@ -2,7 +2,6 @@ package com.dabloons.wattsapp.ui.main.fragment;
 
 import android.os.Bundle;
 
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,10 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.dabloons.wattsapp.R;
-import com.dabloons.wattsapp.model.RoomModel;
+import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
 
@@ -24,7 +22,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private RecyclerView roomRV;
 
     // Arraylist for storing data
-    private ArrayList<RoomModel> roomModelList;
+    private ArrayList<Room> roomModelList;
 
     public HomeFragment() {
 
@@ -44,15 +42,15 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
         // here we have created new array list and added data to it.
         roomModelList = new ArrayList<>();
-        roomModelList.add(new RoomModel("Living Room"));
-        roomModelList.add(new RoomModel("Bed Room"));
-        roomModelList.add(new RoomModel("Kitchen"));
-        roomModelList.add(new RoomModel("Living Room"));
-        roomModelList.add(new RoomModel("Bed Room"));
-        roomModelList.add(new RoomModel("Kitchen"));
-        roomModelList.add(new RoomModel("Living Room"));
-        roomModelList.add(new RoomModel("Bed Room"));
-        roomModelList.add(new RoomModel("Kitchen"));
+//        roomModelList.add(new Room("Living Room"));
+//        roomModelList.add(new Room("Bed Room"));
+//        roomModelList.add(new Room("Kitchen"));
+//        roomModelList.add(new Room("Living Room"));
+//        roomModelList.add(new Room("Bed Room"));
+//        roomModelList.add(new Room("Kitchen"));
+//        roomModelList.add(new Room("Living Room"));
+//        roomModelList.add(new Room("Bed Room"));
+//        roomModelList.add(new Room("Kitchen"));
 
 
         // we are initializing our adapter class and passing our arraylist to it.

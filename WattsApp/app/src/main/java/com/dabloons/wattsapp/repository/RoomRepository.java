@@ -1,7 +1,6 @@
 package com.dabloons.wattsapp.repository;
 
 import android.content.Context;
-import android.hardware.lights.Light;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.MainActivity;
 import com.firebase.ui.auth.AuthUI;
@@ -70,6 +70,19 @@ public final class RoomRepository {
 
         return roomToCreate;
 
+    }
+
+    public Task<Void> updateRoom(Room room) {
+        return getRoomCollection().document(room.getUid()).update("lights", room.getLights());
+    }
+
+    public Task<Void> setRoomIntegrationId(String roomUid, String id) {
+        return getRoomCollection().document(roomUid).update("integrationId", id);
+    }
+
+    public Task<Void> addLightsToRoom(Room room, List<Light> lights) {
+        room.setLights(lights);
+        return updateRoom(room);
     }
 
     public void getUserDefinedRooms(WattsCallback<ArrayList<Room>, Void> callback){

@@ -107,6 +107,7 @@ public final class LightRepository {
         });
     }
 
+    // TODO: Move this stuff to LightManager (repo should be for DB interaction only)
     public void syncLightsToDatabase(IntegrationType integration, WattsCallback<Void, Void> callback) {
         switch(integration) {
             case PHILLIPS_HUE:
@@ -149,7 +150,7 @@ public final class LightRepository {
         List<Light> ret = new ArrayList<>();
         while(true) {
             String integrationId = String.valueOf(currentLight);
-            JSONObject nextLight = null;
+            JSONObject nextLight = null;    // Todo: Move to JsonObject (gson)
             try {
                 nextLight = responseObject.getJSONObject(integrationId);
             } catch (JSONException e) {

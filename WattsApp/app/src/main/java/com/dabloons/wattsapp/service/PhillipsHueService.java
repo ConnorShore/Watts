@@ -1,15 +1,13 @@
 package com.dabloons.wattsapp.service;
 
-import android.app.job.JobScheduler;
 
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
-import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +52,28 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/lights";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+        });
+    }
+
+    public void createGroupWithLights(Room room, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnCompleteListener(val -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val.getResult();
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("name", room.getName());
+            jsonObj.addProperty("type", "LightGroup");
+            JsonArray lightsArr = new JsonArray();
+            for(Light light : room.getLights()) {
+                lightsArr.add(light.getIntegrationId());
+            }
+            jsonObj.add("lights", lightsArr);
+            RequestBody body = createRequestBody(jsonObj);
+
+            String url = username + "/groups";
+            makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
         });
     }
 

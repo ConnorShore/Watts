@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
 
 public class ConnectFragment extends Fragment {
@@ -23,6 +24,9 @@ public class ConnectFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
         result.findViewById(R.id.button_connect_phillips_hue).setOnClickListener(view -> {
             phillipsHueOAuthManager.aquireAuthorizationCode(this.getActivity());
+        });
+        result.findViewById(R.id.button_sync_phillips_hue).setOnClickListener(view -> {
+            LightManager.getInstance().syncLights();
         });
         return result;
     }

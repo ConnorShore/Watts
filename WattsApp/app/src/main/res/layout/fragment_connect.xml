@@ -3,15 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.main.fragment.ConnectFragment">
 
 
     <Button
-        android:id="@+id/button_connect_phillips_hue"
-        android:layout_width="wrap_content"
+        android:id="@+id/button_sync_phillips_hue"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_weight="1"
+        android:layout_margin="50dp"
+        android:text="Sync Phillips Hue Lights" />
+
+    <Button
+        android:id="@+id/button_connect_phillips_hue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_margin="50dp"
         android:text="Conenct to Phillips Hue" />
 </LinearLayout>

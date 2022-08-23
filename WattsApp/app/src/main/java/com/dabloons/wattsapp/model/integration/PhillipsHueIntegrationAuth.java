@@ -1,5 +1,7 @@
 package com.dabloons.wattsapp.model.integration;
 
+import com.dabloons.wattsapp.service.PhillipsHueService;
+
 public class PhillipsHueIntegrationAuth extends IntegrationAuth {
 
     private String username;
@@ -12,6 +14,8 @@ public class PhillipsHueIntegrationAuth extends IntegrationAuth {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
+    public PhillipsHueIntegrationAuth() { super(); }
 
     public String getUsername() {
         return username;

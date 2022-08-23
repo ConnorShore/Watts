@@ -10,6 +10,8 @@ public abstract class IntegrationAuth {
         this.integrationType = integrationType;
     }
 
+    public IntegrationAuth() { }
+
     public String getUid() {
         return uid;
     }

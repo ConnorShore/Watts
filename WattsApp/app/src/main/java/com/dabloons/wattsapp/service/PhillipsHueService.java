@@ -1,7 +1,15 @@
 package com.dabloons.wattsapp.service;
 
+import android.app.job.JobScheduler;
+
 import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +44,32 @@ public class PhillipsHueService extends HttpService {
 
         RequestBody body = createRequestBody(jsonObj);
         makeRequestWithBodyAsync("", RequestType.POST, body, getStandardHeaders(accessToken), callback);
+    }
+
+    public void getAllLights(Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnCompleteListener(val -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val.getResult();
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            String url = username + "/lights";
+            makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+        });
+    }
+
+    public void turnOnLight(Light light, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("on", true);
+            RequestBody body = createRequestBody(jsonObj);
+
+            String url = username + "/lights/" + light.getIntegrationId() + "/state";
+            makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+        });
     }
 
     private Map<String, String> getStandardHeaders(String accessToken) {

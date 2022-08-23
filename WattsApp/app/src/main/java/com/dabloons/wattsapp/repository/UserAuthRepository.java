@@ -1,5 +1,8 @@
 package com.dabloons.wattsapp.repository;
 
+import android.util.Log;
+
+import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
@@ -8,8 +11,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public final class UserAuthRepository {
 
@@ -36,6 +46,21 @@ public final class UserAuthRepository {
             }
             return instance;
         }
+    }
+
+    public void getUserIntegrations(WattsCallback<List<IntegrationType>, Void> callback) {
+        this.getUserAuthCollection().get().addOnCompleteListener(task -> {
+            if(!task.isComplete())
+                Log.e(LOG_TAG, "Failed to get lights collection");
+
+            List<IntegrationType> ret = new ArrayList<>();
+            for (QueryDocumentSnapshot document : task.getResult()) {
+                IntegrationType type = stringToIntegrationType((String)document.get("integrationType"));
+                ret.add(type);
+            }
+
+            callback.apply(ret, new WattsCallbackStatus(true));
+        });
     }
 
     public Task<Void> addPhillipsHueIntegrationToUser(String accessToken, String refreshToken, String username) {
@@ -97,5 +122,16 @@ public final class UserAuthRepository {
                 .document(uid)
                 .collection(AUTH_COLLECTION_NAME);
         return ref;
+    }
+
+    private IntegrationType stringToIntegrationType(String s) {
+        switch(s) {
+            case "PHILLIPS_HUE":
+                return IntegrationType.PHILLIPS_HUE;
+            case "NANOLEAF":
+                return IntegrationType.NANOLEAF;
+            default:
+                return IntegrationType.NONE;
+        }
     }
 }

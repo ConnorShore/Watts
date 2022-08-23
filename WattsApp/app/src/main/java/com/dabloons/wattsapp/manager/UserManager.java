@@ -11,7 +11,10 @@ import com.dabloons.wattsapp.repository.UserRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Map;
+import java.util.List;
+import java.util.function.Function;
+
+import util.WattsCallback;
 
 public class UserManager {
 
@@ -25,19 +28,6 @@ public class UserManager {
     private UserManager() {
         userRepository = UserRepository.getInstance();
         userAuthRepository = UserAuthRepository.getInstance();
-    }
-
-    public static UserManager getInstance() {
-        UserManager result = instance;
-        if (result != null) {
-            return result;
-        }
-        synchronized(UserRepository.class) {
-            if (instance == null) {
-                instance = new UserManager();
-            }
-            return instance;
-        }
     }
 
     public void createUser(){
@@ -60,8 +50,8 @@ public class UserManager {
         }
     }
 
-    public Task<Void> updateUsername(String username){
-        return userRepository.updateUsername(username);
+    public void getUserIntegrations(WattsCallback<List<IntegrationType>, Void> callback) {
+        userAuthRepository.getUserIntegrations(callback);
     }
 
     public Task<Void> deleteUser(Context context){
@@ -89,4 +79,16 @@ public class UserManager {
         return userAuthRepository.updatePropertyString(prop, value, type);
     }
 
+    public static UserManager getInstance() {
+        UserManager result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(UserManager.class) {
+            if (instance == null) {
+                instance = new UserManager();
+            }
+            return instance;
+        }
+    }
 }

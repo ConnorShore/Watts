@@ -2,17 +2,29 @@ package com.dabloons.wattsapp.manager;
 
 import android.content.Context;
 
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.User;
+import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
+import com.dabloons.wattsapp.repository.UserAuthRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Map;
+
 public class UserManager {
+
+    private final String LOG_TAG = "UserManager";
+
     private static volatile UserManager instance;
+
     private UserRepository userRepository;
+    private UserAuthRepository userAuthRepository;
 
     private UserManager() {
         userRepository = UserRepository.getInstance();
+        userAuthRepository = UserAuthRepository.getInstance();
     }
 
     public static UserManager getInstance() {
@@ -35,6 +47,17 @@ public class UserManager {
     public Task<User> getUserData(){
         // Get the user from Firestore and cast it to a User model Object
         return userRepository.getUserData().continueWith(task -> task.getResult().toObject(User.class)) ;
+    }
+
+    public Task<IntegrationAuth> getIntegrationAuthData(IntegrationType type) {
+        switch(type) {
+            case PHILLIPS_HUE:
+                return userAuthRepository.getIntegrationAuth(type)
+                        .continueWith(task -> task.getResult().toObject(PhillipsHueIntegrationAuth.class));
+            case NANOLEAF:
+            default:
+                return null;
+        }
     }
 
     public Task<Void> updateUsername(String username){
@@ -61,4 +84,9 @@ public class UserManager {
     public Boolean isCurrentUserLogged(){
         return (this.getCurrentUser() != null);
     }
+
+    public Task<Void> setAuthPropString(String prop, String value, IntegrationType type) {
+        return userAuthRepository.updatePropertyString(prop, value, type);
+    }
+
 }

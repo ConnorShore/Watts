@@ -16,13 +16,12 @@ import com.firebase.ui.auth.IdpResponse;
 import java.util.Arrays;
 import java.util.List;
 
+import util.RequestCodes;
 import util.UIMessageUtil;
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
-    // Request codes
-    private static final int RC_MAIN_ACTIVITY = 1;
-    private static final int RC_SIGN_IN = 2;
+    private final String LOG_TAG = "LoginActivity";
 
     private UserManager userManager = UserManager.getInstance();
 
@@ -58,7 +57,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         .setIsSmartLockEnabled(false, true)
 //                        .setLogo(R.drawable.ic_logo_auth)
                         .build(),
-                RC_SIGN_IN);
+                RequestCodes.RC_SIGN_IN);
     }
 
     // Method that handles response after SignIn Activity close
@@ -66,7 +65,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
         IdpResponse response = IdpResponse.fromResultIntent(data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RequestCodes.RC_SIGN_IN) {
             // SUCCESS
             if (resultCode == RESULT_OK) {
                 this.userManager.createUser();
@@ -77,7 +76,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                 if (response == null) {
                     UIMessageUtil.showShortToastMessage(this, "Login aborted.");
                 } else if (response.getError()!= null) {
-                    if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK){
+                    if(response.getError().getErrorCode() == ErrorCodes.NO_NETWORK ||
+                            response.getError().getErrorCode() == ErrorCodes.INVALID_EMAIL_LINK_ERROR) {
                         UIMessageUtil.showShortToastMessage(this, "No internet connection");
                     } else if (response.getError().getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
                         UIMessageUtil.showShortToastMessage(this, "Unknown error");
@@ -88,8 +88,8 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     }
 
     private void startMainActivity() {
-        Intent gameActivity = new Intent(this, MainActivity.class);
-        startActivityForResult(gameActivity, RC_MAIN_ACTIVITY);
+        Intent mainActivity = new Intent(this, MainActivity.class);
+        startActivityForResult(mainActivity, RequestCodes.RC_MAIN_ACTIVITY);
     }
 
     @Override

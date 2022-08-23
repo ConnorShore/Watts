@@ -15,9 +15,11 @@ import com.dabloons.wattsapp.model.User;
 
 public final class UserRepository {
 
+    private final String LOG_TAG = "UserRepository";
+
     private static volatile UserRepository instance;
 
-    private static final String COLLECTION_NAME = "users";
+    private static final String USER_COLLECTION_NAME = "users";
     private static final String FIELD_USERNAME = "username";
 
     private UserRepository() { }
@@ -35,28 +37,22 @@ public final class UserRepository {
         }
     }
 
-    // Get the Collection Reference
-    private CollectionReference getUsersCollection(){
-        return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
-    }
-
     // Create User in Firestore
     public void createUser() {
         FirebaseUser user = getCurrentUser();
-        if(user != null){
-            String username = user.getDisplayName();
-            String uid = user.getUid();
+        if(user == null) return;
 
-            User userToCreate = new User(uid, username);
+        String username = user.getDisplayName();
+        String uid = user.getUid();
 
-            Task<DocumentSnapshot> userData = getUserData();
-            // If the user already exist in Firestore, we get his data (isMentor)
-            userData.addOnSuccessListener(documentSnapshot -> {
-                this.getUsersCollection().document(uid).set(userToCreate);
-            });
-        }
+        User userToCreate = new User(uid, username);
+
+        Task<DocumentSnapshot> userData = getUserData();
+        // If the user already exist in Firestore, we get his data (isMentor)
+        userData.addOnSuccessListener(documentSnapshot -> {
+            this.getUsersCollection().document(uid).set(userToCreate);
+        });
     }
-
 
     // Get current User UID, if we have a current user
     @Nullable
@@ -104,5 +100,10 @@ public final class UserRepository {
     @Nullable
     public FirebaseUser getCurrentUser(){
         return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    // Get the User Collection Reference
+    private CollectionReference getUsersCollection(){
+        return FirebaseFirestore.getInstance().collection(USER_COLLECTION_NAME);
     }
 }

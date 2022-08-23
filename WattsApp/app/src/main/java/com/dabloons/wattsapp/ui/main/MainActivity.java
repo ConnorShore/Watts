@@ -11,14 +11,16 @@ import com.dabloons.wattsapp.databinding.ActivityMainBinding;
 import com.dabloons.wattsapp.ui.BaseActivity;
 import com.dabloons.wattsapp.ui.main.fragment.AccountFragment;
 import com.dabloons.wattsapp.ui.main.fragment.HomeFragment;
-import com.dabloons.wattsapp.ui.main.fragment.IntegrationFragment;
+import com.dabloons.wattsapp.ui.main.fragment.ConnectFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements NavigationBarView.OnItemSelectedListener{
 
+    private final String LOG_TAG = "MainActivity";
+
     private HomeFragment homeFragment;
-    private IntegrationFragment integrationFragment;
+    private ConnectFragment connectFragment;
     private AccountFragment accountFragment;
 
     private BottomNavigationView bottomMenu;
@@ -33,7 +35,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
         super.onCreate(savedInstanceState);
 
         homeFragment = new HomeFragment();
-        integrationFragment = new IntegrationFragment();
+        connectFragment = new ConnectFragment();
         accountFragment = new AccountFragment();
 
         bottomMenu = findViewById(R.id.bottom_navigation);
@@ -51,7 +53,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
                 return true;
 
             case R.id.page_2:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, integrationFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, connectFragment).commit();
                 return true;
 
             case R.id.page_3:

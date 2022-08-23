@@ -17,10 +17,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.dabloons.wattsapp.model.User;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
@@ -73,6 +75,20 @@ public final class LightRepository {
         return getLightCollection().document(uid).set(lightToCreate);
     }
 
+    public Task<Void> storeMultipleLights(List<Light> lights) {
+        FirebaseUser user = UserManager.getInstance().getCurrentUser();
+        if(user == null) return null;
+
+        String userId = user.getUid();
+
+        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        for(Light light : lights) {
+            DocumentReference ref = getLightCollection().document(light.getUid());
+            batch.set(ref, light);
+        }
+        return batch.commit();
+    }
+
     public void getAllLights(WattsCallback<List<Light>, Void> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
@@ -116,12 +132,40 @@ public final class LightRepository {
                 String responseData = response.body().string();
                 try {
                     JSONObject responseObject = new JSONObject(responseData);
-
+                    List<Light> lights = getPhillipsHueLightsFromResponse(responseObject);
+                    storeMultipleLights(lights).addOnCompleteListener(val -> {
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    });
                 } catch (JSONException e) {
                     callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
                 }
             }
         });
+    }
+
+    private List<Light> getPhillipsHueLightsFromResponse(JSONObject responseObject) throws JSONException {
+        String userId = UserManager.getInstance().getCurrentUser().getUid();
+        int currentLight = 1;
+        List<Light> ret = new ArrayList<>();
+        while(true) {
+            String integrationId = String.valueOf(currentLight);
+            JSONObject nextLight = null;
+            try {
+                nextLight = responseObject.getJSONObject(integrationId);
+            } catch (JSONException e) {
+                // No more lights
+                break;
+            }
+
+            // TODO: Add more fields of state (i.e. on, color, brightness, etc)
+            String name = nextLight.getString("name");
+
+            Light light = new Light(UUID.randomUUID().toString(), userId, name, integrationId, IntegrationType.PHILLIPS_HUE);
+            ret.add(light);
+            currentLight++;
+        }
+
+        return ret;
     }
 
     // Get the User Collection Reference

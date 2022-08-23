@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public final class UserAuthRepository {
 
@@ -58,7 +59,7 @@ public final class UserAuthRepository {
                 ret.add(type);
             }
 
-            callback.apply(ret, true);
+            callback.apply(ret, new WattsCallbackStatus(true));
         });
     }
 

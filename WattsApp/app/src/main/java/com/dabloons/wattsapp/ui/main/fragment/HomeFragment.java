@@ -49,14 +49,15 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            roomModelList = RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
-            roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
+                roomModelList = rooms;
+                roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
-            // in below two lines we are setting layoutmanager and adapter to our recycler view.
-            roomRV.setLayoutManager(linearLayoutManager);
-            roomRV.setAdapter(roomAdapter);
-            roomAdapter.setClickListener(this);
+                // in below two lines we are setting layoutmanager and adapter to our recycler view.
+                roomRV.setLayoutManager(linearLayoutManager);
+                roomRV.setAdapter(roomAdapter);
+                roomAdapter.setClickListener(this);
             return null;
         });
 

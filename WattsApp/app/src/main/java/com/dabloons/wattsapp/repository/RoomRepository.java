@@ -64,7 +64,6 @@ public final class RoomRepository {
         UUID uuid = UUID.randomUUID();
         String uid = uuid.toString();
         Room roomToCreate = new Room(uid, userManager.getCurrentUser().getUid(), roomName);
-        roomToCreate.setLights(null);
 
         CollectionReference roomCollection = getRoomCollection();
         roomCollection.document(uid).set(roomToCreate);
@@ -73,7 +72,7 @@ public final class RoomRepository {
 
     }
 
-    public ArrayList<Room> getUserDefinedRooms(WattsCallback<ArrayList<Room>, Void> callback){
+    public void getUserDefinedRooms(WattsCallback<ArrayList<Room>, Void> callback){
         ArrayList<Room> ret = new ArrayList<>();
         CollectionReference roomCollection = getRoomCollection();
         roomCollection.whereEqualTo("userId", userManager.getCurrentUser().getUid())
@@ -94,8 +93,6 @@ public final class RoomRepository {
                        }
                    }
                 });
-
-        return ret;
     }
 
     public void deleteRoom(String roomId)

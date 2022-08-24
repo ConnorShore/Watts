@@ -23,13 +23,19 @@ public class Room implements Parcelable {
         this.lights = new ArrayList<>();
     }
 
+    public Room(String uid, String userId, String name, List<Light> lights) {
+        this.uid = uid;
+        this.userId = userId;
+        this.name = name;
+        this.lights = lights;
+    }
+
     protected Room(Parcel in) {
         uid = in.readString();
         userId = in.readString();
         integrationId = in.readString();
         name = in.readString();
-        lights = new ArrayList<>();
-        in.readParcelableList(lights, Light.class.getClassLoader());
+        lights = in.createTypedArrayList(Light.CREATOR);
     }
 
     public static final Creator<Room> CREATOR = new Creator<Room>() {
@@ -96,7 +102,7 @@ public class Room implements Parcelable {
         dest.writeString(this.userId);
         dest.writeString(this.integrationId);
         dest.writeString(this.name);
-        dest.writeList(this.lights);
+        dest.writeTypedList(this.lights);
 
     }
 }

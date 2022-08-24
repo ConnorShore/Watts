@@ -40,7 +40,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
         Room model = mRoomModelArrayList.get(position);
-        holder.integrationName.setText(model.getName());
+        holder.roomName.setText(model.getName());
     }
 
     @Override
@@ -53,11 +53,11 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     }
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
-        private TextView integrationName;
+        private TextView roomName;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
-            integrationName = itemView.findViewById(R.id.integrationName);
+            roomName = itemView.findViewById(R.id.roomName);
             itemView.setOnClickListener(this);
         }
 

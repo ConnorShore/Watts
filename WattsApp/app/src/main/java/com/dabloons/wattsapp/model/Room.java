@@ -3,11 +3,11 @@ package com.dabloons.wattsapp.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.hardware.lights.Light;
 public class Room {
 
     private String uid;
     private String userId;
+    private String integrationId;
     private String name;
     private List<Light> lights;
 
@@ -26,7 +26,6 @@ public class Room {
     public void addLight(Light light) {
         this.lights.add(light);
     }
-
 
     public String getUid() {
         return uid;
@@ -55,4 +54,12 @@ public class Room {
     public List<Light> getLights() { return lights; }
 
     public void setLights(List<Light> lights) { this.lights = lights; }
+
+    public String getIntegrationId() {
+        return integrationId;
+    }
+
+    public void setIntegrationId(String integrationId) {
+        this.integrationId = integrationId;
+    }
 }

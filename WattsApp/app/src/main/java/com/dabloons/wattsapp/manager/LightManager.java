@@ -17,6 +17,7 @@ import java.util.function.Function;
 import okhttp3.Callback;
 import util.UIMessageUtil;
 import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class LightManager {
 
@@ -66,6 +67,12 @@ public class LightManager {
 
             return null;
         });
+    }
+
+    public void getLights(WattsCallback<List<Light>, Void> callback)
+    {
+
+        LightRepository.getInstance().getAllLights(callback);
     }
 
     public static LightManager getInstance() {

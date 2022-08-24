@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="100dp"
     android:layout_margin="5dp"
     app:cardBackgroundColor="@color/white"
     android:clickable="true"
@@ -33,7 +33,7 @@
         <!--Text View to display Course Name-->
         <TextView
             android:id="@+id/roomName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
@@ -42,5 +42,12 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+
     </RelativeLayout>
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/roomSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:checked="false"/>
 </com.google.android.material.card.MaterialCardView>

@@ -31,7 +31,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -149,16 +148,5 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
     @Override
     public void onClick(View view, int position) {
-        Room room = roomAdapter.getRoomList().get(position);
-        RoomManager.getInstance().turnOnRoomLights(room, (var, status) -> {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if(status.success)
-                    UIMessageUtil.showShortToastMessage(view.getContext(), "Turned on lights for room: " + room.getName());
-                else
-                    UIMessageUtil.showShortToastMessage(view.getContext(), "Failed to turn on lights for room: " + room.getName());
-            });
-
-            return null;
-        });
     }
 }

@@ -11,11 +11,8 @@ public class Room {
     private String name;
     private List<Light> lights;
 
+    public Room() { }
 
-    public Room()
-    {
-
-    }
     public Room(String uid, String userId, String name) {
         this.uid = uid;
         this.userId = userId;

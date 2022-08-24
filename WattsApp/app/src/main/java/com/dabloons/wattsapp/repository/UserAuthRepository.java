@@ -2,7 +2,8 @@ package com.dabloons.wattsapp.repository;
 
 import android.util.Log;
 
-import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
@@ -16,7 +17,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 import util.WattsCallback;
 import util.WattsCallbackStatus;
@@ -27,11 +27,11 @@ public final class UserAuthRepository {
 
     private static volatile UserAuthRepository instance;
 
-    private static final String USER_COLLECTION_NAME = "users";
-    private static final String AUTH_COLLECTION_NAME = "auth";
+    private static final String USER_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_users);
+    private static final String AUTH_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_auth);
 
-    private static final String DOCUMENT_PHILLIPS_HUE = "phillips_hue";
-    private static final String DOCUMENT_NANOLEAF = "nanoleaf";
+    private static final String DOCUMENT_PHILLIPS_HUE = WattsApplication.getResourceString(R.string.document_phillips_hue);
+    private static final String DOCUMENT_NANOLEAF  = WattsApplication.getResourceString(R.string.document_nanoleaf);
 
     private UserAuthRepository() { }
 

@@ -88,7 +88,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             lightRV = customDialogView.findViewById(R.id.lightRV);
             launchCustomAlertDialog();
         });
-        return  v;
+
+        return v;
     }
 
     private void launchCustomAlertDialog()
@@ -103,6 +104,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             roomAdapter.setClickListener(HomeFragment.this::onClick);
             return null;
         });
+
         alertDialogBuilder.setView(customDialogView)
                 .setTitle("Add Room")
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -111,11 +113,9 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         String name = roomName.getEditText().getText().toString();
                         Room newRoom = RoomManager.getInstance().createRoom(name);
                         List<Light> lightsToAdd =  new ArrayList<>();
-                        for(int i = 0; i < lightAdapter.getItemCount(); i++)
-                        {
+                        for(int i = 0; i < lightAdapter.getItemCount(); i++) {
                             Light currLight = lightAdapter.lightModelArrayList.get(i);
-                            if(currLight.isSelected())
-                            {
+                            if(currLight.isSelected()) {
                                 lightsToAdd.add(currLight);
                             }
                         }

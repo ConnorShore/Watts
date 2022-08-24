@@ -22,12 +22,15 @@ public class ConnectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
+
         result.findViewById(R.id.button_connect_phillips_hue).setOnClickListener(view -> {
             phillipsHueOAuthManager.aquireAuthorizationCode(this.getActivity());
         });
+
         result.findViewById(R.id.button_sync_phillips_hue).setOnClickListener(view -> {
             LightManager.getInstance().syncLights();
         });
+
         return result;
     }
 }

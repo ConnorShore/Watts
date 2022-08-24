@@ -1,7 +1,5 @@
 package com.dabloons.wattsapp.model.integration;
 
-import com.dabloons.wattsapp.service.PhillipsHueService;
-
 public class PhillipsHueIntegrationAuth extends IntegrationAuth {
 
     private String username;

@@ -1,29 +1,16 @@
 package com.dabloons.wattsapp.repository;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
+import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
-import com.dabloons.wattsapp.ui.main.MainActivity;
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.dabloons.wattsapp.model.User;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -42,22 +29,13 @@ public final class RoomRepository {
 
     private UserManager userManager = UserManager.getInstance();
 
-    private static final String ROOM_COLLECTION_NAME = "rooms";
+    private final String ROOM_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_rooms);
+
+    private final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
+    private final String LIGHTS_FIELD = WattsApplication.getResourceString(R.string.field_lights);
+    private final String INTEGRATION_ID_FIELD = WattsApplication.getResourceString(R.string.field_integrationId);
 
     private RoomRepository() { }
-
-    public static RoomRepository getInstance() {
-        RoomRepository result = instance;
-        if (result != null) {
-            return result;
-        }
-        synchronized(UserRepository.class) {
-            if (instance == null) {
-                instance = new RoomRepository();
-            }
-            return instance;
-        }
-    }
 
     // Create Room in Firestore
     public Room createRoom(String roomName) {
@@ -73,11 +51,11 @@ public final class RoomRepository {
     }
 
     public Task<Void> updateRoom(Room room) {
-        return getRoomCollection().document(room.getUid()).update("lights", room.getLights());
+        return getRoomCollection().document(room.getUid()).update(LIGHTS_FIELD, room.getLights());
     }
 
     public Task<Void> setRoomIntegrationId(String roomUid, String id) {
-        return getRoomCollection().document(roomUid).update("integrationId", id);
+        return getRoomCollection().document(roomUid).update(INTEGRATION_ID_FIELD, id);
     }
 
     public Task<Void> addLightsToRoom(Room room, List<Light> lights) {
@@ -88,7 +66,7 @@ public final class RoomRepository {
     public void getUserDefinedRooms(WattsCallback<ArrayList<Room>, Void> callback){
         ArrayList<Room> ret = new ArrayList<>();
         CollectionReference roomCollection = getRoomCollection();
-        roomCollection.whereEqualTo("userId", userManager.getCurrentUser().getUid())
+        roomCollection.whereEqualTo(USER_ID_FIELD, userManager.getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
                 {
@@ -116,6 +94,19 @@ public final class RoomRepository {
 
     private CollectionReference getRoomCollection(){
         return FirebaseFirestore.getInstance().collection(ROOM_COLLECTION_NAME);
+    }
+
+    public static RoomRepository getInstance() {
+        RoomRepository result = instance;
+        if (result != null) {
+            return result;
+        }
+        synchronized(UserRepository.class) {
+            if (instance == null) {
+                instance = new RoomRepository();
+            }
+            return instance;
+        }
     }
 
 }

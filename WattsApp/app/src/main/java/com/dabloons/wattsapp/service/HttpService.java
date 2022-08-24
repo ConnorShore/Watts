@@ -16,6 +16,8 @@ public abstract class HttpService {
 
     private final String LOG_TAG = "HttpService";
 
+    private final String MEDIA_TYPE = "application/json; charset=utf-16";
+
     public enum RequestType {
         POST,
         GET,
@@ -45,7 +47,7 @@ public abstract class HttpService {
 
     protected RequestBody createRequestBody(JsonObject bodyObj) {
         String json = bodyObj.toString();
-        return RequestBody.create(MediaType.parse("application/json; charset=utf-16"), json);
+        return RequestBody.create(MediaType.parse(MEDIA_TYPE), json);
     }
 
     private Request.Builder buildRequest(String path, RequestType requestType, RequestBody body, Map<String, String> headers) {

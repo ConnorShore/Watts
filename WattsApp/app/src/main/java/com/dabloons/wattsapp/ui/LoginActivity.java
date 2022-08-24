@@ -55,7 +55,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
                         .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false, true)
-//                        .setLogo(R.drawable.ic_logo_auth)
                         .build(),
                 RequestCodes.RC_SIGN_IN);
     }

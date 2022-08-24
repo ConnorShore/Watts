@@ -14,6 +14,7 @@ import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 {
@@ -41,6 +42,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     {
         Room model = mRoomModelArrayList.get(position);
         holder.roomName.setText(model.getName());
+    }
+
+    public List<Room> getRoomList() {
+        return mRoomModelArrayList;
     }
 
     @Override

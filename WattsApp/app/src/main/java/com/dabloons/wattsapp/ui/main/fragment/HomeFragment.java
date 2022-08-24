@@ -31,6 +31,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -50,28 +51,25 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private LightAdapter lightAdapter;
 
     public HomeFragment() {
-
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
-                roomModelList = rooms;
-                roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+        super.onCreate(savedInstanceState);
+            RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
+            roomModelList = rooms;
+            roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
 
-                // in below two lines we are setting layoutmanager and adapter to our recycler view.
-                roomRV.setLayoutManager(linearLayoutManager);
-                roomRV.setAdapter(roomAdapter);
-                roomAdapter.setClickListener(this);
+            // in below two lines we are setting layoutmanager and adapter to our recycler view.
+            roomRV.setLayoutManager(linearLayoutManager);
+            roomRV.setAdapter(roomAdapter);
+            roomAdapter.setClickListener(this);
+
             return null;
         });
-
-
-
     }
 
     @Override
@@ -119,7 +117,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                             Light currLight = lightAdapter.lightModelArrayList.get(i);
                             if(currLight.isSelected())
                             {
-//                                newRoom.addLight(currLight);
                                 lightsToAdd.add(currLight);
                             }
                         }
@@ -147,12 +144,21 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private void updateUI()
     {
         new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
-
     }
 
 
     @Override
     public void onClick(View view, int position) {
-        System.out.println("");
+        Room room = roomAdapter.getRoomList().get(position);
+        RoomManager.getInstance().turnOnRoomLights(room, (var, status) -> {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if(status.success)
+                    UIMessageUtil.showShortToastMessage(view.getContext(), "Turned on lights for room: " + room.getName());
+                else
+                    UIMessageUtil.showShortToastMessage(view.getContext(), "Failed to turn on lights for room: " + room.getName());
+            });
+
+            return null;
+        });
     }
 }

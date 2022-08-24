@@ -55,6 +55,7 @@ public class RoomManager
     public void addLightsToRoom(Room room, List<Light> lights, WattsCallback<Void, Void> callback) {
         if(lights.size() == 0)
         {
+            callback.apply(null, new WattsCallbackStatus(true));
             return;
         }
         roomRepository.addLightsToRoom(room, lights).addOnCompleteListener(task -> {

@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-//import androidx.compose.material3.Switch;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
@@ -32,7 +31,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 

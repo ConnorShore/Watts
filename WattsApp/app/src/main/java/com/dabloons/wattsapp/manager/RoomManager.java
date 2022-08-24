@@ -113,9 +113,16 @@ public class RoomManager
         });
     }
 
-    public void deleteRoom(String roomId)
+    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
-        roomRepository.deleteRoom(roomId);
+        roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {
+            if(!task.isComplete())
+                callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
+            callback.apply(null, new WattsCallbackStatus(true));
+        })
+        .addOnFailureListener(task -> {
+            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+        });
     }
 
 }

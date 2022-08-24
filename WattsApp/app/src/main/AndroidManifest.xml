@@ -13,15 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WattsApp">
-
+        <activity
+            android:name=".ui.RoomActivity"
+            android:exported="true" />
         <activity
             android:name=".manager.auth.callback.OnFailureActivity"
             android:exported="false" />
-
         <activity
             android:name=".manager.auth.callback.OnSuccessActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
@@ -31,22 +31,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true" />
-
         <activity
             android:name="net.openid.appauth.RedirectUriReceiverActivity"
-            tools:node="replace"
-            android:exported="true">
+            android:exported="true"
+            tools:node="replace">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-    
-                <data android:scheme="${appAuthRedirectScheme}"/>
+
+                <data android:scheme="${appAuthRedirectScheme}" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

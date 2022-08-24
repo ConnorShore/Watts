@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.main.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,8 @@ import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.repository.RoomRepository;
+import com.dabloons.wattsapp.ui.RoomActivity;
+import com.dabloons.wattsapp.ui.main.MainActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.main.adapters.LightAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
@@ -31,6 +35,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.RequestCodes;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -122,8 +127,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, new WattsCallback<Void, Void>() {
                             @Override
                             public Void apply(Void var, WattsCallbackStatus success) {
-                                roomModelList.add(newRoom);
-                                updateUI();
+                                roomAdapter.getRoomList().add(newRoom);
+                                updateUI(true);
                                 dialog.dismiss();
                                 return null;
                             }
@@ -140,13 +145,30 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                 .show();
     }
 
-    private void updateUI()
+    public void updateUI(boolean newRoom)
     {
-        new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+        if(newRoom)
+        {
+            new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+        }
+        else {
+            RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
+
+                roomAdapter.setRoomList(rooms);
+                new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+
+                return null;
+            });
+        }
+
     }
 
 
     @Override
-    public void onClick(View view, int position) {
+    public void onClick(View view, int position)
+    {
+        Intent roomActivity = new Intent(this.getContext(), RoomActivity.class);
+        roomActivity.putExtra("room", roomAdapter.getRoomList().get(position));
+        startActivityForResult(roomActivity, RequestCodes.RC_ROOM_ACTIVITY);
     }
 }

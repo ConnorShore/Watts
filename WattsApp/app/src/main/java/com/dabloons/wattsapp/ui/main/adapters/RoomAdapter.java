@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.RoomManager;
+import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -81,6 +82,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public List<Room> getRoomList() {
         return mRoomModelArrayList;
     }
+
+    public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
 
     @Override
     public int getItemCount() {

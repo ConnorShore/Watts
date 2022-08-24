@@ -86,10 +86,9 @@ public final class RoomRepository {
                 });
     }
 
-    public void deleteRoom(String roomId)
+    public Task<Void> deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
-        getRoomCollection().document(roomId)
-                .delete();
+        return getRoomCollection().document(roomId).delete();
     }
 
     private CollectionReference getRoomCollection(){

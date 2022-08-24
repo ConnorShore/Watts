@@ -3,6 +3,7 @@ package com.dabloons.wattsapp.ui.main;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -43,6 +44,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
         bottomMenu.setOnItemSelectedListener(this);
 
         bottomMenu.setSelectedItemId(R.id.page_1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        homeFragment.updateUI(false);
     }
 
     @Override

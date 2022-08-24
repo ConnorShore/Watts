@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_oauth_failure.xml" value="0.1956521739130435" />
         <entry key="app/src/main/res/layout/activity_oauth_success.xml" value="0.1956521739130435" />
+        <entry key="app/src/main/res/layout/activity_room.xml" value="0.10006713867187499" />
         <entry key="app/src/main/res/layout/add_light_to_room.xml" value="0.1" />
         <entry key="app/src/main/res/layout/add_room_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_room_dialog_test.xml" value="0.10648148148148148" />
@@ -28,6 +29,7 @@
         <entry key="app/src/main/res/layout/list_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/text_row_item.xml" value="0.38697916666666665" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.16816253662109376" />
+        <entry key="app/src/main/res/menu/top_app_bar.xml" value="0.1" />
       </map>
     </option>
   </component>

@@ -10,6 +10,7 @@ import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,6 +95,16 @@ public class PhillipsHueService extends HttpService {
     }
 
     public void setRoomLightsState(Room room, LightState state, Callback callback) {
+        // Dont need to make any calls if no lights
+        if(room.getLights().size() == 0) {
+            try {
+                callback.onResponse(null, null);
+            } catch(IOException e) {
+                callback.onFailure(null, e);
+            }
+            return;
+        }
+
         userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
             String accessToken = auth.getAccessToken();

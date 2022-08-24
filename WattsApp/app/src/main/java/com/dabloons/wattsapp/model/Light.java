@@ -10,6 +10,9 @@ public class Light {
     private String integrationId;
     private IntegrationType integrationType;
 
+    public Light(){
+
+    }
     public Light(String uid, String userId, String name, String integrationId, IntegrationType integrationType) {
         this.uid = uid;
         this.userId = userId;

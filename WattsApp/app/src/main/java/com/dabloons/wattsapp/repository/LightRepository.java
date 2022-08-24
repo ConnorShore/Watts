@@ -22,6 +22,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.dabloons.wattsapp.model.User;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.JsonObject;
 
@@ -98,6 +99,7 @@ public final class LightRepository {
                 Log.e(LOG_TAG, "Failed to get lights collection");
 
             List<Light> ret = new ArrayList<>();
+            QuerySnapshot val = task.getResult();
             for (QueryDocumentSnapshot document : task.getResult()) {
                 if(document.get("userId").toString().equals(user.getUid()))
                     ret.add(document.toObject(Light.class));

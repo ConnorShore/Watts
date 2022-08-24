@@ -1,6 +1,8 @@
 package com.dabloons.wattsapp.service;
 
 
+import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
@@ -22,9 +24,9 @@ public class PhillipsHueService extends HttpService {
     private final String LOG_TAG = "PhillipsHueService";
 
     private static volatile PhillipsHueService instance;
+    private final UserManager userManager = UserManager.getInstance();
 
-    private static final String BASE_URL = "https://api.meethue.com/route/api/";
-    private static final UserManager userManager = UserManager.getInstance();
+    private final String CONTENT_TYPE = "application/json";
 
     public PhillipsHueService() {
         super();
@@ -125,13 +127,13 @@ public class PhillipsHueService extends HttpService {
     private Map<String, String> getStandardHeaders(String accessToken) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + accessToken);
-        headers.put("Content-Type", "application/json");
+        headers.put("Content-Type", CONTENT_TYPE);
         return headers;
     }
 
     @Override
     public void setBaseUrl() {
-        this.baseUrl = BASE_URL;
+        this.baseUrl = WattsApplication.getResourceString(R.string.hue_api_base_url);
     }
 
     public static PhillipsHueService getInstance() {

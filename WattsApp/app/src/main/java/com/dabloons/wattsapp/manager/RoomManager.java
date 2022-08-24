@@ -8,7 +8,6 @@ import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.repository.RoomRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
 import com.dabloons.wattsapp.service.PhillipsHueService;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -114,9 +113,16 @@ public class RoomManager
         });
     }
 
-    public void deleteRoom(String roomId)
+    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
-        roomRepository.deleteRoom(roomId);
+        roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {
+            if(!task.isComplete())
+                callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
+            callback.apply(null, new WattsCallbackStatus(true));
+        })
+        .addOnFailureListener(task -> {
+            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+        });
     }
 
 }

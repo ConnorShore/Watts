@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.RoomManager;
+import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -77,12 +77,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 });
             }
         });
-//        holder.room = model;
     }
 
     public List<Room> getRoomList() {
         return mRoomModelArrayList;
     }
+
+    public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
 
     @Override
     public int getItemCount() {
@@ -96,7 +97,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView roomName;
         private SwitchMaterial roomSwitch;
-//        private Room room;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
@@ -107,7 +107,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 
         @Override
         public void onClick(View view) {
-
             clickListener.onClick(view, getLayoutPosition()); // call the onClick in the OnItemClickListener
         }
     }

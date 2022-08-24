@@ -1,9 +1,12 @@
 package com.dabloons.wattsapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.google.firebase.firestore.Exclude;
 
-public class Light {
+public class Light implements Parcelable {
 
     private String uid;
     private String userId;
@@ -14,9 +17,8 @@ public class Light {
     @Exclude
     private boolean isSelected;
 
-    public Light(){
+    public Light(){ }
 
-    }
     public Light(String uid, String userId, String name, String integrationId, IntegrationType integrationType) {
         this.uid = uid;
         this.userId = userId;
@@ -25,6 +27,26 @@ public class Light {
         this.integrationType = integrationType;
         this.isSelected = false;
     }
+
+    protected Light(Parcel in) {
+        uid = in.readString();
+        userId = in.readString();
+        name = in.readString();
+        integrationId = in.readString();
+        isSelected = in.readByte() != 0;
+    }
+
+    public static final Creator<Light> CREATOR = new Creator<Light>() {
+        @Override
+        public Light createFromParcel(Parcel in) {
+            return new Light(in);
+        }
+
+        @Override
+        public Light[] newArray(int size) {
+            return new Light[size];
+        }
+    };
 
     public String getUid() {
         return uid;
@@ -70,4 +92,18 @@ public class Light {
     public boolean isSelected() { return isSelected ; }
 
     public void setSelected(boolean selected) { this.isSelected = selected; }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(userId);
+        dest.writeString(name);
+        dest.writeString(integrationId);
+        dest.writeByte((byte) (isSelected ? 1 : 0));
+    }
 }

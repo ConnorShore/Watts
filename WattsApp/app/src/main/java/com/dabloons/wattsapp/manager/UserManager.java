@@ -12,7 +12,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
-import java.util.function.Function;
 
 import util.WattsCallback;
 

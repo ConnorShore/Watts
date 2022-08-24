@@ -4,7 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.Nullable;
 
-import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,9 +15,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.dabloons.wattsapp.model.User;
 
-import java.util.List;
-
-import kotlin.Function;
 
 public final class UserRepository {
 
@@ -24,8 +22,8 @@ public final class UserRepository {
 
     private static volatile UserRepository instance;
 
-    private static final String USER_COLLECTION_NAME = "users";
-    private static final String FIELD_USERNAME = "username";
+    private static final String USER_COLLECTION_NAME  = WattsApplication.getResourceString(R.string.collection_users);
+    private static final String FIELD_USERNAME = WattsApplication.getResourceString(R.string.field_username);
 
     private UserRepository() { }
 

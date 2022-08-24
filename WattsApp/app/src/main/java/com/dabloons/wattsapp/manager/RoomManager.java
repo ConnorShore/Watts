@@ -63,7 +63,8 @@ public class RoomManager
                     String responseData = response.body().string();
                     JsonArray arr = JsonParser.parseString(responseData).getAsJsonArray();
                     JsonObject successObj = arr.get(0).getAsJsonObject();
-                    String integrationId = successObj.get("id").getAsString();
+                    String integrationId = successObj.get("success")
+                            .getAsJsonObject().get("id").getAsString();
                     room.setIntegrationId(integrationId);
                     roomRepository.setRoomIntegrationId(room.getUid(), integrationId); // may need to do onSuccessListener
                     callback.apply(null, new WattsCallbackStatus(true));

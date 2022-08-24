@@ -122,26 +122,40 @@ public final class LightRepository {
     }
 
     private void syncPhillipsHueLightsToDatabase(WattsCallback<Void, Void> callback) {
-        phillipsHueService.getAllLights(new Callback() {
+        getAllLights(new WattsCallback<List<Light>, Void>() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                String message = "Failed to retrieve phillips hue lights during sync";
-                Log.e(LOG_TAG, message);
-                callback.apply(null, new WattsCallbackStatus(false, message));
-            }
-
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                String responseData = response.body().string();
-                try {
-                    JSONObject responseObject = new JSONObject(responseData);
-                    List<Light> lights = getPhillipsHueLightsFromResponse(responseObject);
-                    storeMultipleLights(lights).addOnCompleteListener(val -> {
-                        callback.apply(null, new WattsCallbackStatus(true));
-                    });
-                } catch (JSONException e) {
-                    callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+            public Void apply(List<Light> existingLights, WattsCallbackStatus status) {
+                if(!status.success) {
+                    String message = "Failed to get existing lights when syncing phillips hue lights";
+                    Log.e(LOG_TAG, message);
+                    callback.apply(null, new WattsCallbackStatus(false, message));
+                    return null;
                 }
+
+                phillipsHueService.getAllLights(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        String message = "Failed to retrieve phillips hue lights during sync";
+                        Log.e(LOG_TAG, message);
+                        callback.apply(null, new WattsCallbackStatus(false, message));
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        String responseData = response.body().string();
+                        try {
+                            JSONObject responseObject = new JSONObject(responseData);
+                            List<Light> lights = getPhillipsHueLightsFromResponse(responseObject);
+                            storeMultipleLights(removeDuplicateLights(existingLights, lights)).addOnCompleteListener(val -> {
+                                callback.apply(null, new WattsCallbackStatus(true));
+                            });
+                        } catch (JSONException e) {
+                            callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                        }
+                    }
+                });
+
+                return null;
             }
         });
     }
@@ -166,6 +180,21 @@ public final class LightRepository {
             Light light = new Light(UUID.randomUUID().toString(), userId, name, integrationId, IntegrationType.PHILLIPS_HUE);
             ret.add(light);
             currentLight++;
+        }
+
+        return ret;
+    }
+
+    private List<Light> removeDuplicateLights(List<Light> existingLights, List<Light> lights) {
+        List<String> existingIds = new ArrayList<>();
+        for(Light l : existingLights) {
+            existingIds.add(l.getIntegrationId());
+        }
+
+        List<Light> ret = new ArrayList<>();
+        for(Light l : lights) {
+            if(!existingIds.contains(l.getIntegrationId()))
+                ret.add(l);
         }
 
         return ret;

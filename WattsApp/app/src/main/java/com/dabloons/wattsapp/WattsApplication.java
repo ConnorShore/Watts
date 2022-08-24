@@ -16,5 +16,8 @@ public class WattsApplication extends Application {
         return WattsApplication.context;
     }
 
-    public static String getResourceString(int resId) { return context.getString(resId); }
+    public static String getResourceString(int resId) {
+        String ret = context.getString(resId);
+        return ret;
+    }
 }

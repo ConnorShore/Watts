@@ -26,8 +26,6 @@ public class PhillipsHueService extends HttpService {
     private static volatile PhillipsHueService instance;
     private final UserManager userManager = UserManager.getInstance();
 
-    private final String BASE_URL = WattsApplication.getResourceString(R.string.hue_api_base_url);
-
     private final String CONTENT_TYPE = "application/json";
 
     public PhillipsHueService() {
@@ -135,7 +133,7 @@ public class PhillipsHueService extends HttpService {
 
     @Override
     public void setBaseUrl() {
-        this.baseUrl = BASE_URL;
+        this.baseUrl = WattsApplication.getResourceString(R.string.hue_api_base_url);
     }
 
     public static PhillipsHueService getInstance() {

@@ -34,6 +34,11 @@ public abstract class HttpService {
         setBaseUrl();
     }
 
+    public HttpService(String baseUrl) {
+        httpClient = new OkHttpClient();
+        this.baseUrl = baseUrl;
+    }
+
     public abstract void setBaseUrl();
 
     protected void makeRequestWithBodyAsync(String path, RequestType requestType, RequestBody body, Map<String, String> headers, Callback callback) {

@@ -115,6 +115,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseData = response.body().string();
                         try {
+                            // Todo: Move to JsonArray and JsonObject (gson)
                             JSONArray jsonObj = new JSONArray(responseData);
                             JSONObject successObj = jsonObj.getJSONObject(0);
                             String username = successObj.getJSONObject("success").getString("username");

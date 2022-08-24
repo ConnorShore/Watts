@@ -3,6 +3,7 @@ package com.dabloons.wattsapp.manager;
 import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.repository.RoomRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
@@ -79,10 +80,26 @@ public class RoomManager
     }
 
     public void turnOnRoomLights(Room room, WattsCallback<Void, Void> callback) {
-        phillipsHueService.turnOnRoomLights(room, new Callback() {
+        LightState state = new LightState(true, 1.0f);
+        phillipsHueService.setRoomLightsState(room, state, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 callback.apply(null, new WattsCallbackStatus(false, "Failed to turn on hue group lights"));
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                callback.apply(null, new WattsCallbackStatus(true));
+            }
+        });
+    }
+
+    public void turnOffRoomLights(Room room, WattsCallback<Void, Void> callback) {
+        LightState state = new LightState(false, 0.0f);
+        phillipsHueService.setRoomLightsState(room, state, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                callback.apply(null, new WattsCallbackStatus(false, "Failed to turn off hue group lights"));
             }
 
             @Override

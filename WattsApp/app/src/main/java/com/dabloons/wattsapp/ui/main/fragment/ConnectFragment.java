@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.LightManager;
+import com.dabloons.wattsapp.manager.auth.NanoleafAuthManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
 
 public class ConnectFragment extends Fragment {
@@ -16,6 +17,7 @@ public class ConnectFragment extends Fragment {
     private final String LOG_TAG = "ConnectFragment";
 
     private PhillipsHueOAuthManager phillipsHueOAuthManager = PhillipsHueOAuthManager.getInstance();
+    private NanoleafAuthManager nanoleafAuthManager = NanoleafAuthManager.getInstance();
 
     public ConnectFragment() { }
 
@@ -24,7 +26,11 @@ public class ConnectFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
 
         result.findViewById(R.id.button_connect_phillips_hue).setOnClickListener(view -> {
-            phillipsHueOAuthManager.aquireAuthorizationCode(this.getActivity());
+            phillipsHueOAuthManager.aquireAuthorizationCode();
+        });
+
+        result.findViewById(R.id.button_connect_nanoleaf).setOnClickListener(view -> {
+            nanoleafAuthManager.connectToNanoleafsOnNetwork();
         });
 
         result.findViewById(R.id.button_sync_phillips_hue).setOnClickListener(view -> {

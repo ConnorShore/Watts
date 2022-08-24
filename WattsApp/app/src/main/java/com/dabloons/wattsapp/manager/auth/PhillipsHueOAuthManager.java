@@ -152,6 +152,13 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         return IntegrationType.PHILLIPS_HUE;
     }
 
+    private void launchMainActivity() {
+        Context context = WattsApplication.getAppContext();
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
+    }
+
+
     public static PhillipsHueOAuthManager getInstance() {
         PhillipsHueOAuthManager result = instance;
         if (result != null) {
@@ -163,11 +170,5 @@ public class PhillipsHueOAuthManager extends OAuthManager {
             }
             return instance;
         }
-    }
-
-    private void launchMainActivity() {
-        Context context = WattsApplication.getAppContext();
-        Intent intent = new Intent(context, MainActivity.class);
-        context.startActivity(intent);
     }
 }

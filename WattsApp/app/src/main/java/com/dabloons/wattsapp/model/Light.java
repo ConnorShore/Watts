@@ -14,9 +14,8 @@ public class Light {
     @Exclude
     private boolean isSelected;
 
-    public Light(){
+    public Light(){ }
 
-    }
     public Light(String uid, String userId, String name, String integrationId, IntegrationType integrationType) {
         this.uid = uid;
         this.userId = userId;

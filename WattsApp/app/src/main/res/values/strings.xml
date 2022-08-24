@@ -1,9 +1,33 @@
 <resources>
-    <string name="app_name">WattsApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">Watts</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="button_sign_out_account">Sign Out</string>
     <string name="button_delete_account">Delete Account</string>
     <string name="button_add_integration">Add Integration</string>
     <string name="button_delete_integration">Delete Integration</string>
+
+    <!-- PHILLIPS HUE API -->
+    <string name="hue_api_base_url">https://api.meethue.com/route/api/</string>
+    <string name="hue_client_id">MHXlFaIMPE52gfnlM0nJ1fzYWOLe8fAv</string>
+    <string name="hue_client_secret">onksb0tv1Vz30vDl</string>  <!-- Need to store this on server or something when we go into full production -->
+    <string name="hue_redirect_uri">com.dabloons.wattsapp:/oauth2redirect</string>
+    <string name="hue_authorize_endpoint">https://api.meethue.com/v2/oauth2/authorize</string>
+    <string name="hue_token_endpoint">https://api.meethue.com/v2/oauth2/token</string>
+
+    <!-- REPOSITORY COLLECTIONS -->
+    <string name="collection_users">users</string>
+    <string name="collection_auth">auth</string>
+    <string name="collection_lights">lights</string>
+    <string name="collection_rooms">rooms</string>
+
+    <!-- REPOSITORY DOCUMENTS -->
+    <string name="document_phillips_hue">phillips_hue</string>
+    <string name="document_nanoleaf">nanoleaf</string>
+
+    <!-- REPOSITORY FIELDS -->
+    <string name="field_userId">userId</string>
+    <string name="field_username">username</string>
+    <string name="field_lights">lights</string>
+    <string name="field_integrationId">integrationId</string>
 </resources>

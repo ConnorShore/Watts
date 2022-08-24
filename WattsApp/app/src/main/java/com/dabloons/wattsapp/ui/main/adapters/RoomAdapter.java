@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -77,7 +76,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 });
             }
         });
-//        holder.room = model;
     }
 
     public List<Room> getRoomList() {
@@ -96,7 +94,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView roomName;
         private SwitchMaterial roomSwitch;
-//        private Room room;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
@@ -107,7 +104,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 
         @Override
         public void onClick(View view) {
-
             clickListener.onClick(view, getLayoutPosition()); // call the onClick in the OnItemClickListener
         }
     }

@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.model.Light;
-import com.dabloons.wattsapp.model.Room;
-import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 
 import java.util.ArrayList;
 
@@ -23,7 +21,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
 
     private Context context;
     public ArrayList<Light> lightModelArrayList;
-    private OnItemClickListener clickListener;
 
     public LightAdapter(Context context, ArrayList<Light> lightList) {
         this.context = context;
@@ -70,7 +67,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
         @Override
         public void onClick(View view) {
 
-//            clickListener.onClick(view, getLayoutPosition()); // call the onClick in the OnItemClickListener
         }
     }
 }

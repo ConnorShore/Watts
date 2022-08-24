@@ -7,20 +7,19 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
 import com.dabloons.wattsapp.service.PhillipsHueService;
 import com.dabloons.wattsapp.ui.main.MainActivity;
 
+import com.google.gson.*;
+
 import net.openid.appauth.AuthorizationException;
 import net.openid.appauth.AuthorizationResponse;
 import net.openid.appauth.ClientAuthentication;
 import net.openid.appauth.ClientSecretBasic;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -37,15 +36,13 @@ public class PhillipsHueOAuthManager extends OAuthManager {
     private static final UserAuthRepository userAuthRepository = UserAuthRepository.getInstance();
     private static final PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
 
-    // TODO: Move these to config
-    private final String HUE_CLIENT_ID = "MHXlFaIMPE52gfnlM0nJ1fzYWOLe8fAv";
-    private final String HUE_CLIENT_SECRET = "onksb0tv1Vz30vDl";
+    private final String HUE_CLIENT_ID = WattsApplication.getResourceString(R.string.hue_client_id);
+    private final String HUE_CLIENT_SECRET = WattsApplication.getResourceString(R.string.hue_client_secret);
 
-    private final Uri HUE_REDIRECT_URI = Uri.parse("com.dabloons.wattsapp:/oauth2redirect");
+    private final Uri HUE_REDIRECT_URI = Uri.parse(WattsApplication.getResourceString(R.string.hue_redirect_uri));;
 
     public PhillipsHueOAuthManager() {
-        // TODO: MAke config
-        super("https://api.meethue.com/v2/oauth2/authorize", "https://api.meethue.com/v2/oauth2/token");
+        super(WattsApplication.getResourceString(R.string.hue_authorize_endpoint), WattsApplication.getResourceString(R.string.hue_token_endpoint));
     }
 
     @Override
@@ -54,7 +51,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         AuthorizationException ex = AuthorizationException.fromIntent(intent);
         updateAuthState(resp, ex);
         if (resp != null) {
-            aquireTokens(resp, intent);
+            aquireTokens(resp);
         }
         else {
             // authorization failed, check ex for more details
@@ -75,7 +72,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
      * Helpers
      */
 
-    private void aquireTokens(AuthorizationResponse response, Intent intent) {
+    private void aquireTokens(AuthorizationResponse response) {
         // authorization completed
         ClientAuthentication auth = new ClientSecretBasic(getClientSecret());
         this.getAuthService().performTokenRequest(response.createTokenExchangeRequest(), auth, (resp, ex1) -> {
@@ -84,7 +81,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                 // exchange succeeded
                 String accessToken = resp.accessToken;
                 String refreshToken = resp.refreshToken;
-                aquireUserNameAndSaveData(accessToken, refreshToken, intent);
+                aquireUserNameAndSaveData(accessToken, refreshToken);
             } else {
                 // authorization failed, check ex for more details
                 System.out.println();
@@ -93,7 +90,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         });
     }
 
-    private void aquireUserNameAndSaveData(String accessToken, String refreshToken, Intent intent) {
+    private void aquireUserNameAndSaveData(String accessToken, String refreshToken) {
 
         phillipsHueService.linkButton(accessToken, new Callback() {
             @Override
@@ -114,22 +111,17 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         String responseData = response.body().string();
-                        try {
-                            // Todo: Move to JsonArray and JsonObject (gson)
-                            JSONArray jsonObj = new JSONArray(responseData);
-                            JSONObject successObj = jsonObj.getJSONObject(0);
-                            String username = successObj.getJSONObject("success").getString("username");
-                            userAuthRepository.addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
-                                    .addOnSuccessListener(v -> {
-                                        endOauthConnection();
-                                        launchMainActivity();
-                                    })
-                                    .addOnFailureListener(v -> {
+                        JsonArray jsonObj = JsonParser.parseString(responseData).getAsJsonArray();
+                        JsonObject successObj = jsonObj.get(0).getAsJsonObject();
+                        String username = successObj.get("success").getAsJsonObject().get("username").getAsString();
+                        userAuthRepository.addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
+                            .addOnSuccessListener(v -> {
+                                endOauthConnection();
+                                launchMainActivity();
+                            })
+                            .addOnFailureListener(v -> {
 
-                                    });
-                        } catch (JSONException e) {
-                            Log.e(LOG_TAG, "Failed to decode json response: " + e.getMessage());
-                        }
+                            });
                     }
                 });
             }

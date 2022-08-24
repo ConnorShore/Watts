@@ -6,6 +6,7 @@
     <string name="button_delete_account">Delete Account</string>
     <string name="button_add_integration">Add Integration</string>
     <string name="button_delete_integration">Delete Integration</string>
+    <string name="button_delete_room">Delete Room</string>
 
     <!-- PHILLIPS HUE API -->
     <string name="hue_api_base_url">https://api.meethue.com/route/api/</string>

@@ -92,6 +92,22 @@ public class PhillipsHueService extends HttpService {
         });
     }
 
+    public void turnOnRoomLights(Room room, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("on", true);
+            jsonObj.addProperty("bri", 254);
+            RequestBody body = createRequestBody(jsonObj);
+
+            String url = username + "/groups/" + room.getIntegrationId() + "/action";
+            makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+        });
+    }
+
     private Map<String, String> getStandardHeaders(String accessToken) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + accessToken);

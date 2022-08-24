@@ -26,6 +26,8 @@ public class RoomManager
     private RoomRepository roomRepository;
     private static volatile RoomManager instance;
 
+    private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
+
     private RoomManager()
     {
         roomRepository = RoomRepository.getInstance();
@@ -73,6 +75,20 @@ public class RoomManager
         })
         .addOnFailureListener(task -> {
             callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+        });
+    }
+
+    public void turnOnRoomLights(Room room, WattsCallback<Void, Void> callback) {
+        phillipsHueService.turnOnRoomLights(room, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                callback.apply(null, new WattsCallbackStatus(false, "Failed to turn on hue group lights"));
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                callback.apply(null, new WattsCallbackStatus(true));
+            }
         });
     }
 

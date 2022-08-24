@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,6 +127,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                             @Override
                             public Void apply(Void var, WattsCallbackStatus success) {
                                 roomModelList.add(newRoom);
+                                updateUI();
                                 dialog.dismiss();
                                 return null;
                             }
@@ -139,6 +142,12 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                     }
                 })
                 .show();
+    }
+
+    private void updateUI()
+    {
+        new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+
     }
 
 

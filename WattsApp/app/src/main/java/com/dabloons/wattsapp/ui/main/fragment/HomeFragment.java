@@ -111,8 +111,25 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                     public void onClick(DialogInterface dialog, int which) {
                         String name = roomName.getEditText().getText().toString();
                         Room newRoom = RoomManager.getInstance().createRoom(name);
-                        roomModelList.add(newRoom);
-                        dialog.dismiss();
+                        List<Light> lightsToAdd =  new ArrayList<>();
+                        for(int i = 0; i < lightAdapter.getItemCount(); i++)
+                        {
+                            Light currLight = lightAdapter.lightModelArrayList.get(i);
+                            if(currLight.isSelected())
+                            {
+//                                newRoom.addLight(currLight);
+                                lightsToAdd.add(currLight);
+                            }
+                        }
+                        RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, new WattsCallback<Void, Void>() {
+                            @Override
+                            public Void apply(Void var, WattsCallbackStatus success) {
+                                roomModelList.add(newRoom);
+                                dialog.dismiss();
+                                return null;
+                            }
+                        });
+
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.main.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
     private final String LOG_TAG = "LightAdapter";
 
     private Context context;
-    private ArrayList<Light> lightModelArrayList;
+    public ArrayList<Light> lightModelArrayList;
     private OnItemClickListener clickListener;
 
     public LightAdapter(Context context, ArrayList<Light> lightList) {
@@ -32,7 +33,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
     @NonNull
     @Override
     public LightAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout, parent, false);
         return new LightAdapter.Viewholder(view);
     }
 
@@ -40,11 +41,21 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
     public void onBindViewHolder(@NonNull LightAdapter.Viewholder holder, int position) {
         Light model = lightModelArrayList.get(position);
         holder.lightName.setText(model.getName());
+
+        holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                model.setSelected(!model.isSelected());
+                holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return lightModelArrayList.size();
     }
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
@@ -52,7 +63,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
-            lightName = itemView.findViewById(R.id.roomName);
+            lightName = itemView.findViewById(R.id.lightName);
             itemView.setOnClickListener(this);
         }
 

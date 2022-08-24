@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.model;
 
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.google.firebase.firestore.Exclude;
 
 public class Light {
 
@@ -9,6 +10,9 @@ public class Light {
     private String name;
     private String integrationId;
     private IntegrationType integrationType;
+
+    @Exclude
+    private boolean isSelected;
 
     public Light(){
 
@@ -19,6 +23,7 @@ public class Light {
         this.name = name;
         this.integrationId = integrationId;
         this.integrationType = integrationType;
+        this.isSelected = false;
     }
 
     public String getUid() {
@@ -60,4 +65,9 @@ public class Light {
     public void setIntegrationType(IntegrationType integrationType) {
         this.integrationType = integrationType;
     }
+
+    @Exclude
+    public boolean isSelected() { return isSelected ; }
+
+    public void setSelected(boolean selected) { this.isSelected = selected; }
 }

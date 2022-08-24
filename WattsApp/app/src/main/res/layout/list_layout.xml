@@ -32,7 +32,7 @@
 
         <!--Text View to display Course Name-->
         <TextView
-            android:id="@+id/roomName"
+            android:id="@+id/lightName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"

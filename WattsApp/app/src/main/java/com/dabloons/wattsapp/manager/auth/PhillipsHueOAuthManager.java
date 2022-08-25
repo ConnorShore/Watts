@@ -118,8 +118,11 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                         JsonArray jsonObj = JsonParser.parseString(responseData).getAsJsonArray();
                         JsonObject successObj = jsonObj.get(0).getAsJsonObject();
                         String username = successObj.get("success").getAsJsonObject().get("username").getAsString();
-                        PhillipsHueIntegrationAuth authData = new PhillipsHueIntegrationAuth(accessToken, refreshToken, username);
+                        PhillipsHueIntegrationAuth authData = new PhillipsHueIntegrationAuth(username, accessToken, refreshToken);
                         userManager.addIntegrationAuthData(IntegrationType.PHILLIPS_HUE, authData, (var, status) -> {
+                            if(!status.success)
+                                Log.e(LOG_TAG, status.message);
+
                             endOauthConnection();
                             launchMainActivity();
                             return null;
@@ -157,6 +160,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
     private void launchMainActivity() {
         Context context = WattsApplication.getAppContext();
         Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

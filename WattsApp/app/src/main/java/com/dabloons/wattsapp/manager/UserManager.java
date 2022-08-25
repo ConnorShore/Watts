@@ -67,6 +67,7 @@ public class UserManager {
                         .addOnFailureListener(task -> {
                             callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
                         });
+                break;
             case NANOLEAF:
                 NanoleafPanelAuthCollection nAuth = (NanoleafPanelAuthCollection) authData;
                 userAuthRepository.addNanoleafIntegrationToUser(nAuth)
@@ -79,6 +80,7 @@ public class UserManager {
                         .addOnFailureListener(task -> {
                             callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
                         });
+                break;
             default:
                 Log.e(LOG_TAG, "No integration exists to add: " + type);
         }

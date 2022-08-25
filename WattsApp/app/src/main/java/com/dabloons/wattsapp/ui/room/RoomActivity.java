@@ -1,4 +1,4 @@
-package com.dabloons.wattsapp.ui.main.room;
+package com.dabloons.wattsapp.ui.room;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -13,6 +13,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
+import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import util.WattsCallbackStatus;
 public class RoomActivity extends AppCompatActivity {
     private Button deleteRoomBtn;
     private Room currentRoom;
-    private MaterialToolbar toolbar;
+//    private MaterialToolbar toolbar;
 
     private RecyclerView lightRV;
     private LightAdapter lightAdapter;
@@ -36,7 +37,7 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
 
         deleteRoomBtn = findViewById(R.id.deletRoomButton);
-        toolbar = findViewById(R.id.topAppBarRoomActivity);
+//        toolbar = findViewById(R.id.topAppBarRoomActivity);
 
 
 
@@ -45,16 +46,16 @@ public class RoomActivity extends AppCompatActivity {
         if(extras != null) {
             currentRoom = extras.getParcelable("room");
 
-            toolbar.setTitle(currentRoom.getName());
+//            toolbar.setTitle(currentRoom.getName());
         }
 
-        this.setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+//        this.setSupportActionBar(toolbar);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                finish();
+//            }
+//        });
 
         lightAdapter = new LightAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) currentRoom.getLights());
         GridLayoutManager linearLayoutManager = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
@@ -66,12 +67,9 @@ public class RoomActivity extends AppCompatActivity {
 
 
         deleteRoomBtn.setOnClickListener(v -> {
-            RoomManager.getInstance().deleteRoom(currentRoom.getUid(), new WattsCallback<Void, Void>() {
-                @Override
-                public Void apply(Void var, WattsCallbackStatus status) {
-                    finish();
-                    return null;
-                }
+            RoomManager.getInstance().deleteRoom(currentRoom.getUid(), (var, status) -> {
+                finish();
+                return null;
             });
 
         });

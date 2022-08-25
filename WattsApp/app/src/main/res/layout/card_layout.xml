@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="?colorSurfaceVariant"
+    app:cardBackgroundColor="@color/cardview_dark_background"
     android:clickable="true"
     android:focusable="true"
     android:checkable="true"
@@ -40,11 +40,11 @@
 
             <TextView
                 android:id="@+id/roomName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="TEST"
                 android:textColor="@color/white"
                 android:textSize="22sp"

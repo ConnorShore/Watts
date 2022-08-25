@@ -23,9 +23,9 @@ import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.repository.RoomRepository;
-import com.dabloons.wattsapp.ui.main.room.RoomActivity;
+import com.dabloons.wattsapp.ui.room.RoomActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
-import com.dabloons.wattsapp.ui.main.adapters.LightItemAdapter;
+import com.dabloons.wattsapp.ui.room.adapters.LightItemAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
@@ -60,18 +60,19 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
-            roomModelList = rooms;
-            roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+                roomModelList = rooms;
+
+                roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
 
-            // in below two lines we are setting layoutmanager and adapter to our recycler view.
-            roomRV.setLayoutManager(linearLayoutManager);
-            roomRV.setAdapter(roomAdapter);
-            roomAdapter.setClickListener(this);
+                // in below two lines we are setting layoutmanager and adapter to our recycler view.
+                roomRV.setLayoutManager(linearLayoutManager);
+                roomRV.setAdapter(roomAdapter);
+                roomAdapter.setClickListener(this);
 
-            return null;
-        });
+                return null;
+            });
     }
 
     @Override

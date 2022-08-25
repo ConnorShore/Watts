@@ -1,6 +1,8 @@
 package com.dabloons.wattsapp.ui.room.adapters;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.model.Light;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -51,15 +54,17 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     {
         Light light = lightModelArrayList.get(position);
         holder.lightName.setText(light.getName());
+
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
                 lightManager.turnOnLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
+
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
                         return null;
                     }
-
+//                    new Handler(Looper.getMainLooper()).post(() -> holder.itemView.setBackground(WattsApplication.getAppContext().getDrawable(R.drawable.custom_shadow)));
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
                     return null;
                 });
@@ -69,10 +74,11 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
+
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
                         return null;
                     }
-
+//                    new Handler(Looper.getMainLooper()).post(() -> holder.itemView.setBackground(null));
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                     return null;
                 });

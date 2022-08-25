@@ -64,14 +64,14 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException
                     {
-//                        if(response.isSuccessful())
-//                        {
-//                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
-//                        }
-//                        else
-//                        {
-//                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
-//                        }
+                        if(response.isSuccessful())
+                        {
+                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
+                        }
+                        else
+                        {
+                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
+                        }
                     }
                 });
             }
@@ -89,11 +89,11 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                     {
                         if(response.isSuccessful())
                         {
-//                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
+                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                         }
                         else
                         {
-//                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
+                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
                         }
                     }
                 });

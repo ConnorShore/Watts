@@ -161,6 +161,7 @@ public class PhillipsHueOAuthManager extends OAuthManager {
         Context context = WattsApplication.getAppContext();
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("fragToLoad", 2);
         context.startActivity(intent);
     }
 

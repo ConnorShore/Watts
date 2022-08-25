@@ -7,7 +7,10 @@ import androidx.annotation.NonNull;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.LightRepository;
+import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
 
 import org.json.JSONException;
@@ -33,12 +36,16 @@ public class LightManager {
 
     private LightRepository lightRepository = LightRepository.getInstance();
     private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
+    private NanoleafService nanoleafService = NanoleafService.getInstance();
 
     public void turnOnLight(Light light, Callback callback) {
         IntegrationType type = light.getIntegrationType();
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
-                PhillipsHueService.getInstance().turnOnLight(light, callback);
+                phillipsHueService.turnOnLight(light, callback);
+                break;
+            case NANOLEAF:
+//                nanoleafService.turnOnLight(light, callback);
                 break;
             default:
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);
@@ -72,6 +79,27 @@ public class LightManager {
         });
     }
 
+    public void syncNanoleafLightsToDatabase(NanoleafPanelAuthCollection collection, WattsCallback<Void, Void> callback) {
+        lightRepository.getAllLightsForType(IntegrationType.NANOLEAF, (existingLights, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, status.message);
+                callback.apply(null, new WattsCallbackStatus(false, status.message));
+                return null;
+            }
+
+            List<Light> lights = createLightsFromAuthCollection(collection);
+            lightRepository.storeMultipleLights(removeDuplicateLights(existingLights, lights))
+                    .addOnCompleteListener(task -> {
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    })
+                    .addOnFailureListener(task -> {
+                        callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                    });
+
+            return null;
+        });
+    }
+
     public void getLights(WattsCallback<List<Light>, Void> callback)
     {
         LightRepository.getInstance().getAllLights(callback);
@@ -80,19 +108,18 @@ public class LightManager {
     /*
         HELPERS
      */
-    private void syncLightsToDatabase(IntegrationType integration, WattsCallback<Void, Void> callback) {
-        switch(integration) {
+    private void syncLightsToDatabase(IntegrationType type, WattsCallback<Void, Void> callback) {
+        switch(type) {
             case PHILLIPS_HUE:
                 syncPhillipsHueLightsToDatabase(callback);
                 break;
             default:
-                Log.e(LOG_TAG, "Cannot sync lights to db from " + integration);
-                break;
+                Log.w(LOG_TAG, "Cannot sync lights of type " + type);
         }
     }
 
     private void syncPhillipsHueLightsToDatabase(WattsCallback<Void, Void> callback) {
-        lightRepository.getAllLights((existingLights, status) -> {
+        lightRepository.getAllLightsForType(IntegrationType.PHILLIPS_HUE, (existingLights, status) -> {
             if(!status.success) {
                 String message = "Failed to get existing lights when syncing phillips hue lights";
                 Log.e(LOG_TAG, message);
@@ -144,11 +171,21 @@ public class LightManager {
             // TODO: Add more fields of state (i.e. on, color, brightness, etc)
             String name = nextLight.getString("name");
 
-            Light light = new Light(UUID.randomUUID().toString(), userId, name, integrationId, IntegrationType.PHILLIPS_HUE);
+            Light light = new Light(userId, name, integrationId, IntegrationType.PHILLIPS_HUE);
             ret.add(light);
             currentLight++;
         }
 
+        return ret;
+    }
+
+    private List<Light> createLightsFromAuthCollection(NanoleafPanelAuthCollection collection) {
+        String userId = UserManager.getInstance().getCurrentUser().getUid();
+        List<Light> ret = new ArrayList<>();
+        for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
+            Light light = new Light(userId, auth.getName(), auth.getName(), IntegrationType.NANOLEAF);
+            ret.add(light);
+        }
         return ret;
     }
 

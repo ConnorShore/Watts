@@ -3,6 +3,7 @@ package util;
 import android.content.Context;
 import android.widget.Toast;
 
+import androidx.annotation.MainThread;
 import androidx.viewbinding.ViewBinding;
 
 import com.google.android.material.snackbar.Snackbar;

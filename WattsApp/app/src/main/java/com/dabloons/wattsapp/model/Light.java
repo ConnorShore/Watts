@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.google.firebase.firestore.Exclude;
 
+import java.util.UUID;
+
 public class Light implements Parcelable {
 
     private String uid;
@@ -19,8 +21,8 @@ public class Light implements Parcelable {
 
     public Light(){ }
 
-    public Light(String uid, String userId, String name, String integrationId, IntegrationType integrationType) {
-        this.uid = uid;
+    public Light(String userId, String name, String integrationId, IntegrationType integrationType) {
+        this.uid = UUID.randomUUID().toString();
         this.userId = userId;
         this.name = name;
         this.integrationId = integrationId;

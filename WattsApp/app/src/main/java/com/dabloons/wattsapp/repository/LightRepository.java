@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import util.RepositoryUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -34,6 +35,7 @@ public final class LightRepository {
 
     private final String LIGHT_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_lights);
     private final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
+    private final String INTEGRATION_TYPE_FIELD = WattsApplication.getResourceString(R.string.field_integration_type);
 
     // Create User in Firestore
     public Task<Void> createLight(String integrationId, IntegrationType type, String name) {
@@ -42,16 +44,13 @@ public final class LightRepository {
 
         String userId = user.getUid();
 
-        String uid = UUID.randomUUID().toString();
-        Light lightToCreate = new Light(uid, userId, name, integrationId, type);
-        return getLightCollection().document(uid).set(lightToCreate);
+        Light lightToCreate = new Light(userId, name, integrationId, type);
+        return getLightCollection().document(lightToCreate.getUid()).set(lightToCreate);
     }
 
     public Task<Void> storeMultipleLights(List<Light> lights) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return null;
-
-        String userId = user.getUid();
 
         WriteBatch batch = FirebaseFirestore.getInstance().batch();
         for(Light light : lights) {
@@ -61,7 +60,7 @@ public final class LightRepository {
         return batch.commit();
     }
 
-    public void getAllLights(WattsCallback<List<Light>, Void> callback) {
+    public void getAllLightsForType(IntegrationType type, WattsCallback<List<Light>, Void> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
@@ -70,14 +69,21 @@ public final class LightRepository {
                 Log.e(LOG_TAG, "Failed to get lights collection");
 
             List<Light> ret = new ArrayList<>();
-            QuerySnapshot val = task.getResult();
             for (QueryDocumentSnapshot document : task.getResult()) {
-                if(document.get(USER_ID_FIELD).toString().equals(user.getUid()))
+                boolean userEqual = document.get(USER_ID_FIELD).toString().equals(user.getUid());
+                boolean typeEqual = type == IntegrationType.NONE
+                    || RepositoryUtil.stringToIntegrationType(document.get(INTEGRATION_TYPE_FIELD).toString()) == type;
+
+                if(userEqual && typeEqual)
                     ret.add(document.toObject(Light.class));
             }
 
             callback.apply(ret, new WattsCallbackStatus(true));
         });
+    }
+
+    public void getAllLights(WattsCallback<List<Light>, Void> callback) {
+        getAllLightsForType(IntegrationType.NONE, callback);
     }
 
     // Get the User Collection Reference

@@ -74,6 +74,10 @@ public class NSDServiceUtil {
         nsdManager.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, nsdListener);
     }
 
+    public void removeDiscoveryCallback(String serviceType) {
+        onDiscoveryCallbacks.remove(serviceType);
+    }
+
     public void safeEndNetworkDiscovery(WattsCallback<Boolean, Void> callback) {
         if(nsdListener == null) {
             callback.apply(true, new WattsCallbackStatus(true));
@@ -92,12 +96,12 @@ public class NSDServiceUtil {
     }
 
     public void forceEndNetworkDiscovery() {
+        clearDiscoveryCallbacks();
         if(nsdListener == null)
             return;
 
         this.nsdManager.stopServiceDiscovery(nsdListener);
         this.nsdListener = null;
-        clearDiscoveryCallbacks();
     }
 
     public static NSDServiceUtil getInstance() {
@@ -134,7 +138,6 @@ public class NSDServiceUtil {
 
                 WattsCallback<NetworkService, Void> callback = onDiscoveryCallbacks.get(type);
                 callback.apply(retService, new WattsCallbackStatus(true));
-                onDiscoveryCallbacks.remove(type);
             }
         }
     };

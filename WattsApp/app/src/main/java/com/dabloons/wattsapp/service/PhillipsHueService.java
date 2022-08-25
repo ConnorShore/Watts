@@ -28,7 +28,7 @@ public class PhillipsHueService extends HttpService {
 
     private final String CONTENT_TYPE = "application/json";
 
-    public PhillipsHueService() {
+    private PhillipsHueService() {
         super();
     }
 

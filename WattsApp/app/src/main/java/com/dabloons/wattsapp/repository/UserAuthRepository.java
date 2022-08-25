@@ -6,6 +6,7 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,8 +17,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+import util.RepositoryUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -55,7 +56,7 @@ public final class UserAuthRepository {
 
             List<IntegrationType> ret = new ArrayList<>();
             for (QueryDocumentSnapshot document : task.getResult()) {
-                IntegrationType type = stringToIntegrationType((String)document.get("integrationType"));
+                IntegrationType type = RepositoryUtil.stringToIntegrationType((String)document.get("integrationType"));
                 ret.add(type);
             }
 
@@ -63,14 +64,16 @@ public final class UserAuthRepository {
         });
     }
 
-    public Task<Void> addPhillipsHueIntegrationToUser(String accessToken, String refreshToken, String username) {
+    public Task<Void> addPhillipsHueIntegrationToUser(PhillipsHueIntegrationAuth authProps) {
         FirebaseUser user = UserRepository.getInstance().getCurrentUser();
         if(user == null) return null;
-
-        PhillipsHueIntegrationAuth authProps =
-                new PhillipsHueIntegrationAuth(UUID.randomUUID().toString(), username, accessToken, refreshToken);
-
         return setIntegrationAuth(IntegrationType.PHILLIPS_HUE, authProps);
+    }
+
+    public Task<Void> addNanoleafIntegrationToUser(NanoleafPanelAuthCollection collection) {
+        FirebaseUser user = UserRepository.getInstance().getCurrentUser();
+        if(user == null) return null;
+        return setIntegrationAuth(IntegrationType.NANOLEAF, collection);
     }
 
     public Task<Void> removeIntegration(IntegrationType type) {
@@ -122,16 +125,5 @@ public final class UserAuthRepository {
                 .document(uid)
                 .collection(AUTH_COLLECTION_NAME);
         return ref;
-    }
-
-    private IntegrationType stringToIntegrationType(String s) {
-        switch(s) {
-            case "PHILLIPS_HUE":
-                return IntegrationType.PHILLIPS_HUE;
-            case "NANOLEAF":
-                return IntegrationType.NANOLEAF;
-            default:
-                return IntegrationType.NONE;
-        }
     }
 }

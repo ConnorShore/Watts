@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
 import com.dabloons.wattsapp.service.PhillipsHueService;
 import com.dabloons.wattsapp.ui.main.MainActivity;
@@ -26,6 +28,8 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class PhillipsHueOAuthManager extends OAuthManager {
 
@@ -33,8 +37,8 @@ public class PhillipsHueOAuthManager extends OAuthManager {
 
     private static volatile PhillipsHueOAuthManager instance;
 
-    private static final UserAuthRepository userAuthRepository = UserAuthRepository.getInstance();
-    private static final PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
+    private final UserManager userManager = UserManager.getInstance();
+    private final PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
 
     private final String HUE_CLIENT_ID = WattsApplication.getResourceString(R.string.hue_client_id);
     private final String HUE_CLIENT_SECRET = WattsApplication.getResourceString(R.string.hue_client_secret);
@@ -114,14 +118,12 @@ public class PhillipsHueOAuthManager extends OAuthManager {
                         JsonArray jsonObj = JsonParser.parseString(responseData).getAsJsonArray();
                         JsonObject successObj = jsonObj.get(0).getAsJsonObject();
                         String username = successObj.get("success").getAsJsonObject().get("username").getAsString();
-                        userAuthRepository.addPhillipsHueIntegrationToUser(accessToken, refreshToken, username)
-                            .addOnSuccessListener(v -> {
-                                endOauthConnection();
-                                launchMainActivity();
-                            })
-                            .addOnFailureListener(v -> {
-
-                            });
+                        PhillipsHueIntegrationAuth authData = new PhillipsHueIntegrationAuth(accessToken, refreshToken, username);
+                        userManager.addIntegrationAuthData(IntegrationType.PHILLIPS_HUE, authData, (var, status) -> {
+                            endOauthConnection();
+                            launchMainActivity();
+                            return null;
+                        });
                     }
                 });
             }

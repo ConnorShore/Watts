@@ -43,7 +43,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
 
         bottomMenu.setOnItemSelectedListener(this);
 
-        bottomMenu.setSelectedItemId(R.id.page_1);
+        Bundle extras = getIntent().getExtras();
+        int intentFragment= 0;
+        if(extras!= null)
+        {
+            intentFragment = extras.getInt("fragToLoad");
+        }
+
+
+        switch (intentFragment){
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, connectFragment).commit();
+                break;
+            case 3:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, accountFragment).commit();
+                break;
+            default:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, homeFragment).commit();
+                break;
+        }
+
     }
 
     @Override

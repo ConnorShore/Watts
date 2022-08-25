@@ -32,4 +32,8 @@
     <string name="field_lights">lights</string>
     <string name="field_integrationId">integrationId</string>
     <string name="field_integration_type">integrationType</string>
+    <string name="connect_to_integration">Connect</string>
+    <string name="phillips_hue">Phillips Hue</string>
+    <string name="nanoleaf">Nanoleaf</string>
+    <string name="sync_lights">Sync Lights</string>
 </resources>

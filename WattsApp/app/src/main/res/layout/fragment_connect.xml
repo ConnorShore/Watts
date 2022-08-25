@@ -3,33 +3,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ui.main.fragment.ConnectFragment">
 
 
-    <Button
-        android:id="@+id/button_sync_phillips_hue"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="50dp"
-        android:text="Sync Phillips Hue Lights" />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/button_connect_phillips_hue"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/integration_RV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="50dp"
-        android:text="Conenct to Phillips Hue" />
+        android:layout_height="match_parent"
+        android:layout_weight="2.5"
+        android:orientation="horizontal">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom">
 
-    <Button
-        android:id="@+id/button_connect_nanoleaf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="50dp"
-        android:text="Conenct to Nanoleaf" />
+            <Button
+                android:id="@+id/sync_lights_btn"
+                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:backgroundTint="@color/md_theme_dark_inversePrimary"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:layout_gravity="bottom"
+                android:text="@string/sync_lights"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/connect_to_integration_Btn"
+                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:backgroundTint="@color/md_theme_dark_inversePrimary"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="0dp"
+                android:text="@string/connect_to_integration"
+                app:icon="@drawable/ic_add_48px" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

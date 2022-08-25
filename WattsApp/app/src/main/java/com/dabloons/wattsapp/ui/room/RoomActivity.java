@@ -25,7 +25,7 @@ import util.WattsCallbackStatus;
 public class RoomActivity extends AppCompatActivity {
     private Button deleteRoomBtn;
     private Room currentRoom;
-//    private MaterialToolbar toolbar;
+    private MaterialToolbar toolbar;
 
     private RecyclerView lightRV;
     private LightAdapter lightAdapter;
@@ -37,7 +37,7 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
 
         deleteRoomBtn = findViewById(R.id.deletRoomButton);
-//        toolbar = findViewById(R.id.topAppBarRoomActivity);
+        toolbar = findViewById(R.id.topAppBarRoomActivity);
 
 
 
@@ -46,16 +46,15 @@ public class RoomActivity extends AppCompatActivity {
         if(extras != null) {
             currentRoom = extras.getParcelable("room");
 
-//            toolbar.setTitle(currentRoom.getName());
+            toolbar.setTitle(currentRoom.getName());
         }
 
-//        this.setSupportActionBar(toolbar);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                finish();
-//            }
-//        });
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         lightAdapter = new LightAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) currentRoom.getLights());
         GridLayoutManager linearLayoutManager = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);

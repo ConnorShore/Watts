@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.main.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -87,18 +88,19 @@ public class ConnectFragment extends Fragment {
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                if(item.getTitle().equals("Phillips Hue"))
-                {
-                    phillipsHueOAuthManager.aquireAuthorizationCode();
-                }
-                if(item.getTitle().equals("NanoLeaf"))
-                {
-                    new AlertDialog.Builder(getActivity())
-                            .setMessage("Are you panels in connect mode? (Hold power button down for 5-7 seconds)")
-                            .setPositiveButton("Yes", (dialogInterface, i) ->
-                                    nanoleafAuthManager.discoverNanoleafPanelsOnNetwork())
-                            .setNegativeButton("No", null)
-                            .show();
+                switch(item.getTitle().toString()) {
+                    case "Phillips Hue":
+                        phillipsHueOAuthManager.aquireAuthorizationCode();
+
+                    case "Nanoleef":
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Are you panels in connect mode? (Hold power button down for 5-7 seconds)")
+                                .setPositiveButton("Yes", (dialogInterface, i) ->
+                                        nanoleafAuthManager.discoverNanoleafPanelsOnNetwork())
+                                .setNegativeButton("No", null)
+                                .show();
+                    default:
+                        Log.w(LOG_TAG, "Integration not found.");
                 }
                 return false;
             }

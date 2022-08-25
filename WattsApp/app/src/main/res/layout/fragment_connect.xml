@@ -34,9 +34,11 @@
             android:layout_weight="1"
             android:gravity="bottom">
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            <Button
                 android:id="@+id/sync_lights_btn"
                 android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:backgroundTint="@color/md_theme_dark_inversePrimary"
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:layout_gravity="bottom"
@@ -49,9 +51,11 @@
             android:layout_weight="1"
             android:gravity="end">
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            <Button
                 android:id="@+id/connect_to_integration_Btn"
                 android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                android:backgroundTint="@color/md_theme_dark_inversePrimary"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="0dp"
@@ -59,34 +63,6 @@
                 app:icon="@drawable/ic_add_48px" />
         </LinearLayout>
 
-
-
     </LinearLayout>
-
-
-<!--    <Button-->
-<!--        android:id="@+id/button_sync_phillips_hue"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:layout_margin="50dp"-->
-<!--        android:text="Sync Phillips Hue Lights" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/button_connect_phillips_hue"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:layout_margin="50dp"-->
-<!--        android:text="Conenct to Phillips Hue" />-->
-
-
-<!--    <Button-->
-<!--        android:id="@+id/button_connect_nanoleaf"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom"-->
-<!--        android:layout_margin="50dp"-->
-<!--        android:text="Conenct to Nanoleaf" />-->
 
 </LinearLayout>

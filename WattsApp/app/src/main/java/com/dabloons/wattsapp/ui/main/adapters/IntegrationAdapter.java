@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.main.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 public class IntegrationAdapter extends RecyclerView.Adapter<IntegrationAdapter.ViewHolder>
 {
-
+    private final String LOG_TAG = "InegrationAdapter";
     private Context context;
     public ArrayList<IntegrationType> integrationTypeList;
 
@@ -40,15 +41,17 @@ public class IntegrationAdapter extends RecyclerView.Adapter<IntegrationAdapter.
         IntegrationType type = integrationTypeList.get(position);
         holder.integrationConnectStatus.setText("Connected");
         holder.integrationConnectStatus.setTextColor(this.context.getColor(R.color.connected));
-        if(type == IntegrationType.PHILLIPS_HUE)
-        {
-            holder.integrationName.setText("Phillips Hue");
+        switch(type){
+            case PHILLIPS_HUE:
+                holder.integrationName.setText("Phillips Hue");
+                break;
+            case NANOLEAF:
+                holder.integrationName.setText("Nanoleaf");
+                break;
+            default:
+                Log.w(LOG_TAG, "Integration: "+type+ " is not defined.");
+        }
 
-        }
-        if(type == IntegrationType.NANOLEAF)
-        {
-            holder.integrationName.setText("Nanoleaf");
-        }
 
     }
 

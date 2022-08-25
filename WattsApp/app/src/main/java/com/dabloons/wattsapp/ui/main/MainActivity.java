@@ -54,7 +54,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
         switch (intentFragment){
             case 2:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, connectFragment).commit();
-
                 break;
             case 3:
                 getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, accountFragment).commit();

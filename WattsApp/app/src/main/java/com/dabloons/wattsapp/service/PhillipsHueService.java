@@ -77,7 +77,8 @@ public class PhillipsHueService extends HttpService {
             jsonObj.addProperty("type", "LightGroup");
             JsonArray lightsArr = new JsonArray();
             for(Light light : room.getLights()) {
-                lightsArr.add(light.getIntegrationId());
+                if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
+                    lightsArr.add(light.getIntegrationId());
             }
             jsonObj.add("lights", lightsArr);
             RequestBody body = createRequestBody(jsonObj);

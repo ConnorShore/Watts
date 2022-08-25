@@ -44,10 +44,10 @@ public class LightManager {
         LightState state = new LightState(true, 1.0f);
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
-                phillipsHueService.turnOnLight(light, callback);
+                phillipsHueService.setLightState(light, state, callback);
                 break;
             case NANOLEAF:
-//                nanoleafService.turnOnLight(light, callback);
+//                nanoleafService.setLightState(light, state, callback);
                 break;
             default:
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);

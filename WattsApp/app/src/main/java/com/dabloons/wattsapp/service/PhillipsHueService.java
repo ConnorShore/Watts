@@ -1,6 +1,8 @@
 package com.dabloons.wattsapp.service;
 
 
+import android.util.Log;
+
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
@@ -49,7 +51,7 @@ public class PhillipsHueService extends HttpService {
     }
 
     public void getAllLights(Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnCompleteListener(val -> {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, n).addOnCompleteListener(val -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val.getResult();
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
@@ -82,6 +84,11 @@ public class PhillipsHueService extends HttpService {
     }
 
     public void setLightState(Light light, LightState state, Callback callback) {
+        if(light.getIntegrationType() != IntegrationType.PHILLIPS_HUE) {
+            String msg = "Setting light state, integration mismatch";
+            Log.e(LOG_TAG, msg);
+            return;
+        }
         userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
             String accessToken = auth.getAccessToken();

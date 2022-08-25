@@ -22,6 +22,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import util.UIMessageUtil;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 {
@@ -29,6 +31,8 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 
     private Context context;
     public ArrayList<Light> lightModelArrayList;
+
+    private LightManager lightManager = LightManager.getInstance();
 
     public LightAdapter(Context context, ArrayList<Light> lightModelArrayList) {
         this.context = context;
@@ -49,49 +53,28 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         holder.lightName.setText(light.getName());
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
-                LightManager.getInstance().turnOnLight(light, new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e)
-                    {
-//
-                        Log.e(LOG_TAG, e.getMessage());
+                lightManager.turnOnLight(light, (var, status) -> {
+                    if(!status.success) {
+                        Log.e(LOG_TAG, status.message);
+                        UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
+                        return null;
                     }
 
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException
-                    {
-                        if(response.isSuccessful())
-                        {
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
-                        }
-                        else
-                        {
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
-                        }
-                    }
+                    UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
+                    return null;
                 });
             }
             else
             {
-                LightManager.getInstance().turnOffLight(light, new Callback() {
-                    @Override
-                    public void onFailure(@NonNull Call call, @NonNull IOException e)
-                    {
+                lightManager.turnOffLight(light, (var, status) -> {
+                    if(!status.success) {
+                        Log.e(LOG_TAG, status.message);
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
+                        return null;
                     }
 
-                    @Override
-                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException
-                    {
-                        if(response.isSuccessful())
-                        {
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
-                        }
-                        else
-                        {
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
-                        }
-                    }
+                    UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
+                    return null;
                 });
             }
         });

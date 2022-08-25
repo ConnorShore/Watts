@@ -42,14 +42,28 @@ public class UserManager {
         return userRepository.getUserData().continueWith(task -> task.getResult().toObject(User.class)) ;
     }
 
-    public Task<IntegrationAuth> getIntegrationAuthData(IntegrationType type) {
+    public void getIntegrationAuthData(IntegrationType type, WattsCallback<IntegrationAuth, Void> callback) {
         switch(type) {
             case PHILLIPS_HUE:
-                return userAuthRepository.getIntegrationAuth(type)
-                        .continueWith(task -> task.getResult().toObject(PhillipsHueIntegrationAuth.class));
+                userAuthRepository.getIntegrationAuth(type)
+                        .continueWith(task -> task.getResult().toObject(PhillipsHueIntegrationAuth.class))
+                        .addOnCompleteListener(task -> {
+                            callback.apply(task.getResult(), new WattsCallbackStatus(true));
+                        })
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        });
+                break;
             case NANOLEAF:
-            default:
-                return null;
+                userAuthRepository.getIntegrationAuth(type)
+                        .continueWith(task -> task.getResult().toObject(NanoleafPanelAuthCollection.class))
+                        .addOnCompleteListener(task -> {
+                            callback.apply(task.getResult(), new WattsCallbackStatus(true));
+                        })
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        });
+                break;
         }
     }
 

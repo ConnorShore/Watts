@@ -11,41 +11,42 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
 
 import java.util.ArrayList;
 
-public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>{
+public class LightItemAdapter extends RecyclerView.Adapter<LightItemAdapter.Viewholder>{
 
-    private final String LOG_TAG = "LightAdapter";
+    private final String LOG_TAG = "LightItemAdapter";
 
     private Context context;
     public ArrayList<Light> lightModelArrayList;
 
-    public LightAdapter(Context context, ArrayList<Light> lightList) {
+    public LightItemAdapter(Context context, ArrayList<Light> lightList) {
         this.context = context;
         this.lightModelArrayList = lightList;
     }
 
     @NonNull
     @Override
-    public LightAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public LightItemAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout, parent, false);
-        return new LightAdapter.Viewholder(view);
+        return new LightItemAdapter.Viewholder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LightAdapter.Viewholder holder, int position) {
+    public void onBindViewHolder(@NonNull LightItemAdapter.Viewholder holder, int position) {
         Light model = lightModelArrayList.get(position);
         holder.lightName.setText(model.getName());
 
-        holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+        holder.itemView.setBackgroundColor(model.isSelected() ? this.context.getColor(R.color.md_theme_dark_onPrimary) : this.context.getColor(R.color.md_theme_dark_surfaceVariant));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 model.setSelected(!model.isSelected());
-                holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+                holder.itemView.setBackgroundColor(model.isSelected() ? WattsApplication.getAppContext().getColor(R.color.md_theme_dark_onPrimary) : WattsApplication.getAppContext().getColor(R.color.md_theme_dark_surfaceVariant));
             }
         });
     }

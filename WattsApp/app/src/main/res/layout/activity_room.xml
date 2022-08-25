@@ -12,7 +12,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/topAppBar"
+        android:id="@+id/topAppBarRoomActivity"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:title="Room Name"
@@ -29,6 +29,13 @@
         android:gravity="bottom"
         android:orientation="vertical"
         android:layout_weight="3">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/roomLightRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/light_card_offset"
+            android:orientation="horizontal"/>
 
 
     </LinearLayout>

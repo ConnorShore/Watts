@@ -81,14 +81,17 @@ public class PhillipsHueService extends HttpService {
         });
     }
 
-    public void turnOnLight(Light light, Callback callback) {
+    public void setLightState(Light light, LightState state, Callback callback) {
         userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
+
             JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty("on", true);
+            jsonObj.addProperty("on", state.on);
+            jsonObj.addProperty("bri", state.getPhillipsHueBrightness());
+            // Todo: Add color, brightness, etc
             RequestBody body = createRequestBody(jsonObj);
 
             String url = username + "/lights/" + light.getIntegrationId() + "/state";
@@ -112,11 +115,9 @@ public class PhillipsHueService extends HttpService {
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
-            int brightness = (int)(state.brightness * 254.0f);
-
             JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("on", state.on);
-            jsonObj.addProperty("bri", brightness);
+            jsonObj.addProperty("bri", state.getPhillipsHueBrightness());
             RequestBody body = createRequestBody(jsonObj);
 
             String url = username + "/groups/" + room.getIntegrationId() + "/action";

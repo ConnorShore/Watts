@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".ui.RoomActivity"
+            android:name=".ui.main.room.RoomActivity"
             android:exported="true" />
         <activity
             android:name=".manager.auth.callback.OnFailureActivity"

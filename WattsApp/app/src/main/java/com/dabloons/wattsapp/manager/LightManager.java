@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
@@ -40,12 +41,26 @@ public class LightManager {
 
     public void turnOnLight(Light light, Callback callback) {
         IntegrationType type = light.getIntegrationType();
+        LightState state = new LightState(true, 1.0f);
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
                 phillipsHueService.turnOnLight(light, callback);
                 break;
             case NANOLEAF:
 //                nanoleafService.turnOnLight(light, callback);
+                break;
+            default:
+                Log.w(LOG_TAG, "There is no light manager for integration type " + type);
+                break;
+        }
+    }
+
+    public void turnOffLight(Light light, Callback callback) {
+        IntegrationType type = light.getIntegrationType();
+        LightState state = new LightState(false, 0.0f);
+        switch(light.getIntegrationType()) {
+            case PHILLIPS_HUE:
+                PhillipsHueService.getInstance().setLightState(light, state, callback);
                 break;
             default:
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);

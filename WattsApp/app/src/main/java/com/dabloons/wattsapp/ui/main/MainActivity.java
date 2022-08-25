@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.databinding.ActivityMainBinding;
@@ -38,6 +40,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements N
         homeFragment = new HomeFragment();
         connectFragment = new ConnectFragment();
         accountFragment = new AccountFragment();
+
 
         bottomMenu = findViewById(R.id.bottom_navigation);
 

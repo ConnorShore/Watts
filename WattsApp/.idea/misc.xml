@@ -15,15 +15,15 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_oauth_failure.xml" value="0.1956521739130435" />
         <entry key="app/src/main/res/layout/activity_oauth_success.xml" value="0.1956521739130435" />
-        <entry key="app/src/main/res/layout/activity_room.xml" value="0.10006713867187499" />
+        <entry key="app/src/main/res/layout/activity_room.xml" value="0.2828018188476563" />
         <entry key="app/src/main/res/layout/add_light_to_room.xml" value="0.1" />
         <entry key="app/src/main/res/layout/add_room_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_room_dialog_test.xml" value="0.10648148148148148" />
         <entry key="app/src/main/res/layout/card_layout.xml" value="0.4101470947265625" />
         <entry key="app/src/main/res/layout/fragment_account.xml" value="0.1956521739130435" />
         <entry key="app/src/main/res/layout/fragment_add_room.xml" value="0.10648148148148148" />
-        <entry key="app/src/main/res/layout/fragment_connect.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_connect.xml" value="0.28713226318359364" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.37484893798828123" />
         <entry key="app/src/main/res/layout/fragment_integration.xml" value="0.3287582397460938" />
         <entry key="app/src/main/res/layout/fragment_test.xml" value="0.1956521739130435" />
         <entry key="app/src/main/res/layout/integration_card_layout.xml" value="0.1" />

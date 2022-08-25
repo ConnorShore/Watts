@@ -111,35 +111,26 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
         alertDialogBuilder.setView(customDialogView)
                 .setTitle("Add Room")
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String name = roomName.getEditText().getText().toString();
-                        Room newRoom = RoomManager.getInstance().createRoom(name);
-                        List<Light> lightsToAdd =  new ArrayList<>();
-                        for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
-                            Light currLight = mLightItemAdapter.lightModelArrayList.get(i);
-                            if(currLight.isSelected()) {
-                                lightsToAdd.add(currLight);
-                            }
+                .setPositiveButton("Add", (dialog, which) -> {
+                    String name = roomName.getEditText().getText().toString();
+                    Room newRoom = RoomManager.getInstance().createRoom(name);
+                    List<Light> lightsToAdd =  new ArrayList<>();
+                    for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
+                        Light currLight = mLightItemAdapter.lightModelArrayList.get(i);
+                        if(currLight.isSelected()) {
+                            lightsToAdd.add(currLight);
                         }
-                        RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, new WattsCallback<Void, Void>() {
-                            @Override
-                            public Void apply(Void var, WattsCallbackStatus success) {
-                                roomAdapter.getRoomList().add(newRoom);
-                                updateUI(true);
-                                dialog.dismiss();
-                                return null;
-                            }
-                        });
-
                     }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, (var, success) -> {
+                        roomAdapter.getRoomList().add(newRoom);
+                        updateUI(true);
                         dialog.dismiss();
-                    }
+                        return null;
+                    });
+
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.dismiss();
                 })
                 .show();
     }

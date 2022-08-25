@@ -1,10 +1,13 @@
 package com.dabloons.wattsapp.manager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.User;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
@@ -14,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.List;
 
 import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class UserManager {
 
@@ -46,6 +50,39 @@ public class UserManager {
             case NANOLEAF:
             default:
                 return null;
+        }
+    }
+
+    public void addIntegrationAuthData(IntegrationType type, IntegrationAuth authData, WattsCallback<Void, Void> callback) {
+        switch(type) {
+            case PHILLIPS_HUE:
+                PhillipsHueIntegrationAuth phAuthData = (PhillipsHueIntegrationAuth) authData;
+                userAuthRepository.addPhillipsHueIntegrationToUser(phAuthData)
+                        .addOnCompleteListener(task -> {
+                            if(task.isComplete())
+                                callback.apply(null, new WattsCallbackStatus(true));
+                            else
+                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: " + type));
+                        })
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        });
+                break;
+            case NANOLEAF:
+                NanoleafPanelAuthCollection nAuth = (NanoleafPanelAuthCollection) authData;
+                userAuthRepository.addNanoleafIntegrationToUser(nAuth)
+                        .addOnCompleteListener(task -> {
+                            if(task.isComplete())
+                                callback.apply(null, new WattsCallbackStatus(true));
+                            else
+                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: " + type));
+                        })
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        });
+                break;
+            default:
+                Log.e(LOG_TAG, "No integration exists to add: " + type);
         }
     }
 

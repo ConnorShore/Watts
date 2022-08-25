@@ -1,8 +1,6 @@
-package com.dabloons.wattsapp.ui.main.room;
+package com.dabloons.wattsapp.ui.room.adapters;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.LightManager;
-import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
-import com.dabloons.wattsapp.model.Room;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.IOException;

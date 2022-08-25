@@ -31,4 +31,5 @@
     <string name="field_username">username</string>
     <string name="field_lights">lights</string>
     <string name="field_integrationId">integrationId</string>
+    <string name="field_integration_type">integrationType</string>
 </resources>

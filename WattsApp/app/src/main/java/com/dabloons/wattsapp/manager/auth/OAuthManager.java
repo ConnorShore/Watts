@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.auth.callback.OnFailureActivity;
 import com.dabloons.wattsapp.manager.auth.callback.OnSuccessActivity;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
@@ -41,7 +42,7 @@ public abstract class OAuthManager {
         authState = new AuthState(serviceConfig);
     }
 
-    public void aquireAuthorizationCode(Context context) {
+    public void aquireAuthorizationCode() {
         OAuthConnectionManager.getInstance().startConnection(getIntegrationType());
 
         AuthorizationRequest.Builder authRequestBuilder =
@@ -52,6 +53,7 @@ public abstract class OAuthManager {
                         getRedirectUri()); // the redirect URI to which the auth response is sent
 
         AuthorizationRequest authRequest = authRequestBuilder.build();
+        Context context = WattsApplication.getAppContext();
 
         authService = new AuthorizationService(context);
         authService.performAuthorizationRequest(

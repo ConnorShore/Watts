@@ -57,6 +57,11 @@ public abstract class HttpService {
         return RequestBody.create(MediaType.parse(MEDIA_TYPE), json);
     }
 
+    protected RequestBody createEmptyRequestBody() {
+        String body = "";
+        return RequestBody.create(MediaType.parse(MEDIA_TYPE), body);
+    }
+
     private Request.Builder buildRequest(String path, RequestType requestType, RequestBody body, Map<String, String> headers) {
         String url = this.baseUrl + path;
 

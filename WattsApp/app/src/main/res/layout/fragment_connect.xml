@@ -22,4 +22,14 @@
         android:layout_gravity="bottom"
         android:layout_margin="50dp"
         android:text="Conenct to Phillips Hue" />
+
+
+    <Button
+        android:id="@+id/button_connect_nanoleaf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="50dp"
+        android:text="Conenct to Nanoleaf" />
+
 </LinearLayout>

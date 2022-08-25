@@ -1,4 +1,4 @@
-package com.dabloons.wattsapp.ui.main.room;
+package com.dabloons.wattsapp.ui.room;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -13,6 +13,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
+import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
@@ -48,7 +49,6 @@ public class RoomActivity extends AppCompatActivity {
             toolbar.setTitle(currentRoom.getName());
         }
 
-        this.setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,12 +66,9 @@ public class RoomActivity extends AppCompatActivity {
 
 
         deleteRoomBtn.setOnClickListener(v -> {
-            RoomManager.getInstance().deleteRoom(currentRoom.getUid(), new WattsCallback<Void, Void>() {
-                @Override
-                public Void apply(Void var, WattsCallbackStatus status) {
-                    finish();
-                    return null;
-                }
+            RoomManager.getInstance().deleteRoom(currentRoom.getUid(), (var, status) -> {
+                finish();
+                return null;
             });
 
         });

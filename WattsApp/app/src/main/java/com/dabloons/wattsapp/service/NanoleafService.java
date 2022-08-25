@@ -1,9 +1,15 @@
 package com.dabloons.wattsapp.service;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -21,7 +27,11 @@ import util.WattsCallbackStatus;
 
 public class NanoleafService extends HttpService {
 
+    private final String LOG_TAG = "NanoleafService";
+
     private static volatile NanoleafService instance;
+
+    private UserManager userManager = UserManager.getInstance();
 
     private NanoleafService() { super(); }
 
@@ -51,8 +61,28 @@ public class NanoleafService extends HttpService {
         });
     }
 
-    public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
-        //TODO: Need to get baseURL from NanoleafAuth based on light's integrationID
+    public void setLightState(Light light, LightState state, Callback callback) {
+        if(light.getIntegrationType() != IntegrationType.NANOLEAF) {
+            String msg = "Setting light state, integration mismatch";
+            Log.e(LOG_TAG, msg);
+            return;
+        }
+
+        userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
+            NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
+            NanoleafPanelIntegrationAuth panel = collection.findNanoleafPanelAuthForLight(light);
+            setBaseUrl(panel.getBaseUrl());
+            String path = String.format("%s/state", panel.getAuthToken());
+
+            JsonObject bodyObj = new JsonObject();
+            JsonObject value = new JsonObject();
+            value.addProperty("value", state.on);
+            bodyObj.add("on", value);
+            RequestBody body = createRequestBody(bodyObj);
+
+            makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);
+            return null;
+        });
     }
 
     private Map<String, String> getStandardHeaders() {

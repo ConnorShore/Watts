@@ -3,6 +3,8 @@ package com.dabloons.wattsapp.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.dabloons.wattsapp.model.integration.IntegrationType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,15 @@ public class Room implements Parcelable {
             return new Room[size];
         }
     };
+
+    public List<Light> getLightOfIntegration(IntegrationType type) {
+        List<Light> ret = new ArrayList<>();
+        for(Light l : lights) {
+            if(l.getIntegrationType() == type)
+                ret.add(l);
+        }
+        return ret;
+    }
 
     public void addLight(Light light) {
         this.lights.add(light);

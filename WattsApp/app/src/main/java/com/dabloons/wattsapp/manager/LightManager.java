@@ -39,28 +39,46 @@ public class LightManager {
     private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
     private NanoleafService nanoleafService = NanoleafService.getInstance();
 
-    public void turnOnLight(Light light, Callback callback) {
-        IntegrationType type = light.getIntegrationType();
+    public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
         LightState state = new LightState(true, 1.0f);
-        switch(light.getIntegrationType()) {
-            case PHILLIPS_HUE:
-                phillipsHueService.setLightState(light, state, callback);
-                break;
-            case NANOLEAF:
-//                nanoleafService.setLightState(light, state, callback);
-                break;
-            default:
-                Log.w(LOG_TAG, "There is no light manager for integration type " + type);
-                break;
-        }
+        setLightState(light, state, callback);
     }
 
-    public void turnOffLight(Light light, Callback callback) {
-        IntegrationType type = light.getIntegrationType();
+    public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
         LightState state = new LightState(false, 0.0f);
+        setLightState(light, state, callback);
+    }
+
+    private void setLightState(Light light, LightState state, WattsCallback<Void, Void> callback) {
+        IntegrationType type = light.getIntegrationType();
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
-                PhillipsHueService.getInstance().setLightState(light, state, callback);
+                phillipsHueService.setLightState(light, state, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                        callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    }
+                });
+                break;
+            case NANOLEAF:
+                nanoleafService.setLightState(light, state, new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                        callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    }
+                });
                 break;
             default:
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);
@@ -198,7 +216,7 @@ public class LightManager {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         List<Light> ret = new ArrayList<>();
         for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
-            Light light = new Light(userId, auth.getName(), auth.getName(), IntegrationType.NANOLEAF);
+            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF);
             ret.add(light);
         }
         return ret;

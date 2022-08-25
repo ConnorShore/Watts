@@ -17,7 +17,7 @@ public abstract class HttpService {
 
     private final String LOG_TAG = "HttpService";
 
-    private final String MEDIA_TYPE = "application/json; charset=utf-16";
+    private final String MEDIA_TYPE = "application/json";
 
 
     public enum RequestType {

@@ -46,26 +46,30 @@ public class NanoleafAuthManager {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                nsdServiceUtil.removeDiscoveryCallback(NANOLEAF_MDNS_SERVICE);
-                nsdServiceUtil.safeEndNetworkDiscovery((ended, status1) -> {
+                nsdServiceUtil.safeEndNetworkDiscovery((ended, status) -> {
                     if(!ended)
                         Log.e(LOG_TAG, "Failed to end network discovery after nanoleaf connection");
                     else
                         Log.d(LOG_TAG, "Successfully ended network discovery after nanoleaf connection");
 
-                    getAuthTokenForProps(nanoleafPanelConnections, 0, (auths, status) -> {
-                        if(!status.success) {
-                            Log.e(LOG_TAG, status.message);
-                            return null;
-                        }
+                    nsdServiceUtil.waitForAllServicesToResolve((var, status1) -> {
+                        getAuthTokenForProps(nanoleafPanelConnections, 0, (auths, status2) -> {
+                            if(!status2.success) {
+                                Log.e(LOG_TAG, status1.message);
+                                return null;
+                            }
 
-                        saveNanoleafPanelAuthsToDB(auths);
+                            saveNanoleafPanelAuthsToDB(auths);
+                            return null;
+                        });
+
                         return null;
                     });
+
                     return null;
                 });
             }
-        }, 6000);
+        }, 5000);
 
         // Start to discover panels
         this.nsdServiceUtil.discoverService(NANOLEAF_MDNS_SERVICE, (service, status) -> {
@@ -86,7 +90,7 @@ public class NanoleafAuthManager {
             return;
         }
 
-        NanoleafPanelIntegrationAuth auth = authProps.get(0);
+        NanoleafPanelIntegrationAuth auth = authProps.get(index);
         nanoleafService.addNanoleafUser(auth, (authToken, status) -> {
             if(!status.success)
                 Log.e(LOG_TAG, status.message);
@@ -114,7 +118,7 @@ public class NanoleafAuthManager {
                     return null;
                 }
 
-                String message = String.format("Successfully added %s nanoleaf panels", panelAuths.size());
+                String message = String.format("Successfully added %s nanoleaf panels", finalAuths.size());
                 UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), message);
                 return null;
             });

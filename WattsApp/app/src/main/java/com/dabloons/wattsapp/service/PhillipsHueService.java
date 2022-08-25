@@ -1,12 +1,15 @@
 package com.dabloons.wattsapp.service;
 
 
+import android.util.Log;
+
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.Room;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.google.gson.JsonArray;
@@ -18,6 +21,8 @@ import java.util.Map;
 
 import okhttp3.Callback;
 import okhttp3.RequestBody;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class PhillipsHueService extends HttpService {
 
@@ -49,19 +54,20 @@ public class PhillipsHueService extends HttpService {
     }
 
     public void getAllLights(Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnCompleteListener(val -> {
-            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val.getResult();
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
             String url = username + "/lights";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+            return null;
         });
     }
 
     public void createGroupWithLights(Room room, Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnCompleteListener(val -> {
-            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val.getResult();
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
@@ -78,11 +84,17 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/groups";
             makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
+            return null;
         });
     }
 
     public void setLightState(Light light, LightState state, Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
+        if(light.getIntegrationType() != IntegrationType.PHILLIPS_HUE) {
+            String msg = "Setting light state, integration mismatch";
+            Log.e(LOG_TAG, msg);
+            return;
+        }
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (val, status) -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
@@ -96,6 +108,7 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/lights/" + light.getIntegrationId() + "/state";
             makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+            return null;
         });
     }
 
@@ -110,8 +123,8 @@ public class PhillipsHueService extends HttpService {
             return;
         }
 
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE).addOnSuccessListener(val -> {
-            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)val;
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
@@ -122,6 +135,7 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/groups/" + room.getIntegrationId() + "/action";
             makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+            return null;
         });
     }
 

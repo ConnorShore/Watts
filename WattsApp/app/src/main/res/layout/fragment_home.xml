@@ -34,7 +34,7 @@
             android:layout_gravity="bottom"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/purple_200"
+            android:backgroundTint="?colorPrimaryInverse"
             android:text="Add Room"
             app:icon="@drawable/ic_add_48px"
             app:layout_constraintBottom_toBottomOf="parent"

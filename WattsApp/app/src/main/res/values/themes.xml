@@ -28,5 +28,7 @@
         <item name="colorPrimaryContainer">@color/md_theme_dark_primaryContainer</item>
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>
+
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryInverse</item>
     </style>
 </resources>

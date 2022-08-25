@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="@color/md_theme_light_onSurface"
+    app:cardBackgroundColor="?colorSurfaceVariant"
     android:clickable="true"
     android:focusable="true"
     android:checkable="true"

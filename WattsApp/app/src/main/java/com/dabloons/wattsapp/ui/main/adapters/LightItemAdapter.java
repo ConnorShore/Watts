@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
 
 import java.util.ArrayList;
@@ -39,13 +40,13 @@ public class LightItemAdapter extends RecyclerView.Adapter<LightItemAdapter.View
         Light model = lightModelArrayList.get(position);
         holder.lightName.setText(model.getName());
 
-        holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+        holder.itemView.setBackgroundColor(model.isSelected() ? this.context.getColor(R.color.md_theme_dark_onPrimary) : this.context.getColor(R.color.md_theme_dark_surfaceVariant));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 model.setSelected(!model.isSelected());
-                holder.itemView.setBackgroundColor(model.isSelected() ? Color.CYAN : Color.WHITE);
+                holder.itemView.setBackgroundColor(model.isSelected() ? WattsApplication.getAppContext().getColor(R.color.md_theme_dark_onPrimary) : WattsApplication.getAppContext().getColor(R.color.md_theme_dark_surfaceVariant));
             }
         });
     }

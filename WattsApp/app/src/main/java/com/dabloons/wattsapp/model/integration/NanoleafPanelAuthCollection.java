@@ -20,6 +20,10 @@ public class NanoleafPanelAuthCollection extends IntegrationAuth {
         this.panelAuths = panelAuths;
     }
 
+    public NanoleafPanelAuthCollection() {
+        super();
+    }
+
     public void addNanoleafPanelAuth(NanoleafPanelIntegrationAuth auth) {
         this.panelAuths.add(auth);
     }

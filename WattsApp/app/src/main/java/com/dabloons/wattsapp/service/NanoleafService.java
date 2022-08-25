@@ -62,7 +62,7 @@ public class NanoleafService extends HttpService {
     }
 
     public void setLightState(Light light, LightState state, Callback callback) {
-        if(light.getIntegrationType() != IntegrationType.PHILLIPS_HUE) {
+        if(light.getIntegrationType() != IntegrationType.NANOLEAF) {
             String msg = "Setting light state, integration mismatch";
             Log.e(LOG_TAG, msg);
             return;
@@ -71,7 +71,7 @@ public class NanoleafService extends HttpService {
         userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
             NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
             NanoleafPanelIntegrationAuth panel = collection.findNanoleafPanelAuthForLight(light);
-            setBaseUrl();
+            setBaseUrl(panel.getBaseUrl());
             String path = String.format("%s/state", panel.getAuthToken());
 
             JsonObject bodyObj = new JsonObject();

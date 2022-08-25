@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +23,9 @@ import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.repository.RoomRepository;
-import com.dabloons.wattsapp.ui.RoomActivity;
-import com.dabloons.wattsapp.ui.main.MainActivity;
+import com.dabloons.wattsapp.ui.main.room.RoomActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
-import com.dabloons.wattsapp.ui.main.adapters.LightAdapter;
+import com.dabloons.wattsapp.ui.main.adapters.LightItemAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
@@ -52,7 +50,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     // Arraylist for storing data
     private ArrayList<Room> roomModelList;
     private RoomAdapter roomAdapter;
-    private LightAdapter lightAdapter;
+    private LightItemAdapter mLightItemAdapter;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -103,9 +101,9 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
         LightManager.getInstance().getLights((lights, success) -> {
             LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
-            lightAdapter = new LightAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) lights);
+            mLightItemAdapter = new LightItemAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) lights);
             lightRV.setLayoutManager(linearLayoutManager1);
-            lightRV.setAdapter(lightAdapter);
+            lightRV.setAdapter(mLightItemAdapter);
             roomAdapter.setClickListener(HomeFragment.this::onClick);
             return null;
         });
@@ -118,8 +116,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         String name = roomName.getEditText().getText().toString();
                         Room newRoom = RoomManager.getInstance().createRoom(name);
                         List<Light> lightsToAdd =  new ArrayList<>();
-                        for(int i = 0; i < lightAdapter.getItemCount(); i++) {
-                            Light currLight = lightAdapter.lightModelArrayList.get(i);
+                        for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
+                            Light currLight = mLightItemAdapter.lightModelArrayList.get(i);
                             if(currLight.isSelected()) {
                                 lightsToAdd.add(currLight);
                             }

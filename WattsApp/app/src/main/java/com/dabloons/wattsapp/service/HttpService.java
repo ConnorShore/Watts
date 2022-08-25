@@ -2,6 +2,7 @@ package com.dabloons.wattsapp.service;
 
 import android.util.Log;
 
+import com.dabloons.wattsapp.model.Light;
 import com.google.gson.JsonObject;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ public abstract class HttpService {
     private final String LOG_TAG = "HttpService";
 
     private final String MEDIA_TYPE = "application/json; charset=utf-16";
+
 
     public enum RequestType {
         POST,

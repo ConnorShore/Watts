@@ -1,6 +1,8 @@
 package util;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.viewbinding.ViewBinding;
@@ -15,7 +17,8 @@ public class UIMessageUtil {
      * @param message Message to display
      */
     public static void showShortToastMessage(Context context, String message){
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -24,6 +27,6 @@ public class UIMessageUtil {
      * @param message Message to display
      */
     public static void showLongToastMessage(Context context, String message){
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 }

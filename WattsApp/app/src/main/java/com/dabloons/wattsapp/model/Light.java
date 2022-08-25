@@ -33,6 +33,7 @@ public class Light implements Parcelable {
         userId = in.readString();
         name = in.readString();
         integrationId = in.readString();
+        integrationType = IntegrationType.valueOf(in.readString());
         isSelected = in.readByte() != 0;
     }
 
@@ -104,6 +105,7 @@ public class Light implements Parcelable {
         dest.writeString(userId);
         dest.writeString(name);
         dest.writeString(integrationId);
+        dest.writeString(integrationType.name());
         dest.writeByte((byte) (isSelected ? 1 : 0));
     }
 }

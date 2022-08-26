@@ -55,9 +55,9 @@ public class RoomManager
         }
     }
 
-    public Room createRoom(String roomName)
+    public void createRoom(String roomName, WattsCallback<Room, Void> callback)
     {
-        return roomRepository.createRoom(roomName);
+        roomRepository.createRoom(roomName, callback);
     }
 
     public void addLightsToRoom(Room room, List<Light> lights, WattsCallback<Void, Void> callback) {

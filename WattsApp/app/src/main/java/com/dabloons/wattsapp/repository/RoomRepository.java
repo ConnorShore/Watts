@@ -8,6 +8,7 @@ import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -38,15 +39,19 @@ public final class RoomRepository {
     private RoomRepository() { }
 
     // Create Room in Firestore
-    public Room createRoom(String roomName) {
+    public void createRoom(String roomName, WattsCallback<Room, Void> callback) {
         UUID uuid = UUID.randomUUID();
         String uid = uuid.toString();
+
         Room roomToCreate = new Room(uid, userManager.getCurrentUser().getUid(), roomName);
 
         CollectionReference roomCollection = getRoomCollection();
-        roomCollection.document(uid).set(roomToCreate);
-
-        return roomToCreate;
+        roomCollection.document(uid).set(roomToCreate).addOnCompleteListener(task -> {
+            if(task.isComplete())
+                callback.apply(roomToCreate, new WattsCallbackStatus(true));
+            else
+                callback.apply(roomToCreate, new WattsCallbackStatus(false, "Failed to add room."));
+        }).addOnFailureListener(e -> callback.apply(roomToCreate, new WattsCallbackStatus(false, e.getMessage())));
 
     }
 

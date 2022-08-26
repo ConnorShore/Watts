@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="5dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_height="110dp"
+        android:layout_width="220dp"
+        android:clickable="true"
+        android:elevation="10dp"
+        android:backgroundTint="@color/md_theme_dark_onSecondary"
+        android:focusable="true"
+        android:checkable="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/sceneName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="PLACE_HOLDER"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <Button
+                    style="@style/Widget.Material3.Button.IconButton"
+                    android:id="@+id/set_scene"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:backgroundTint="@color/md_theme_dark_inversePrimary"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginTop="1dp"
+                    app:icon="@drawable/ic_power_settings_new_24px"
+                    android:textSize="10sp"
+                    />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

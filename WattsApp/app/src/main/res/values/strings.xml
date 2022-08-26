@@ -21,6 +21,7 @@
     <string name="collection_auth">auth</string>
     <string name="collection_lights">lights</string>
     <string name="collection_rooms">rooms</string>
+    <string name="collection_scenes">scenes</string>
 
     <!-- REPOSITORY DOCUMENTS -->
     <string name="document_phillips_hue">phillips_hue</string>
@@ -30,6 +31,7 @@
     <string name="field_userId">userId</string>
     <string name="field_username">username</string>
     <string name="field_lights">lights</string>
+    <string name="field_scenes">scenes</string>
     <string name="field_integrationId">integrationId</string>
     <string name="field_integration_type">integrationType</string>
     <string name="connect_to_integration">Connect</string>

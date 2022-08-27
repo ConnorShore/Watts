@@ -53,13 +53,10 @@ public class RoomActivity extends AppCompatActivity {
         addSceneBtn = findViewById(R.id.addSceneBtn);
         toolbar = findViewById(R.id.topAppBarRoomActivity);
 
-
-
-
         Bundle extras = getIntent().getExtras();
+
         if(extras != null) {
             currentRoom = extras.getParcelable("room");
-
             toolbar.setTitle(currentRoom.getName());
         }
 
@@ -74,6 +71,8 @@ public class RoomActivity extends AppCompatActivity {
         lightRV.setAdapter(lightAdapter);
         lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
 
+        initializeListeners();
+
         SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
             sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), (ArrayList<Scene>) scenes);
@@ -84,6 +83,11 @@ public class RoomActivity extends AppCompatActivity {
             sceneRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
             return null;
         });
+
+    }
+
+    private void initializeListeners() {
+
 
         addSceneBtn.setOnClickListener(new View.OnClickListener() {
             @Override

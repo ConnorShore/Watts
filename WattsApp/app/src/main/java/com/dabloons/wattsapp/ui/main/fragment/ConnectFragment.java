@@ -123,6 +123,7 @@ public class ConnectFragment extends Fragment {
                 switch(item.getTitle().toString()) {
                     case "Phillips Hue":
                         phillipsHueOAuthManager.aquireAuthorizationCode();
+                        break;
 
                     case "Nanoleaf":
                         devicesDiscoveredCt = 0;
@@ -150,8 +151,10 @@ public class ConnectFragment extends Fragment {
                                 })
                                 .setNegativeButton("No", null)
                                 .show();
+                        break;
                     default:
                         Log.w(LOG_TAG, "Integration not found.");
+                        break;
                 }
 
                 return false;

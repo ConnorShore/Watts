@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         Room newRoom = room;
                         List<Light> lightsToAdd =  new ArrayList<>();
                         for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
-                            Light currLight = mLightItemAdapter.lightModelArrayList.get(i);
+                            Light currLight = (Light) mLightItemAdapter.lightItems.get(i);
                             if(currLight.isSelected()) {
                                 lightsToAdd.add(currLight);
                             }

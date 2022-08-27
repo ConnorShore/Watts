@@ -64,7 +64,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
                         return null;
                     }
-//                    new Handler(Looper.getMainLooper()).post(() -> holder.itemView.setBackground(WattsApplication.getAppContext().getDrawable(R.drawable.custom_shadow)));
+
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
                     return null;
                 });
@@ -78,7 +78,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
                         return null;
                     }
-//                    new Handler(Looper.getMainLooper()).post(() -> holder.itemView.setBackground(null));
+
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                     return null;
                 });

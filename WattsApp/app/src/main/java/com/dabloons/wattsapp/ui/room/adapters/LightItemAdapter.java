@@ -30,7 +30,7 @@ public class LightItemAdapter extends RecyclerView.Adapter<LightItemAdapter.View
     @NonNull
     @Override
     public LightItemAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.light_list_layout, parent, false);
         return new LightItemAdapter.Viewholder(view);
     }
 

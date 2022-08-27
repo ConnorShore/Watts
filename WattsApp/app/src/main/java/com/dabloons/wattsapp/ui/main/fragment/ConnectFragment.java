@@ -33,12 +33,14 @@ import com.dabloons.wattsapp.model.NetworkService;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
+import com.dabloons.wattsapp.ui.main.adapters.DiscoveredLightsAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.IntegrationAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -56,12 +58,17 @@ public class ConnectFragment extends Fragment {
     private TextView devicesFoundTextView;
 
     private IntegrationAdapter integrationAdapter;
+    private RecyclerView integrationRV;
+
+    private DiscoveredLightsAdapter discoveredLightsAdapter;
     private RecyclerView discoveredLightsRV;
 
     private AlertDialog popupDialog;
     private MaterialAlertDialogBuilder popupDialogBuilder;
+
     private View discoveryView;
     private View selectLightsView;
+    private View loadingView;
 
     private int devicesDiscoveredCt;
 
@@ -92,12 +99,10 @@ public class ConnectFragment extends Fragment {
                 syncLightsBtn.setClickable(false);
 
             integrationAdapter = new IntegrationAdapter(WattsApplication.getAppContext(), (ArrayList<IntegrationType>) integration);
-
-
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
-            discoveredLightsRV = result.findViewById(R.id.integration_RV);
-            discoveredLightsRV.setLayoutManager(linearLayoutManager);
-            discoveredLightsRV.setAdapter(integrationAdapter);
+            integrationRV = result.findViewById(R.id.integration_RV);
+            integrationRV.setLayoutManager(linearLayoutManager);
+            integrationRV.setAdapter(integrationAdapter);
 
             return null;
         });
@@ -126,18 +131,20 @@ public class ConnectFragment extends Fragment {
                                 .setPositiveButton("Yes", (dialogInterface, i) -> {
                                     nanoleafAuthManager.discoverNanoleafPanelsOnNetwork(
                                             (var, status) -> {
+                                                // On device found callback
                                                 if(status.success)
                                                     updateDevicesFoundCount(++devicesDiscoveredCt);
                                                 else
                                                     Log.e(LOG_TAG, "Issue discovering device: " + status.message);
                                                 return null;
                                             },
-                                            new WattsCallback<List<NanoleafPanelIntegrationAuth>, Void>() {
-                                                @Override
-                                                public Void apply(List<NanoleafPanelIntegrationAuth> panels, WattsCallbackStatus status) {
-                                                    setPopupView(selectLightsView);
-                                                    return null;
-                                                }
+                                            (panels, status) -> {
+                                                // On finished discovering devices callback
+                                                devicesDiscoveredCt = 0;
+                                                updateDevicesFoundCount(0);
+                                                setLightsForSelection(panels);
+                                                setSelectLightsView();
+                                                return null;
                                             });
                                     launchPopupWindow();
                                 })
@@ -155,20 +162,31 @@ public class ConnectFragment extends Fragment {
     }
 
     private void launchPopupWindow() {
-        discoveryView = LayoutInflater.from(this.getContext()).inflate(R.layout.discover_devices, null);
-        selectLightsView = LayoutInflater.from(this.getContext()).inflate(R.layout.select_discovered_lights, null);
-        devicesFoundTextView = discoveryView.findViewById(R.id.devices_found_txt);
-
+        initializePopupItems();
         popupDialogBuilder.setView(discoveryView)
                 .setTitle("Discover Lights")
                 .setNegativeButton("Cancel", (dialog, which) -> {
+                    // stop discovering lights
+                    nanoleafAuthManager.cancelDiscovery();
                     dialog.dismiss();
                 });
 
-
         popupDialog = popupDialogBuilder.create();
-//        dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
         popupDialog.show();
+    }
+
+    private void initializePopupItems() {
+        loadingView = LayoutInflater.from(this.getContext()).inflate(R.layout.loading_layout, null);
+        discoveryView = LayoutInflater.from(this.getContext()).inflate(R.layout.discover_devices, null);
+        selectLightsView = LayoutInflater.from(this.getContext()).inflate(R.layout.select_discovered_lights, null);
+
+        devicesFoundTextView = discoveryView.findViewById(R.id.devices_found_txt);
+        discoveredLightsAdapter = new DiscoveredLightsAdapter(this.getContext(), new ArrayList<>());
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+        discoveredLightsRV = selectLightsView.findViewById(R.id.discoveredLightsRV);
+        discoveredLightsRV.setLayoutManager(linearLayoutManager);
+        discoveredLightsRV.setAdapter(discoveredLightsAdapter);
     }
 
     private void updateDevicesFoundCount(int newCt) {
@@ -176,8 +194,53 @@ public class ConnectFragment extends Fragment {
         devicesFoundTextView.setText(text);
     }
 
-    private void setPopupView(View view) {
-        new Handler(Looper.getMainLooper()).post(() -> popupDialogBuilder.setView(view).show());
+    private void setLoadingView() {
+        closePopupWindow();
+        new Handler(Looper.getMainLooper()).post(() -> {
+            TextView loadingTxt = loadingView.findViewById(R.id.loading_text);
+            loadingTxt.setText("Adding devices...");
+            popupDialogBuilder.setView(loadingView)
+                    .setPositiveButton("", null)
+                    .setNegativeButton("", null);
+
+            popupDialog = popupDialogBuilder.create();
+            popupDialog.show();
+        });
+    }
+
+    private void setSelectLightsView() {
+        closePopupWindow();
+        new Handler(Looper.getMainLooper()).post(() -> {
+            popupDialogBuilder.setView(selectLightsView)
+                .setTitle("Select Lights To Add")
+                .setPositiveButton("Confirm", (dialogInterface, i) ->  {
+                    confirmLights();
+                });
+
+            popupDialog = popupDialogBuilder.create();
+            popupDialog.show();
+        });
+    }
+
+    private void confirmLights() {
+        setLoadingView();
+        List<NanoleafPanelIntegrationAuth> lights = discoveredLightsAdapter.getSelectedLights();
+        nanoleafAuthManager.connectToPanels(lights, (numLights, status) -> {
+            if(status.success) {
+                String message = String.format("Successfully added %s Nanoleaf panels", numLights);
+                UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), message);
+            } else {
+                UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), "Failed to add panels");
+                Log.e(LOG_TAG, status.message);
+            }
+
+            closePopupWindow();
+            return null;
+        });
+    }
+
+    private void setLightsForSelection(List<NanoleafPanelIntegrationAuth> panels) {
+        discoveredLightsAdapter.setLights(panels);
     }
 
     private void closePopupWindow() {

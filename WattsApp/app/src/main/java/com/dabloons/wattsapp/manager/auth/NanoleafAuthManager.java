@@ -36,6 +36,8 @@ public class NanoleafAuthManager {
     private final String NANOLEAF_MDNS_SERVICE = "_nanoleafapi._tcp.";
     private final String URL_FORMAT = "http://%s:%s/api/v1/";
 
+    private final int DISCOVERY_SEARCH_TIME_MILLISECONDS = 4000;
+
     public NanoleafAuthManager() {
 
     }
@@ -66,7 +68,7 @@ public class NanoleafAuthManager {
                     return null;
                 });
             }
-        }, 5000);
+        }, DISCOVERY_SEARCH_TIME_MILLISECONDS);
 
         // Start to discover panels
         this.nsdServiceUtil.discoverService(NANOLEAF_MDNS_SERVICE, (service, status) -> {
@@ -82,7 +84,12 @@ public class NanoleafAuthManager {
         });
     }
 
-    public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Void, Void> callback) {
+
+    public void cancelDiscovery() {
+        nsdServiceUtil.forceEndNetworkDiscovery();
+    }
+
+    public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Integer, Void> callback) {
         getAuthTokenForProps(panels, 0, (auths, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
@@ -115,7 +122,7 @@ public class NanoleafAuthManager {
         });
     }
 
-    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Void, Void> callback) {
+    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Integer, Void> callback) {
         List<NanoleafPanelIntegrationAuth> finalAuths = removeUnconnectedAuths(panelAuths);
         NanoleafPanelAuthCollection authCollection = new NanoleafPanelAuthCollection(finalAuths);
         userManager.addIntegrationAuthData(IntegrationType.NANOLEAF, authCollection, (var, status) -> {
@@ -131,9 +138,7 @@ public class NanoleafAuthManager {
                     return null;
                 }
 
-                String message = String.format("Successfully added %s nanoleaf panels", finalAuths.size());
-                UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), message);
-                callback.apply(null, status1);
+                callback.apply(finalAuths.size(), status1);
                 return null;
             });
 

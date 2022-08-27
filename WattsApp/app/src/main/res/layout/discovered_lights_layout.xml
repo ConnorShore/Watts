@@ -29,29 +29,52 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/md_theme_dark_onTertiaryContainer"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <!--Text View to display Course Name-->
-        <TextView
-            android:id="@+id/discoveredLightName"
+        <LinearLayout
+            android:layout_width="43dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/discoverLightIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=""/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:backgroundTint="@color/md_theme_dark_onTertiaryContainer"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/discoveredLightIntegration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            <!--Text View to display Course Name-->
+            <TextView
+                android:id="@+id/discoveredLightName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/discoveredLightIntegration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
+
+
 </com.google.android.material.card.MaterialCardView>

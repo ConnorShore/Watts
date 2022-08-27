@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.main.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ public class DiscoveredLightsAdapter extends RecyclerView.Adapter<DiscoveredLigh
     @Override
     public DiscoveredLightsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.discovered_lights_layout, parent, false);
+        TextView lightIcon = view.findViewById(R.id.discoverLightIcon);
+        lightIcon.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_light_bulb_32, 0, 0, 0);
         return new DiscoveredLightsAdapter.ViewHolder(view);
     }
 

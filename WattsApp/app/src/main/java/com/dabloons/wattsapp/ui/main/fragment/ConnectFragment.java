@@ -227,7 +227,12 @@ public class ConnectFragment extends Fragment {
         List<NanoleafPanelIntegrationAuth> lights = discoveredLightsAdapter.getSelectedLights();
         nanoleafAuthManager.connectToPanels(lights, (numLights, status) -> {
             if(status.success) {
-                String message = String.format("Successfully added %s Nanoleaf panels", numLights);
+                String message;
+                if(numLights > 0)
+                    message = String.format("Successfully added %s Nanoleaf panels", numLights);
+                else
+                    message = "No lights were added";
+
                 UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), message);
             } else {
                 UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), "Failed to add panels");

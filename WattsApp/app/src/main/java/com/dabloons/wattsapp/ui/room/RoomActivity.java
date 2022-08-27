@@ -74,7 +74,7 @@ public class RoomActivity extends AppCompatActivity {
         lightRV.setAdapter(lightAdapter);
         lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
 
-        SceneManager.getInstance().getALlScenes(currentRoom.getUid(), (scenes, status) -> {
+        SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
             sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), (ArrayList<Scene>) scenes);
             GridLayoutManager gridLayoutManager1 = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
@@ -84,7 +84,6 @@ public class RoomActivity extends AppCompatActivity {
             sceneRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
             return null;
         });
-
 
         addSceneBtn.setOnClickListener(new View.OnClickListener() {
             @Override

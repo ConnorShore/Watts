@@ -20,6 +20,20 @@ public class SceneManager {
     public SceneManager() {
     }
 
+    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback)
+    {
+        sceneRepository.createScene(roomID, sceneName, sceneList, callback);
+    }
+
+    public void getAllScenes(String roomID, WattsCallback<List<Scene>, Void> callback)
+    {
+        sceneRepository.getAllScenes(roomID, callback);
+    }
+
+    public void deleteUserScenes(WattsCallback<Void, Void> callback) {
+        sceneRepository.deleteScenesForUser(callback);
+    }
+
     public static SceneManager getInstance() {
         SceneManager result = instance;
         if (result != null) {
@@ -31,15 +45,5 @@ public class SceneManager {
             }
             return instance;
         }
-    }
-
-    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback)
-    {
-        sceneRepository.createScene(roomID, sceneName, sceneList, callback);
-    }
-
-    public void getALlScenes(String roomID, WattsCallback<List<Scene>, Void> callback)
-    {
-        sceneRepository.getAllScenes(roomID, callback);
     }
 }

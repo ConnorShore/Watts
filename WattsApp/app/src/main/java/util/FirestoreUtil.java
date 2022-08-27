@@ -7,6 +7,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
@@ -52,7 +53,7 @@ public class FirestoreUtil {
             for (QueryDocumentSnapshot document : task.getResult()) {
                 boolean userEqual = document.get(USER_ID_FIELD).toString().equals(userId);
                 if(userEqual)
-                    ids.add(document.get("userId").toString());
+                    ids.add(document.get("uid").toString());
             }
 
             callback.apply(ids, new WattsCallbackStatus(true));

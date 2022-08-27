@@ -53,6 +53,7 @@ public class AccountFragment extends Fragment {
                                         UIMessageUtil.showLongToastMessage(
                                                 WattsApplication.getAppContext(),
                                                 "Successfully deleted user");
+                                        getActivity().finish();
                                     } else {
                                         Log.e(LOG_TAG, "Failed to delete user: " + status.message);
                                         UIMessageUtil.showLongToastMessage(

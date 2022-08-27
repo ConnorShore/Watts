@@ -15,6 +15,7 @@ public class Room implements Parcelable {
     private String integrationId;
     private String name;
     private List<Light> lights;
+    private List<Scene> scenes;
 
     public Room() { }
 

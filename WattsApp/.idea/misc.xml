@@ -20,6 +20,7 @@
         <entry key="app/src/main/res/layout/add_room_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_room_dialog_test.xml" value="0.10648148148148148" />
         <entry key="app/src/main/res/layout/card_layout.xml" value="0.4101470947265625" />
+        <entry key="app/src/main/res/layout/discover_devices.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_account.xml" value="0.1956521739130435" />
         <entry key="app/src/main/res/layout/fragment_add_room.xml" value="0.10648148148148148" />
         <entry key="app/src/main/res/layout/fragment_connect.xml" value="0.28713226318359364" />
@@ -30,6 +31,7 @@
         <entry key="app/src/main/res/layout/light_card.xml" value="0.32592592592592595" />
         <entry key="app/src/main/res/layout/light_card_layout.xml" value="0.12777777777777777" />
         <entry key="app/src/main/res/layout/list_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/select_discovered_lights.xml" value="0.1721014492753623" />
         <entry key="app/src/main/res/layout/text_row_item.xml" value="0.38697916666666665" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.16816253662109376" />
         <entry key="app/src/main/res/menu/popup_connect_menu.xml" value="0.16822916666666668" />

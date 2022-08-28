@@ -111,8 +111,19 @@ public class NSDServiceUtil {
     }
 
     public void discoverService(String serviceType, WattsCallback<NetworkService, Void> callback) {
-        onDiscoveryCallbacks.put(serviceType, callback);
-        nsdManager.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, nsdListener);
+        try {
+            onDiscoveryCallbacks.put(serviceType, callback);
+            nsdManager.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, nsdListener);
+        } catch(Exception e) {
+            Log.w(LOG_TAG, e.getMessage());
+            restartDiscoveryService();
+            discoverService(serviceType, callback);
+        }
+    }
+
+    private void restartDiscoveryService() {
+        forceEndNetworkDiscovery();
+        initializeDiscoveryListener();
     }
 
     public void removeDiscoveryCallback(String serviceType) {

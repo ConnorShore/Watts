@@ -5,6 +5,7 @@ import android.util.Log;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.model.NetworkService;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
@@ -35,11 +36,14 @@ public class NanoleafAuthManager {
     private final String NANOLEAF_MDNS_SERVICE = "_nanoleafapi._tcp.";
     private final String URL_FORMAT = "http://%s:%s/api/v1/";
 
+    private final int DISCOVERY_SEARCH_TIME_MILLISECONDS = 4000;
+
     public NanoleafAuthManager() {
 
     }
 
-    public void discoverNanoleafPanelsOnNetwork() {
+    public void discoverNanoleafPanelsOnNetwork(WattsCallback<NetworkService, Void> onDeviceFound,
+                                                WattsCallback<List<NanoleafPanelIntegrationAuth>, Void> onFinish) {
         List<NanoleafPanelIntegrationAuth> nanoleafPanelConnections = new ArrayList<>();
 
         // Set timeout of discovery
@@ -53,32 +57,47 @@ public class NanoleafAuthManager {
                         Log.d(LOG_TAG, "Successfully ended network discovery after nanoleaf connection");
 
                     nsdServiceUtil.waitForAllServicesToResolve((var, status1) -> {
-                        getAuthTokenForProps(nanoleafPanelConnections, 0, (auths, status2) -> {
-                            if(!status2.success) {
-                                Log.e(LOG_TAG, status1.message);
-                                return null;
-                            }
+                        // Call callback here and move getAuthTokenForProps
+                        if(!status.success)
+                            Log.e(LOG_TAG, status1.message);
 
-                            saveNanoleafPanelAuthsToDB(auths);
-                            return null;
-                        });
-
+                        onFinish.apply(nanoleafPanelConnections, status1);
                         return null;
                     });
 
                     return null;
                 });
             }
-        }, 5000);
+        }, DISCOVERY_SEARCH_TIME_MILLISECONDS);
 
         // Start to discover panels
         this.nsdServiceUtil.discoverService(NANOLEAF_MDNS_SERVICE, (service, status) -> {
+            onDeviceFound.apply(service, status);
+
             // url: http://{hostName}:{port}/api/v1/
             String url = String.format(URL_FORMAT,
                     service.getHost().getHostName(), service.getPort());
 
             NanoleafPanelIntegrationAuth auth = new NanoleafPanelIntegrationAuth(service.getName(), url, null);
             nanoleafPanelConnections.add(auth);
+            return null;
+        });
+    }
+
+
+    public void cancelDiscovery() {
+        nsdServiceUtil.forceEndNetworkDiscovery();
+    }
+
+    public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Integer, Void> callback) {
+        getAuthTokenForProps(panels, 0, (auths, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, status.message);
+                callback.apply(null, status);
+                return null;
+            }
+
+            saveNanoleafPanelAuthsToDB(auths, callback);
             return null;
         });
     }
@@ -103,12 +122,13 @@ public class NanoleafAuthManager {
         });
     }
 
-    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths) {
+    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Integer, Void> callback) {
         List<NanoleafPanelIntegrationAuth> finalAuths = removeUnconnectedAuths(panelAuths);
         NanoleafPanelAuthCollection authCollection = new NanoleafPanelAuthCollection(finalAuths);
         userManager.addIntegrationAuthData(IntegrationType.NANOLEAF, authCollection, (var, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
+                callback.apply(null, status);
                 return null;
             }
 
@@ -118,8 +138,7 @@ public class NanoleafAuthManager {
                     return null;
                 }
 
-                String message = String.format("Successfully added %s nanoleaf panels", finalAuths.size());
-                UIMessageUtil.showLongToastMessage(WattsApplication.getAppContext(), message);
+                callback.apply(finalAuths.size(), status1);
                 return null;
             });
 

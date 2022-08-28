@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import util.FirestoreUtil;
 import util.RepositoryUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
@@ -84,6 +85,10 @@ public final class LightRepository {
 
     public void getAllLights(WattsCallback<List<Light>, Void> callback) {
         getAllLightsForType(IntegrationType.NONE, callback);
+    }
+
+    public void deleteLightsForUser(WattsCallback<Void, Void> callback) {
+        FirestoreUtil.deleteDocumentsForUser(getLightCollection(), callback);
     }
 
     // Get the User Collection Reference

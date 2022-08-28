@@ -49,6 +49,10 @@ public class LightManager {
         setLightState(light, state, callback);
     }
 
+    public void deleteLightsForUser(WattsCallback<Void, Void> callback) {
+        lightRepository.deleteLightsForUser(callback);
+    }
+
     private void setLightState(Light light, LightState state, WattsCallback<Void, Void> callback) {
         IntegrationType type = light.getIntegrationType();
         switch(light.getIntegrationType()) {

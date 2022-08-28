@@ -4,17 +4,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.MenuRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -24,25 +20,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
-import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.manager.auth.NanoleafAuthManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
-import com.dabloons.wattsapp.model.Light;
-import com.dabloons.wattsapp.model.NetworkService;
-import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
-import com.dabloons.wattsapp.ui.main.adapters.DiscoveredLightsAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.IntegrationAdapter;
+import com.dabloons.wattsapp.ui.room.adapters.LightItemAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import util.UIMessageUtil;
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class ConnectFragment extends Fragment {
 
@@ -60,7 +50,7 @@ public class ConnectFragment extends Fragment {
     private IntegrationAdapter integrationAdapter;
     private RecyclerView integrationRV;
 
-    private DiscoveredLightsAdapter discoveredLightsAdapter;
+    private LightItemAdapter<NanoleafPanelIntegrationAuth> discoveredLightsAdapter;
     private RecyclerView discoveredLightsRV;
 
     private AlertDialog popupDialog;
@@ -87,12 +77,7 @@ public class ConnectFragment extends Fragment {
     }
 
     private void initializeListeners(View result) {
-        result.findViewById(R.id.connect_to_integration_Btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMenu(v, R.menu.popup_connect_menu);
-            }
-        });
+        result.findViewById(R.id.connect_to_integration_Btn).setOnClickListener(v -> showMenu(v, R.menu.popup_connect_menu));
 
         userManager.getUserIntegrations((integration, status) -> {
             if(integration.size() == 0)
@@ -117,45 +102,45 @@ public class ConnectFragment extends Fragment {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.getMenuInflater().inflate(res, popupMenu.getMenu());
 
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getTitle().toString()) {
-                    case "Phillips Hue":
-                        phillipsHueOAuthManager.aquireAuthorizationCode();
+        popupMenu.setOnMenuItemClickListener(item -> {
+            switch(item.getTitle().toString()) {
+                case "Phillips Hue":
+                    phillipsHueOAuthManager.aquireAuthorizationCode();
+                    break;
 
-                    case "Nanoleaf":
-                        devicesDiscoveredCt = 0;
-                        new AlertDialog.Builder(getActivity())
-                                .setMessage("Are you panels in connect mode? (Hold power button down for 5-7 seconds)")
-                                .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                    nanoleafAuthManager.discoverNanoleafPanelsOnNetwork(
-                                            (var, status) -> {
-                                                // On device found callback
-                                                if(status.success)
-                                                    updateDevicesFoundCount(++devicesDiscoveredCt);
-                                                else
-                                                    Log.e(LOG_TAG, "Issue discovering device: " + status.message);
-                                                return null;
-                                            },
-                                            (panels, status) -> {
-                                                // On finished discovering devices callback
-                                                devicesDiscoveredCt = 0;
-                                                updateDevicesFoundCount(0);
-                                                setLightsForSelection(panels);
-                                                setSelectLightsView();
-                                                return null;
-                                            });
-                                    launchPopupWindow();
-                                })
-                                .setNegativeButton("No", null)
-                                .show();
-                    default:
-                        Log.w(LOG_TAG, "Integration not found.");
-                }
-
-                return false;
+                case "Nanoleaf":
+                    devicesDiscoveredCt = 0;
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Are you panels in connect mode? (Hold power button down for 5-7 seconds)")
+                            .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                nanoleafAuthManager.discoverNanoleafPanelsOnNetwork(
+                                        (var, status) -> {
+                                            // On device found callback
+                                            if(status.success)
+                                                updateDevicesFoundCount(++devicesDiscoveredCt);
+                                            else
+                                                Log.e(LOG_TAG, "Issue discovering device: " + status.message);
+                                            return null;
+                                        },
+                                        (panels, status) -> {
+                                            // On finished discovering devices callback
+                                            devicesDiscoveredCt = 0;
+                                            updateDevicesFoundCount(0);
+                                            setLightsForSelection(panels);
+                                            setSelectLightsView();
+                                            return null;
+                                        });
+                                launchPopupWindow();
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+                    break;
+                default:
+                    Log.w(LOG_TAG, "Integration not found.");
+                    break;
             }
+
+            return false;
         });
 
         popupMenu.show();
@@ -178,10 +163,10 @@ public class ConnectFragment extends Fragment {
     private void initializePopupItems() {
         loadingView = LayoutInflater.from(this.getContext()).inflate(R.layout.loading_layout, null);
         discoveryView = LayoutInflater.from(this.getContext()).inflate(R.layout.discover_devices, null);
-        selectLightsView = LayoutInflater.from(this.getContext()).inflate(R.layout.select_discovered_lights, null);
+        selectLightsView = LayoutInflater.from(this.getContext()).inflate(R.layout.select_lights, null);
 
         devicesFoundTextView = discoveryView.findViewById(R.id.devices_found_txt);
-        discoveredLightsAdapter = new DiscoveredLightsAdapter(this.getContext(), new ArrayList<>());
+        discoveredLightsAdapter = new LightItemAdapter<>(this.getContext(), new ArrayList<>());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
         discoveredLightsRV = selectLightsView.findViewById(R.id.discoveredLightsRV);

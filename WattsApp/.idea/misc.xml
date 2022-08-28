@@ -15,6 +15,7 @@
         <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/fragment_connect.xml" value="0.2630208333333333" />
         <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/fragment_home.xml" value="0.5546875" />
         <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/light_card_layout.xml" value="0.5546875" />
+        <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/light_list_layout.xml" value="0.5546875" />
         <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/list_layout.xml" value="0.565625" />
         <entry key="..\:/Watts/WattsApp/app/src/main/res/layout/select_discovered_lights.xml" value="0.5546875" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.115" />
@@ -50,5 +51,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.5546875" />
+      </ProjectState>
+    </option>
   </component>
 </project>

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
@@ -14,10 +15,12 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import util.FirestoreUtil;
 import util.RepositoryUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
@@ -30,6 +33,8 @@ public final class UserAuthRepository {
 
     private static final String USER_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_users);
     private static final String AUTH_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_auth);
+
+    private static final String INTEGRATION_TYPE_PROPERTY = WattsApplication.getResourceString(R.string.field_integration_type);
 
     private static final String DOCUMENT_PHILLIPS_HUE = WattsApplication.getResourceString(R.string.document_phillips_hue);
     private static final String DOCUMENT_NANOLEAF  = WattsApplication.getResourceString(R.string.document_nanoleaf);
@@ -104,6 +109,46 @@ public final class UserAuthRepository {
     public Task<Void> setIntegrationAuth(IntegrationType type, IntegrationAuth props) {
         String doc = getIntegrationDocument(type);
         return this.getUserAuthCollection().document(doc).set(props);
+    }
+
+    public void deleteIntegrationsForUser(WattsCallback<Void, Void> callback) {
+        deleteIntegrationssForUser(callback);
+    }
+
+    private void deleteIntegrationssForUser(WattsCallback<Void, Void> callback) {
+        FirebaseUser user = UserManager.getInstance().getCurrentUser();
+        if(user == null) return;
+
+        getAllDocByProp((docIds, status) -> {
+            WriteBatch batch = FirebaseFirestore.getInstance().batch();
+            for(String id : docIds) {
+                batch.delete(getUserAuthCollection().document(id));
+            }
+
+            batch.commit()
+                    .addOnCompleteListener(task ->{
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    })
+                    .addOnFailureListener(task -> {
+                        callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                    });
+
+            return null;
+        });
+    }
+
+    private void getAllDocByProp(WattsCallback<List<String>, Void> callback) {
+        getUserAuthCollection().get().addOnCompleteListener(task -> {
+            if(!task.isComplete())
+                Log.e(LOG_TAG, "Failed to get lights collection");
+
+            List<String> ids = new ArrayList<>();
+            for (QueryDocumentSnapshot document : task.getResult()) {
+                ids.add(document.get(INTEGRATION_TYPE_PROPERTY).toString().toLowerCase());
+            }
+
+            callback.apply(ids, new WattsCallbackStatus(true));
+        });
     }
 
     private String getIntegrationDocument(IntegrationType type) {

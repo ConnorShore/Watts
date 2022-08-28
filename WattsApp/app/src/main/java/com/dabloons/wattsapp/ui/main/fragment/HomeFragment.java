@@ -113,25 +113,22 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                 .setTitle("Add Room")
                 .setPositiveButton("Add", (dialog, which) -> {
                     String name = roomName.getEditText().getText().toString();
-                    RoomManager.getInstance().createRoom(name, new WattsCallback<Room, Void>() {
-                        @Override
-                        public Void apply(Room room, WattsCallbackStatus status) {
-                            Room newRoom = room;
-                            List<Light> lightsToAdd =  new ArrayList<>();
-                            for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
-                                Light currLight = mLightItemAdapter.lightModelArrayList.get(i);
-                                if(currLight.isSelected()) {
-                                    lightsToAdd.add(currLight);
-                                }
+                    RoomManager.getInstance().createRoom(name, (room, status) -> {
+                        Room newRoom = room;
+                        List<Light> lightsToAdd =  new ArrayList<>();
+                        for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
+                            Light currLight = (Light) mLightItemAdapter.lightItems.get(i);
+                            if(currLight.isSelected()) {
+                                lightsToAdd.add(currLight);
                             }
-                            RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, (var, success) -> {
-                                roomAdapter.getRoomList().add(newRoom);
-                                updateUI(true);
-                                dialog.dismiss();
-                                return null;
-                            });
-                            return null;
                         }
+                        RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, (var, success) -> {
+                            roomAdapter.getRoomList().add(newRoom);
+                            updateUI(true);
+                            dialog.dismiss();
+                            return null;
+                        });
+                        return null;
                     });
 
 

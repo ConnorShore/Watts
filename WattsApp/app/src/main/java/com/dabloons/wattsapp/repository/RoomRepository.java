@@ -1,5 +1,7 @@
 package com.dabloons.wattsapp.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.R;
@@ -10,15 +12,18 @@ import com.dabloons.wattsapp.model.Room;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import util.FirestoreUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -94,6 +99,9 @@ public final class RoomRepository {
     public Task<Void> deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
         return getRoomCollection().document(roomId).delete();
+    }
+    public void deleteRoomsForUser(WattsCallback<Void, Void> callback) {
+        FirestoreUtil.deleteDocumentsForUser(getRoomCollection(), callback);
     }
 
     private CollectionReference getRoomCollection(){

@@ -103,6 +103,10 @@ public class RoomManager
                 });
     }
 
+    public void deleteRoomsForUser(WattsCallback<Void, Void> callback) {
+        roomRepository.deleteRoomsForUser(callback);
+    }
+
     /*
      * HELPERS
      */

@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import util.FirestoreUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -95,6 +96,9 @@ public final class SceneRepository
         });
     }
 
+    public void deleteScenesForUser(WattsCallback<Void, Void> callback) {
+        FirestoreUtil.deleteDocumentsForUser(getSceneCollection(), callback);
+    }
 
     // Get the User Collection Reference
     private CollectionReference getSceneCollection(){

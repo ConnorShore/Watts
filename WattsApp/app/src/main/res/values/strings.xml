@@ -22,6 +22,7 @@
     <string name="collection_lights">lights</string>
     <string name="collection_rooms">rooms</string>
     <string name="collection_scenes">scenes</string>
+    <string name="collection_integration_scenes">scenes</string>
 
     <!-- REPOSITORY DOCUMENTS -->
     <string name="document_phillips_hue">phillips_hue</string>

@@ -17,18 +17,14 @@ import com.dabloons.wattsapp.manager.SceneManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
-import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import util.ItemOffsetDecoration;
 import util.UIMessageUtil;
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class RoomActivity extends AppCompatActivity {
     private Button deleteRoomBtn;

@@ -46,14 +46,4 @@ public class SceneManager {
             return instance;
         }
     }
-
-    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback)
-    {
-        sceneRepository.createScene(roomID, sceneName, sceneList, callback);
-    }
-
-    public void getAllScenes(String roomID, WattsCallback<List<Scene>, Void> callback)
-    {
-        sceneRepository.getAllScenes(roomID, callback);
-    }
 }

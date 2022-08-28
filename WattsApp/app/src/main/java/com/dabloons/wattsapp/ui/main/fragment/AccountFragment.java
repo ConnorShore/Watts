@@ -1,5 +1,6 @@
 package com.dabloons.wattsapp.ui.main.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -13,7 +14,10 @@ import androidx.fragment.app.Fragment;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.ui.LoginActivity;
+import com.dabloons.wattsapp.ui.main.MainActivity;
 
+import util.RequestCodes;
 import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
@@ -45,23 +49,19 @@ public class AccountFragment extends Fragment {
             new AlertDialog.Builder(this.getActivity())
                     .setMessage("Are you sure you want to delete your account?")
                     .setPositiveButton("Yes", (dialogInterface, i) ->
-                            userManager.deleteUser(WattsApplication.getAppContext(), new WattsCallback<Void, Void>() {
-
-                                @Override
-                                public Void apply(Void var, WattsCallbackStatus status) {
-                                    if(status.success) {
-                                        UIMessageUtil.showLongToastMessage(
-                                                WattsApplication.getAppContext(),
-                                                "Successfully deleted user");
-                                        getActivity().finish();
-                                    } else {
-                                        Log.e(LOG_TAG, "Failed to delete user: " + status.message);
-                                        UIMessageUtil.showLongToastMessage(
-                                                WattsApplication.getAppContext(),
-                                                "Successfully deleted user");
-                                    }
-                                    return null;
+                            userManager.deleteUser(WattsApplication.getAppContext(), (var, status) -> {
+                                if(status.success) {
+                                    UIMessageUtil.showLongToastMessage(
+                                            WattsApplication.getAppContext(),
+                                            "Successfully deleted user");
+                                    startLoginActivity();
+                                } else {
+                                    Log.e(LOG_TAG, "Failed to delete user: " + status.message);
+                                    UIMessageUtil.showLongToastMessage(
+                                            WattsApplication.getAppContext(),
+                                            "Successfully deleted user");
                                 }
+                                return null;
                             })
                     )
                     .setNegativeButton("No", null)
@@ -71,4 +71,10 @@ public class AccountFragment extends Fragment {
 
         return result;
     }
+
+    private void startLoginActivity() {
+        Intent mainActivity = new Intent(WattsApplication.getAppContext(), LoginActivity.class);
+        startActivityForResult(mainActivity, RequestCodes.RC_LOGIN_ACTIVITY);
+    }
+
 }

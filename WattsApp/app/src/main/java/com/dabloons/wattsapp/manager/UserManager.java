@@ -3,6 +3,7 @@ package com.dabloons.wattsapp.manager;
 import android.content.Context;
 import android.util.Log;
 
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.User;
@@ -13,6 +14,7 @@ import com.dabloons.wattsapp.repository.LightRepository;
 import com.dabloons.wattsapp.repository.UserAuthRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
@@ -115,19 +117,28 @@ public class UserManager {
                 return null;
             }
 
-            userRepository.deleteUserFromFirestore()
-                .addOnCompleteListener(task -> {
-                    // Once done, delete the user data from Auth
-                    userRepository.deleteUser(context)
-                        .addOnCompleteListener(task1 -> {
-                            callback.apply(null, new WattsCallbackStatus(true));
+            userAuthRepository.deleteIntegrationsForUser((var1, status1) -> {
+                if(!status.success) {
+                    Log.e(LOG_TAG, status.message);
+                    callback.apply(null, new WattsCallbackStatus(false, status.message));
+                    return null;
+                }
+
+                userRepository.deleteUserFromFirestore()
+                        .addOnCompleteListener(task -> {
+                            userRepository.deleteUser(context)
+                                    .addOnCompleteListener(task1 -> {
+                                        userRepository.signOut(WattsApplication.getAppContext());
+                                        callback.apply(null, new WattsCallbackStatus(true));
+                                    })
+                                    .addOnFailureListener(task1 -> {
+                                        callback.apply(null, new WattsCallbackStatus(false, task1.getMessage()));
+                                    });
                         })
-                        .addOnFailureListener(task1 -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task1.getMessage()));
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
                         });
-            })
-            .addOnFailureListener(task -> {
-                callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                return null;
             });
 
             return null;

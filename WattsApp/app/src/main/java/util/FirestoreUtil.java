@@ -40,7 +40,6 @@ public class FirestoreUtil {
 
             return null;
         });
-
     }
 
     private static void getUserDocIds(CollectionReference collection, WattsCallback<List<String>, Void> callback) {

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dropDownIntegrationName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PLACE_HOLDER"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:padding="10dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/integrationSceneMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:hint="Select scene">
+
+            <AutoCompleteTextView
+                android:id="@+id/integrationSceneMenuTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+</LinearLayout>

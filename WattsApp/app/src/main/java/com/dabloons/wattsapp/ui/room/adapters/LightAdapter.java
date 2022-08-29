@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +50,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     public ArrayList<Light> lightModelArrayList;
 
     private MaterialAlertDialogBuilder alertDialogBuilder;
+    private AlertDialog currentColorPicker;
     private View customDialogView;
 
     private LightManager lightManager = LightManager.getInstance();
@@ -123,7 +125,16 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             itemView.setOnTouchListener(this);
         }
 
-        public void initializeColorPickerDialog(@NotNull View view) {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            initializeColorPickerDialog(v);
+            initalizeListeners();
+            showColorPicker();
+            return false;
+        }
+
+        private void initializeColorPickerDialog(@NotNull View view) {
             alertDialogBuilder = new MaterialAlertDialogBuilder(view.getContext());
 
             customDialogView = LayoutInflater.from(WattsApplication.getAppContext()).inflate(R.layout.light_detail_dialog, null, false);
@@ -136,7 +147,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             hsv = new float[3];
         }
 
-        public void initalizeListeners() {
+        private void initalizeListeners() {
             colorPickerView.setColorListener((ColorListener) (color, fromUser) -> {
                 ColorEnvelope colorEnvelope = new ColorEnvelope(color);
                 int[] rgb = colorEnvelope.getArgb();
@@ -147,10 +158,12 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 
             alertDialogBuilder.setPositiveButton("Set", (dialog, which) -> {
                 onColorSet();
+                dialog.dismiss();
+                currentColorPicker = null;
             });
         }
 
-        public void onColorSet() {Light light = lightModelArrayList.get(this.getAbsoluteAdapterPosition());
+        private void onColorSet() {Light light = lightModelArrayList.get(this.getAbsoluteAdapterPosition());
             float brightness = brighnessBar.getProgress() / 100.0f;
             float hue = (hsv[0]) / 360.0f;
             float saturation = hsv[1];
@@ -170,15 +183,12 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             });
         }
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
+        private void showColorPicker() {
+            if(currentColorPicker != null)
+                currentColorPicker.dismiss();
 
-            initializeColorPickerDialog(v);
-            initalizeListeners();
-
-            alertDialogBuilder.show();
-
-            return false;
+            currentColorPicker = alertDialogBuilder.create();
+            currentColorPicker.show();
         }
     }
 }

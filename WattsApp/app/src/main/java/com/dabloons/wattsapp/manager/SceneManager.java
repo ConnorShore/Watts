@@ -32,12 +32,14 @@ public class SceneManager {
     private PhillipsHueService phillipsHueService;
     private NanoleafService nanoleafService;
     private UserManager userManager;
+    private RoomManager roomManager;
 
     private SceneManager() {
         sceneRepository = SceneRepository.getInstance();
         phillipsHueService = PhillipsHueService.getInstance();
         nanoleafService = NanoleafService.getInstance();
         userManager = UserManager.getInstance();
+        roomManager = RoomManager.getInstance();
     }
 
     public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback)
@@ -56,9 +58,22 @@ public class SceneManager {
 
     public void activateScene(Scene scene, WattsCallback<Void, Void> callback) {
         List<IntegrationScene> scenes = scene.getIntegrationScenes();
+        roomManager.getRoomForId(scene.getRoomId(), (room, status) -> {
+            activateIntegrationScenes(room, scenes, 0, (var, status1) -> {
+                if(!status1.success) {
+                    Log.e(LOG_TAG, status1.message);
+                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
+                    return null;
+                }
+
+                callback.apply(null, new WattsCallbackStatus(true));
+                return null;
+            });
+            return null;
+        });
     }
 
-    private void activateIntegrationScene(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void, Void> callback) {
+    private void activateIntegrationScenes(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void, Void> callback) {
         if(index >= scenes.size()) {
             callback.apply(null, new WattsCallbackStatus(true));
             return;
@@ -81,7 +96,7 @@ public class SceneManager {
                         }
 
                         int next = index + 1;
-                        activateIntegrationScene(room, scenes, next, callback);
+                        activateIntegrationScenes(room, scenes, next, callback);
                     }
                 });
                 break;
@@ -102,7 +117,7 @@ public class SceneManager {
                             }
 
                             int next = index + 1;
-                            activateIntegrationScene(room, scenes, next, callback);
+                            activateIntegrationScenes(room, scenes, next, callback);
                         }
                     });
                     return null;

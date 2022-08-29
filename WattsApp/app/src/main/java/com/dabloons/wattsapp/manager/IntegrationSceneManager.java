@@ -3,6 +3,7 @@ package com.dabloons.wattsapp.manager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
@@ -56,9 +57,9 @@ public class IntegrationSceneManager {
     }
 
     public void createIntegrationScene(IntegrationType type, String name, String integrationId,
-                            List<String> lightIds, WattsCallback<IntegrationScene, Void> callback)
+                            List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene, Void> callback)
     {
-        integrationSceneRepository.createIntegrationScene(type, name, integrationId, lightIds, callback);
+        integrationSceneRepository.createIntegrationScene(type, name, integrationId, lightIds, parentLightId, callback);
     }
 
     public void getIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>, Void> callback)

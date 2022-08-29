@@ -50,18 +50,15 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
         Scene scene = sceneArrayList.get(position);
         holder.sceneName.setText(scene.getName());
         holder.setScene.setOnClickListener(view -> {
-            sceneManager.activateScene(scene, new WattsCallback<Void, Void>() {
-                @Override
-                public Void apply(Void var, WattsCallbackStatus status) {
-                    if(!status.success) {
-                        Log.e(LOG_TAG, status.message);
-                        UIMessageUtil.showShortToastMessage(context, "Failed to activate scene " + scene.getName());
-                        return null;
-                    }
-
-                    UIMessageUtil.showShortToastMessage(context, "Activated scene " + scene.getName());
+            sceneManager.activateScene(scene, (var, status) -> {
+                if(!status.success) {
+                    Log.e(LOG_TAG, status.message);
+                    UIMessageUtil.showShortToastMessage(context, "Failed to activate scene " + scene.getName());
                     return null;
                 }
+
+                UIMessageUtil.showShortToastMessage(context, "Activated scene " + scene.getName());
+                return null;
             });
         });
     }

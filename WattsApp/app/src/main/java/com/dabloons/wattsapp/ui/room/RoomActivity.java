@@ -2,11 +2,15 @@ package com.dabloons.wattsapp.ui.room;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
@@ -14,17 +18,28 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.manager.SceneManager;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.model.integration.IntegrationScene;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneAdapter;
+import com.dabloons.wattsapp.ui.room.adapters.SceneDropdownAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import util.ItemOffsetDecoration;
 import util.UIMessageUtil;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class RoomActivity extends AppCompatActivity {
     private Button deleteRoomBtn;
@@ -32,11 +47,17 @@ public class RoomActivity extends AppCompatActivity {
     private Room currentRoom;
     private MaterialToolbar toolbar;
 
+    private MaterialAlertDialogBuilder alertDialogBuilder;
+    private View customDialogView;
+
     private RecyclerView lightRV;
     private LightAdapter lightAdapter;
 
     private RecyclerView sceneRV;
     private SceneAdapter sceneAdapter;
+
+    private RecyclerView sceneDropdownRV;
+    private SceneDropdownAdapter sceneDropdownAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +88,7 @@ public class RoomActivity extends AppCompatActivity {
         lightRV.setAdapter(lightAdapter);
         lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
 
-        initializeListeners();
+
 
         SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
@@ -80,26 +101,23 @@ public class RoomActivity extends AppCompatActivity {
             return null;
         });
 
+        alertDialogBuilder = new MaterialAlertDialogBuilder(RoomActivity.this);
+        UserManager.getInstance().getUserIntegrations((var, status) -> {
+
+            sceneDropdownAdapter = new SceneDropdownAdapter(RoomActivity.this, (ArrayList<IntegrationType>) var);
+            initializeListeners();
+            return null;
+        });
+
     }
 
     private void initializeListeners() {
 
 
-        addSceneBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SceneManager.getInstance().createScene(currentRoom.getUid(), "TEST", new ArrayList<>(), (var, status) -> {
-                    if(status.success) {
-                        sceneAdapter.sceneArrayList.add(var);
-                        updateUI();
-                        UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully added scene");
-                    }
-                    else
-                        UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to add scene");
+        addSceneBtn.setOnClickListener(v -> {
 
-                    return null;
-                });
-            }
+            customDialogView = LayoutInflater.from(RoomActivity.this).inflate(R.layout.create_scene_dialog, null, false);
+            launchCustomAlertDialog();
         });
 
         deleteRoomBtn.setOnClickListener(v -> {
@@ -109,6 +127,37 @@ public class RoomActivity extends AppCompatActivity {
             });
 
         });
+    }
+
+    private void launchCustomAlertDialog() {
+        alertDialogBuilder.setView(customDialogView);
+        sceneDropdownRV = customDialogView.findViewById(R.id.sceneDropdownRV);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+        sceneDropdownRV.setLayoutManager(linearLayoutManager);
+        sceneDropdownRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
+        sceneDropdownRV.setAdapter(sceneDropdownAdapter);
+        alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
+            Map<IntegrationType, IntegrationScene> scenes = sceneDropdownAdapter.getSelectedScenes();
+            ArrayList<IntegrationScene> scenesToAdd = new ArrayList<>();
+            for(Map.Entry<IntegrationType, IntegrationScene> scene : scenes.entrySet())
+            {
+                scenesToAdd.add(scene.getValue());
+            }
+            TextInputLayout sceneName = customDialogView.findViewById(R.id.sceneNameTextLayout);
+            SceneManager.getInstance().createScene(currentRoom.getUid(),sceneName.getEditText().getText().toString() , scenesToAdd, (var, status) -> {
+                if(status.success) {
+                    sceneAdapter.sceneArrayList.add(var);
+                    updateUI();
+                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully added scene");
+                }
+                else
+                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to add scene");
+
+                return null;
+            });
+        }).setNegativeButton("Cancel", (dialog, which) -> {
+            dialog.dismiss();
+        }).show();
     }
 
     private void updateUI()

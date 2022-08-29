@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.bosphere.fadingedgelayout.FadingEdgeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bosphere.fadingedgelayout.FadingEdgeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="15dp"
-    android:background="@color/white">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:fel_edge="top|bottom|left|right"
+    app:fel_size_bottom="15dp"
+    app:fel_size_top="15dp"
+    app:fel_size_left="15dp"
+    app:fel_size_right="15dp" >
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_height="110dp"
-        android:layout_width="110dp"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:backgroundTint="@color/md_theme_dark_onSecondary"
-        android:focusable="true"
-        android:checkable="true" >
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lightCardBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_height="110dp"
+            android:layout_width="110dp"
+            android:clickable="true"
+            android:elevation="10dp"
+            android:backgroundTint="@color/md_theme_dark_onSecondary"
+            android:focusable="true"
+            android:checkable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,8 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top"
-                android:layout_weight="1"
-                />
+                android:layout_weight="1" />
+
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/lightSwitch"
                 android:layout_width="wrap_content"
@@ -35,7 +47,8 @@
 
         </LinearLayout>
 
+        </com.google.android.material.card.MaterialCardView>
 
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
 </com.bosphere.fadingedgelayout.FadingEdgeLayout>

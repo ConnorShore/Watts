@@ -1,12 +1,14 @@
 package com.dabloons.wattsapp.ui.room.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,10 +62,13 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 lightManager.turnOnLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
-
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
                         return null;
                     }
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        holder.background.setBackgroundColor(Color.parseColor(WattsApplication.getResourceString(R.color.lightOnDefault)));
+                    });
 
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
                     return null;
@@ -74,10 +79,13 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
-
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
                         return null;
                     }
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        holder.background.setBackgroundColor(Color.parseColor(WattsApplication.getResourceString(R.color.md_theme_dark_surface)));
+                    });
 
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                     return null;
@@ -94,11 +102,13 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView lightName;
         private SwitchMaterial lightSwitch;
+        private LinearLayout background;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             lightName = itemView.findViewById(R.id.lightName);
             lightSwitch = itemView.findViewById(R.id.lightSwitch);
+            background = itemView.findViewById(R.id.lightCardBackground);
             itemView.setOnClickListener(this);
         }
 

@@ -9,6 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="connected">#408F43</color>
 
+
+    <color name="lightOnDefault">#9FFFFBDA</color>
+
     <!--    THEME  -->
     <color name="seed">#6750A4</color>
     <color name="md_theme_dark_surfaceTint">#D0BCFF</color>

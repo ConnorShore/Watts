@@ -1,17 +1,20 @@
 package com.dabloons.wattsapp.ui.main.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
@@ -54,8 +57,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
             if(isChecked) {
                 RoomManager.getInstance().turnOnRoomLights(room, (var, status) -> {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if (status.success)
+                        if (status.success) {
+                            holder.background.setBackgroundColor(Color.parseColor(WattsApplication.getResourceString(R.color.lightOnDefault)));
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on lights for room: " + room.getName());
+                        }
                         else
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
                     });
@@ -67,8 +72,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
             {
                 RoomManager.getInstance().turnOffRoomLights(room, (var, status) -> {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if (status.success)
+                        if (status.success) {
+                            holder.background.setBackgroundColor(Color.parseColor(WattsApplication.getResourceString(R.color.lightOnDefault)));
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off lights for room: " + room.getName());
+                        }
                         else
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off lights for room: " + room.getName());
                     });
@@ -100,11 +107,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView roomName;
         private SwitchMaterial roomSwitch;
+        private LinearLayout background;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             roomName = itemView.findViewById(R.id.roomName);
             roomSwitch = itemView.findViewById(R.id.roomSwitch);
+            background = itemView.findViewById(R.id.roomCardBackground);
             itemView.setOnClickListener(this);
         }
 

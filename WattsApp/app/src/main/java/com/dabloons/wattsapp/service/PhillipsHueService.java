@@ -139,6 +139,11 @@ public class PhillipsHueService extends HttpService {
             JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("on", state.on);
             jsonObj.addProperty("bri", state.getPhillipsHueBrightness());
+            if(state.hsv != null)
+            {
+                jsonObj.addProperty("hue", state.hsv[0]*65535);
+                jsonObj.addProperty("sat", state.hsv[1]*254);
+            }
             // Todo: Add color, brightness, etc
             RequestBody body = createRequestBody(jsonObj);
 

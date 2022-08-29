@@ -169,21 +169,31 @@ public class UserManager {
                 return null;
             }
 
-            SceneManager.getInstance().deleteUserScenes((var1, status1) -> {
+            IntegrationSceneManager.getInstance().deleteUserScenes((var1, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
                     callback.apply(null, new WattsCallbackStatus(false, status1.message));
                     return null;
                 }
 
-                LightManager.getInstance().deleteLightsForUser((var11, status11) -> {
+                SceneManager.getInstance().deleteUserScenes((var11, status11) -> {
                     if(!status11.success) {
-                        Log.e(LOG_TAG, status1.message);
+                        Log.e(LOG_TAG, status11.message);
                         callback.apply(null, new WattsCallbackStatus(false, status11.message));
                         return null;
                     }
 
-                    callback.apply(null, new WattsCallbackStatus(true));
+                    LightManager.getInstance().deleteLightsForUser((var111, status111) -> {
+                        if(!status111.success) {
+                            Log.e(LOG_TAG, status111.message);
+                            callback.apply(null, new WattsCallbackStatus(false, status111.message));
+                            return null;
+                        }
+
+                        callback.apply(null, new WattsCallbackStatus(true));
+                        return null;
+                    });
+
                     return null;
                 });
 

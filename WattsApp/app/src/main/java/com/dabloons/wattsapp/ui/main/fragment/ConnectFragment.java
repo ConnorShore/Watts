@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.IntegrationSceneManager;
 import com.dabloons.wattsapp.manager.LightManager;
+import com.dabloons.wattsapp.manager.SceneManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.manager.auth.NanoleafAuthManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
@@ -94,6 +96,7 @@ public class ConnectFragment extends Fragment {
 
         syncLightsBtn.setOnClickListener(view -> {
             LightManager.getInstance().syncLights();
+            IntegrationSceneManager.getInstance().syncIntegrationScenes();
         });
     }
 

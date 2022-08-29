@@ -85,6 +85,17 @@ public class NanoleafService extends HttpService {
         });
     }
 
+    public void getEffectsForLight(Light light, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
+            NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
+            NanoleafPanelIntegrationAuth panel = collection.findNanoleafPanelAuthForLight(light);
+            setBaseUrl(panel.getBaseUrl());
+            String path = String.format("%s/effects/effectsList", panel.getAuthToken());
+            makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
+            return null;
+        });
+    }
+
     private Map<String, String> getStandardHeaders() {
         Map<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "application/json");

@@ -81,7 +81,10 @@ public class LightManager {
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        callback.apply(null, new WattsCallbackStatus(true));
+                        if(response.isSuccessful())
+                            callback.apply(null, new WattsCallbackStatus(true));
+                        else
+                            callback.apply(null, new WattsCallbackStatus(false, response.message()));
                     }
                 });
                 break;

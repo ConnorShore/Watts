@@ -166,18 +166,15 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             float hue = (hsv[0]) / 360.0f;
             float saturation = hsv[1];
             LightState lightState = new LightState(true, brightness, hue, saturation);
-            LightManager.getInstance().setLightState(light, lightState, new WattsCallback<Void, Void>() {
-                @Override
-                public Void apply(Void var, WattsCallbackStatus status) {
-                    if(!status.success) {
-                        Log.e(LOG_TAG, status.message);
-                        UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state");
-                        return null;
-                    }
-
-                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully set light state");
+            LightManager.getInstance().setLightState(light, lightState, (var, status) -> {
+                if(!status.success) {
+                    Log.e(LOG_TAG, status.message);
+                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state");
                     return null;
                 }
+
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully set light state");
+                return null;
             });
         }
 

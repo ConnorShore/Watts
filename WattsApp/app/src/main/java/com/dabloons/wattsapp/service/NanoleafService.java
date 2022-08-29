@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
-import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
@@ -33,6 +32,10 @@ public class NanoleafService extends HttpService {
     private static volatile NanoleafService instance;
 
     private UserManager userManager = UserManager.getInstance();
+
+    private final int HUE_LIMIT = 360;
+    private final int BRIGHTNESS_LIMIT = 100;
+    private final int SATURATION_LIMIT = 100;
 
     private NanoleafService() { super(); }
 
@@ -76,9 +79,28 @@ public class NanoleafService extends HttpService {
             String path = String.format("%s/state", panel.getAuthToken());
 
             JsonObject bodyObj = new JsonObject();
-            JsonObject value = new JsonObject();
-            value.addProperty("value", state.isOn());
-            bodyObj.add("on", value);
+
+            // On prop
+            JsonObject onValue = new JsonObject();
+            onValue.addProperty("value", state.isOn());
+
+            // Brightness prop
+            JsonObject brightnessValue = new JsonObject();
+            brightnessValue.addProperty("value", (int)(state.getBrightness() * BRIGHTNESS_LIMIT));
+
+            // Hue prop
+            JsonObject hueValue = new JsonObject();
+            hueValue.addProperty("value", (int)(state.getHue() * HUE_LIMIT));
+
+            // Saturation Value
+            JsonObject satValue = new JsonObject();
+            satValue.addProperty("value", (int)(state.getSaturation() * SATURATION_LIMIT));
+
+            bodyObj.add("on", onValue);
+            bodyObj.add("brightness", brightnessValue);
+            bodyObj.add("hue", hueValue);
+            bodyObj.add("sat", satValue);
+
             RequestBody body = createRequestBody(bodyObj);
 
             makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);

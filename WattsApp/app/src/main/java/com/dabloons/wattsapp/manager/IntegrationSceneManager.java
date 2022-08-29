@@ -3,12 +3,15 @@ package com.dabloons.wattsapp.manager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.IntegrationSceneRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
@@ -54,9 +57,9 @@ public class IntegrationSceneManager {
     }
 
     public void createIntegrationScene(IntegrationType type, String name, String integrationId,
-                            List<String> lightIds, WattsCallback<IntegrationScene, Void> callback)
+                            List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene, Void> callback)
     {
-        integrationSceneRepository.createIntegrationScene(type, name, integrationId, lightIds, callback);
+        integrationSceneRepository.createIntegrationScene(type, name, integrationId, lightIds, parentLightId, callback);
     }
 
     public void getIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>, Void> callback)
@@ -184,7 +187,7 @@ public class IntegrationSceneManager {
             while(idIt.hasNext()) {
                 lightIdsRet.add(idIt.next().getAsString());
             }
-            IntegrationScene is = new IntegrationScene(userId, IntegrationType.PHILLIPS_HUE, name, integrationId, lightIdsRet);
+            IntegrationScene is = new IntegrationScene(userId, IntegrationType.PHILLIPS_HUE, name, integrationId, lightIdsRet, null);
             ret.add(is);
         }
         return ret;
@@ -223,7 +226,7 @@ public class IntegrationSceneManager {
             String effect = responseIt.next().getAsString();
             List<String> lightIds = new ArrayList<>();
             lightIds.add(light.getIntegrationId());
-            IntegrationScene is = new IntegrationScene(userId, IntegrationType.NANOLEAF, effect, effect, lightIds);
+            IntegrationScene is = new IntegrationScene(userId, IntegrationType.NANOLEAF, effect, effect, lightIds, light.getIntegrationId());
             ret.add(is);
         }
         return ret;

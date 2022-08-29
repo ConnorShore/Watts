@@ -2,6 +2,8 @@ package com.dabloons.wattsapp.repository;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
@@ -33,14 +35,14 @@ public class IntegrationSceneRepository {
 
 
     public void createIntegrationScene(IntegrationType type, String name, String integrationId,
-                                       List<String> lightIds, WattsCallback<IntegrationScene, Void> callback) {
+                                       List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene, Void> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null)
             return;
 
         String userId = user.getUid();
 
-        IntegrationScene sceneToCreate = new IntegrationScene(userId, type, name, integrationId, lightIds);
+        IntegrationScene sceneToCreate = new IntegrationScene(userId, type, name, integrationId, lightIds, parentLightId);
         getIntegrationSceneCollection().document(sceneToCreate.getUid()).set(sceneToCreate)
                 .addOnCompleteListener(task -> {
                     if(task.isComplete())

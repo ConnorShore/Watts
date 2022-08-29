@@ -14,18 +14,18 @@ public class Scene implements Parcelable {
     private String userId;
     private String roomId;
     private String name;
-    private List<IntegrationScene> sceneList;
+    private List<IntegrationScene> integrationScenes;
 
 
     public Scene() {
     }
 
-    public Scene(String userId, String roomId, String sceneName, List<IntegrationScene> sceneList) {
+    public Scene(String userId, String roomId, String sceneName, List<IntegrationScene> integrationScenes) {
         this.uid = UUID.randomUUID().toString();
         this.userId = userId;
         this.roomId = roomId;
         this.name = sceneName;
-        this.sceneList = sceneList;
+        this.integrationScenes = integrationScenes;
     }
 
 
@@ -34,7 +34,7 @@ public class Scene implements Parcelable {
         userId = in.readString();
         roomId = in.readString();
         name = in.readString();
-        sceneList = in.createTypedArrayList(IntegrationScene.CREATOR);
+        integrationScenes = in.createTypedArrayList(IntegrationScene.CREATOR);
     }
 
     public static final Creator<Scene> CREATOR = new Creator<Scene>() {
@@ -69,8 +69,8 @@ public class Scene implements Parcelable {
     public void setName(String name) {
         this.name = name;
     }
-    public List<IntegrationScene> getSceneList() {
-        return sceneList;
+    public List<IntegrationScene> getIntegrationScenes() {
+        return integrationScenes;
     }
 
     public String getRoomId() {
@@ -81,11 +81,11 @@ public class Scene implements Parcelable {
         this.roomId = roomId;
     }
 
-    public void setSceneList(List<IntegrationScene> sceneList) {
-        this.sceneList = sceneList;
+    public void setIntegrationScenes(List<IntegrationScene> integrationScenes) {
+        this.integrationScenes = integrationScenes;
     }
 
-    public void addSceneToList(IntegrationScene scene) { this.sceneList.add(scene); }
+    public void addIntegrationSceneToList(IntegrationScene scene) { this.integrationScenes.add(scene); }
 
     @Override
     public int describeContents() {
@@ -99,7 +99,7 @@ public class Scene implements Parcelable {
         dest.writeString(userId);
         dest.writeString(roomId);
         dest.writeString(name);
-        dest.writeTypedList(sceneList);
+        dest.writeTypedList(integrationScenes);
     }
 
 

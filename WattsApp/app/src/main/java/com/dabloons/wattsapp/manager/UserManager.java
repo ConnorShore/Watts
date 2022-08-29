@@ -104,6 +104,23 @@ public class UserManager {
         }
     }
 
+    public void getNanoleafPanelIntegrationAuth(String id, WattsCallback<NanoleafPanelIntegrationAuth, Void> callback) {
+        userAuthRepository.getIntegrationAuth(IntegrationType.NANOLEAF)
+                .addOnCompleteListener(task -> {
+                    NanoleafPanelAuthCollection collection = task.getResult().toObject(NanoleafPanelAuthCollection.class);
+                    for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
+                        if(auth.getUid().equals(id)) {
+                            callback.apply(auth, new WattsCallbackStatus(true));
+                            return;
+                        }
+                    }
+                    callback.apply(null, new WattsCallbackStatus(false, "NanoleafPanelIntegrationAuth with id does not exist: " + id));
+                })
+                .addOnFailureListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                });
+    }
+
     public void getUserIntegrations(WattsCallback<List<IntegrationType>, Void> callback) {
         userAuthRepository.getUserIntegrations(callback);
     }

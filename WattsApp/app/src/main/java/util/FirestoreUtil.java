@@ -58,4 +58,5 @@ public class FirestoreUtil {
             callback.apply(ids, new WattsCallbackStatus(true));
         });
     }
+
 }

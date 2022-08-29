@@ -21,6 +21,10 @@ public class IntegrationScene extends IntegrationAuth implements Parcelable {
         this.lightIds = lightIds;
     }
 
+    public IntegrationScene() {
+        super();
+    }
+
     protected IntegrationScene(Parcel in) {
     }
 

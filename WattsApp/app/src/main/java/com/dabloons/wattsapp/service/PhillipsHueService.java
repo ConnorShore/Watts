@@ -65,6 +65,18 @@ public class PhillipsHueService extends HttpService {
         });
     }
 
+    public void getAllScenes(Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            String url = username + "/scenes";
+            makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+            return null;
+        });
+    }
+
     public void createGroupWithLights(Room room, Callback callback) {
         userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
             PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;

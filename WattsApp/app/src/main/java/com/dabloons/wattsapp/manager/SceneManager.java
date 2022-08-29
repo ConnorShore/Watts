@@ -39,7 +39,7 @@ public class SceneManager {
         if (result != null) {
             return result;
         }
-        synchronized(UserRepository.class) {
+        synchronized(SceneManager.class) {
             if (instance == null) {
                 instance = new SceneManager();
             }

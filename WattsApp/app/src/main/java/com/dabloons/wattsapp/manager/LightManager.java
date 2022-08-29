@@ -25,6 +25,7 @@ import java.util.UUID;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import util.RepositoryUtil;
 import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
@@ -124,7 +125,7 @@ public class LightManager {
                 return null;
             }
 
-            List<Light> lights = createLightsFromAuthCollection(collection);
+            List<Light> lights = RepositoryUtil.createNanoleafLightsFromAuthCollection(collection);
             lightRepository.storeMultipleLights(removeDuplicateLights(existingLights, lights))
                     .addOnCompleteListener(task -> {
                         callback.apply(null, new WattsCallbackStatus(true));
@@ -139,7 +140,11 @@ public class LightManager {
 
     public void getLights(WattsCallback<List<Light>, Void> callback)
     {
-        LightRepository.getInstance().getAllLights(callback);
+        lightRepository.getAllLights(callback);
+    }
+
+    public void getLightsForIntegration(IntegrationType type, WattsCallback<List<Light>, Void> callback) {
+        lightRepository.getAllLightsForType(type, callback);
     }
 
     /*
@@ -213,16 +218,6 @@ public class LightManager {
             currentLight++;
         }
 
-        return ret;
-    }
-
-    private List<Light> createLightsFromAuthCollection(NanoleafPanelAuthCollection collection) {
-        String userId = UserManager.getInstance().getCurrentUser().getUid();
-        List<Light> ret = new ArrayList<>();
-        for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
-            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF);
-            ret.add(light);
-        }
         return ret;
     }
 

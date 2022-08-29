@@ -5,13 +5,15 @@ import android.util.Log;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
-import com.dabloons.wattsapp.model.Scene;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +53,18 @@ public class IntegrationSceneRepository {
                 });
     }
 
+    public Task<Void> storeMultipleIntegrationScenes(List<IntegrationScene> integrationScenes) {
+        FirebaseUser user = UserManager.getInstance().getCurrentUser();
+        if(user == null) return null;
+
+        WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        for(IntegrationScene scene : integrationScenes) {
+            DocumentReference ref = getIntegrationSceneCollection().document(scene.getUid());
+            batch.set(ref, scene);
+        }
+        return batch.commit();
+    }
+
     public void getAllIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>, Void> callback)
     {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
@@ -83,6 +97,7 @@ public class IntegrationSceneRepository {
     private CollectionReference getIntegrationSceneCollection(){
         return FirebaseFirestore.getInstance().collection(INTEGRATION_SCENES_COLLECTION_NAME);
     }
+
 
 
     public static IntegrationSceneRepository getInstance() {

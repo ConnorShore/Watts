@@ -7,11 +7,8 @@ import androidx.annotation.Nullable;
 
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
-import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
-import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
-import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.IntegrationSceneRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
@@ -19,9 +16,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +25,6 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import util.RepositoryUtil;
 import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;

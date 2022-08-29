@@ -34,6 +34,10 @@ public class PhillipsHueService extends HttpService {
 
     private final String CONTENT_TYPE = "application/json";
 
+    private final int HUE_LIMIT = 65535;
+    private final int BRIGHTNESS_LIMIT = 254;
+    private final int SATURATION_LIMIT = 254;
+
     private PhillipsHueService() {
         super();
     }
@@ -137,9 +141,14 @@ public class PhillipsHueService extends HttpService {
 
 
             JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty("on", state.on);
-            jsonObj.addProperty("bri", state.getPhillipsHueBrightness());
-            // Todo: Add color, brightness, etc
+            jsonObj.addProperty("on", state.isOn());
+            jsonObj.addProperty("bri", (int)(state.getBrightness() * BRIGHTNESS_LIMIT));
+
+            if(state.getHue() != null)
+                jsonObj.addProperty("hue", (int)(state.getHue().floatValue() * HUE_LIMIT));
+            if(state.getSaturation() != null)
+                jsonObj.addProperty("sat", (int)(state.getSaturation().floatValue() * SATURATION_LIMIT));
+
             RequestBody body = createRequestBody(jsonObj);
 
             String url = username + "/lights/" + light.getIntegrationId() + "/state";
@@ -165,8 +174,8 @@ public class PhillipsHueService extends HttpService {
             String username = auth.getUsername();
 
             JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty("on", state.on);
-            jsonObj.addProperty("bri", state.getPhillipsHueBrightness());
+            jsonObj.addProperty("on", state.isOn());
+            jsonObj.addProperty("bri", (int)(state.getBrightness() * BRIGHTNESS_LIMIT));
             RequestBody body = createRequestBody(jsonObj);
 
             String url = username + "/groups/" + room.getIntegrationId() + "/action";

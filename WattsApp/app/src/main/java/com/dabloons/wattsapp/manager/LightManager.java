@@ -41,12 +41,12 @@ public class LightManager {
     private NanoleafService nanoleafService = NanoleafService.getInstance();
 
     public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(true, 1.0f);
+        LightState state = new LightState(true, 1.0f, null, null);
         setLightState(light, state, callback);
     }
 
     public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(false, 0.0f);
+        LightState state = new LightState(false, 0.0f, null, null);
         setLightState(light, state, callback);
     }
 
@@ -54,7 +54,7 @@ public class LightManager {
         lightRepository.deleteLightsForUser(callback);
     }
 
-    private void setLightState(Light light, LightState state, WattsCallback<Void, Void> callback) {
+    public void setLightState(Light light, LightState state, WattsCallback<Void, Void> callback) {
         IntegrationType type = light.getIntegrationType();
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
@@ -81,7 +81,10 @@ public class LightManager {
 
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                        callback.apply(null, new WattsCallbackStatus(true));
+                        if(response.isSuccessful())
+                            callback.apply(null, new WattsCallbackStatus(true));
+                        else
+                            callback.apply(null, new WattsCallbackStatus(false, response.message()));
                     }
                 });
                 break;

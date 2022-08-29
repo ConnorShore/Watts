@@ -69,7 +69,7 @@ public class RoomManager
 
         List<IntegrationType> integrationsUsed = integrationsUsedInLights(lights);
 
-        roomRepository.addLightsToRoom(room, lights).addOnCompleteListener(task -> {
+        roomRepository.setRoomLights(room, lights).addOnCompleteListener(task -> {
             // Lights have been added to room in DB
             if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE))
                 createPhillipsHueGroup(room, callback);
@@ -108,9 +108,21 @@ public class RoomManager
         });
     }
 
+    public void removeLightFromRoom(Room room, Light light, WattsCallback<Void, Void> callback) {
+        List<Light> lights = room.getLights();
+        lights.remove(light);
+        roomRepository.setRoomLights(room, lights)
+                .addOnCompleteListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(true));
+                })
+                .addOnFailureListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                });
+    }
+
     public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
-        roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {
+        roomRepository.deleteRoom(roomId).addOnCompleteListener(task -> {
                     if(!task.isComplete())
                         callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
                     callback.apply(null, new WattsCallbackStatus(true));

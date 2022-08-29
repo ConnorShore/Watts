@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="ctx_menu_group_lights">0</item>
-    <item type="id" name="ctx_menu_group_scenes">1</item>
+    <item type="id" name="ctx_menu_group_lights" />
+    <item type="id" name="ctx_menu_group_scenes" />
 
-    <item type="id" name="ctx_menu_item_details">0</item>
-    <item type="id" name="ctx_menu_item_delete">1</item>
+    <item type="id" name="ctx_menu_item_details" />
+    <item type="id" name="ctx_menu_item_delete" />
 </resources>

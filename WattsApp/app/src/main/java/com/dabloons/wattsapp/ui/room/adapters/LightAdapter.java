@@ -113,7 +113,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         return lightModelArrayList.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder implements View.OnTouchListener  {
+    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView lightName;
         private SwitchMaterial lightSwitch;
         private AppCompatSeekBar brighnessBar;
@@ -122,16 +122,14 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             super(itemView);
             lightName = itemView.findViewById(R.id.lightName);
             lightSwitch = itemView.findViewById(R.id.lightSwitch);
-            itemView.setOnTouchListener(this);
+            itemView.setOnClickListener(this);
         }
 
-
         @Override
-        public boolean onTouch(View v, MotionEvent event) {
+        public void onClick(View v) {
             initializeColorPickerDialog(v);
             initalizeListeners();
             showColorPicker();
-            return false;
         }
 
         private void initializeColorPickerDialog(@NotNull View view) {
@@ -190,5 +188,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             currentColorPicker = alertDialogBuilder.create();
             currentColorPicker.show();
         }
+
+
     }
 }

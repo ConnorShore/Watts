@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
@@ -117,6 +118,13 @@ public class NanoleafService extends HttpService {
             makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
             return null;
         });
+    }
+
+    public void getEffectsForLight(NanoleafPanelIntegrationAuth integrationAuth, Callback callback)
+    {
+        setBaseUrl(integrationAuth.getBaseUrl());
+        String path = String.format("%s/effects/effectsList", integrationAuth.getAuthToken());
+        makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
     }
 
     public void activateEffectForLight(NanoleafPanelIntegrationAuth panel, IntegrationScene effect, Callback callback) {

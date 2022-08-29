@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,17 +12,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.IntegrationSceneManager;
-import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
+import com.dabloons.wattsapp.service.NanoleafService;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -32,13 +40,13 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
     private final String LOG_TAG = "SceneDropdownAdapter";
 
     private Context context;
-    public ArrayList<IntegrationType> integrationSceneArrayList;
-    private Map<IntegrationType, IntegrationScene> selectedScenes;
+    public List<IntegrationAuth> integrationAuths;
+    private Map<IntegrationAuth, IntegrationScene> selectedScenes;
 
-    public SceneDropdownAdapter(Context context, ArrayList<IntegrationType> integrationSceneArrayList) {
+    public SceneDropdownAdapter(Context context, ArrayList<IntegrationAuth> integrationAuths) {
         this.context = context;
-        this.integrationSceneArrayList = integrationSceneArrayList;
-        this.selectedScenes = new HashMap<IntegrationType, IntegrationScene>();
+        this.integrationAuths = integrationAuths;
+        this.selectedScenes = new HashMap<IntegrationAuth, IntegrationScene>();
     }
 
     @NonNull
@@ -51,7 +59,8 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
     @Override
     public void onBindViewHolder(@NonNull SceneDropdownAdapter.Viewholder holder, int position)
     {
-        IntegrationType type = integrationSceneArrayList.get(position);
+        IntegrationType type = integrationAuths.get(position).getIntegrationType();
+
         IntegrationSceneManager.getInstance().getIntegrationScenes(type, (scenes, status) -> {
 
             holder.integrationName.setText(setIntegrationName(type));
@@ -66,14 +75,23 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
 
             return null;
         });
+
     }
 
     public void setSelectedScene(IntegrationScene scene)
     {
-        selectedScenes.put(scene.getIntegrationType(), scene);
+        UserManager.getInstance().getIntegrationAuthData(scene.getIntegrationType(), new WattsCallback<IntegrationAuth, Void>() {
+            @Override
+            public Void apply(IntegrationAuth integrationAuth, WattsCallbackStatus status)
+            {
+                selectedScenes.put(integrationAuth, scene);
+                return null;
+            }
+        });
+
     }
 
-    public Map<IntegrationType, IntegrationScene> getSelectedScenes() {
+    public Map<IntegrationAuth, IntegrationScene> getSelectedScenes() {
         return selectedScenes;
     }
 
@@ -103,7 +121,7 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
 
     @Override
     public int getItemCount() {
-        return integrationSceneArrayList.size();
+        return integrationAuths.size();
     }
 
     public class Viewholder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {

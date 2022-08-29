@@ -71,6 +71,38 @@ public class UserManager {
         }
     }
 
+    public void getAllIntegrationAuthData(List<IntegrationType> types, List<IntegrationAuth> integrationAuths, int index, WattsCallback<List<IntegrationAuth>, Void> callback)
+    {
+        if(index >= types.size()) {
+            callback.apply(integrationAuths, new WattsCallbackStatus(true));
+            return;
+        }
+
+        IntegrationType type = types.get(index);
+
+        this.getIntegrationAuthData(type, new WattsCallback<IntegrationAuth, Void>() {
+            @Override
+            public Void apply(IntegrationAuth auth, WattsCallbackStatus status) {
+                switch(auth.getIntegrationType()) {
+                    case PHILLIPS_HUE:
+                        integrationAuths.add(auth);
+                        break;
+                    case NANOLEAF:
+                        NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
+                        for(NanoleafPanelIntegrationAuth panel : collection.getPanelAuths()) {
+                            integrationAuths.add(panel);
+                        }
+                        break;
+                }
+                int newIndex = index + 1;
+                getAllIntegrationAuthData(types, integrationAuths, newIndex, callback);
+                return null;
+            }
+
+        });
+
+    }
+
     public void addIntegrationAuthData(IntegrationType type, IntegrationAuth authData, WattsCallback<Void, Void> callback) {
         switch(type) {
             case PHILLIPS_HUE:

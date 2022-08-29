@@ -108,6 +108,21 @@ public class RoomManager
         });
     }
 
+    public List<IntegrationType> getRoomIntegrationTypes(Room room)
+    {
+        List<IntegrationType> ret = new ArrayList<>();
+
+        for(Light light : room.getLights())
+        {
+            if(!ret.contains(light.getIntegrationType()))
+            {
+                ret.add(light.getIntegrationType());
+            }
+        }
+
+        return ret;
+    }
+
     public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
         roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {

@@ -211,7 +211,7 @@ public class IntegrationSceneManager {
         });
     }
 
-    private List<IntegrationScene> getNanoleafScenesFromResponse(Light light, JsonArray responseArray) {
+    public List<IntegrationScene> getNanoleafScenesFromResponse(Light light, JsonArray responseArray) {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         List<IntegrationScene> ret = new ArrayList<>();
         Iterator<JsonElement> responseIt = responseArray.iterator();

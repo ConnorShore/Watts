@@ -23,6 +23,7 @@ import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
@@ -103,13 +104,18 @@ public class RoomActivity extends AppCompatActivity {
         });
 
         alertDialogBuilder = new MaterialAlertDialogBuilder(RoomActivity.this);
-        UserManager.getInstance().getUserIntegrations((var, status) -> {
+        List<IntegrationType> integrationTypes = RoomManager.getInstance().getRoomIntegrationTypes(currentRoom);
+        UserManager.getInstance().getAllIntegrationAuthData(integrationTypes, new ArrayList<>(), 0, new WattsCallback<List<IntegrationAuth>, Void>() {
+            @Override
+            public Void apply(List<IntegrationAuth> integrationAuths, WattsCallbackStatus status) {
 
-            sceneDropdownAdapter = new SceneDropdownAdapter(RoomActivity.this, (ArrayList<IntegrationType>) var);
-            initializeListeners();
-            return null;
+                sceneDropdownAdapter = new SceneDropdownAdapter(RoomActivity.this, (ArrayList<IntegrationAuth>) integrationAuths);
+                initializeListeners();
+                return null;
+            }
         });
 
+        
 
     }
 
@@ -139,9 +145,9 @@ public class RoomActivity extends AppCompatActivity {
         sceneDropdownRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
         sceneDropdownRV.setAdapter(sceneDropdownAdapter);
         alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
-            Map<IntegrationType, IntegrationScene> scenes = sceneDropdownAdapter.getSelectedScenes();
+            Map<IntegrationAuth, IntegrationScene> scenes = sceneDropdownAdapter.getSelectedScenes();
             ArrayList<IntegrationScene> scenesToAdd = new ArrayList<>();
-            for(Map.Entry<IntegrationType, IntegrationScene> scene : scenes.entrySet())
+            for(Map.Entry<IntegrationAuth, IntegrationScene> scene : scenes.entrySet())
             {
                 scenesToAdd.add(scene.getValue());
             }

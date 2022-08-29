@@ -8,6 +8,7 @@ import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
@@ -92,6 +93,19 @@ public class NanoleafService extends HttpService {
             setBaseUrl(panel.getBaseUrl());
             String path = String.format("%s/effects/effectsList", panel.getAuthToken());
             makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
+            return null;
+        });
+    }
+
+    public void activateEffectForLight(NanoleafPanelIntegrationAuth panel, IntegrationScene effect, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
+            setBaseUrl(panel.getBaseUrl());
+            String path = String.format("%s/effects", panel.getAuthToken());
+
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("select", effect.getIntegrationId());
+            RequestBody body = createRequestBody(jsonObj);
+            makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);
             return null;
         });
     }

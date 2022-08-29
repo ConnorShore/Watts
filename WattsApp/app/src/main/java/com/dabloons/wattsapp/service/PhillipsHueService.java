@@ -10,6 +10,7 @@ import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
+import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.PhillipsHueIntegrationAuth;
 import com.google.gson.JsonArray;
@@ -73,6 +74,28 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/scenes";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+            return null;
+        });
+    }
+
+    public void activateScene(IntegrationScene scene, Room room, Callback callback) {
+        if(scene.getIntegrationType() != IntegrationType.PHILLIPS_HUE)
+            return;
+
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+
+            JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("on", true);
+            jsonObj.addProperty("scene", scene.getIntegrationId());
+
+            RequestBody body = createRequestBody(jsonObj);
+
+            String url = String.format("%s/groups/%s/action", username, room.getIntegrationId());
+            makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
             return null;
         });
     }

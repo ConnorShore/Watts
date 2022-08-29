@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 public class IntegrationScene extends IntegrationAuth implements Parcelable {
 
     private String userId;
@@ -13,12 +15,17 @@ public class IntegrationScene extends IntegrationAuth implements Parcelable {
     private String integrationId;
     private List<String> lightIds;
 
-    public IntegrationScene(String userId, IntegrationType type, String name, String integrationId, List<String> lightIds) {
+    @Nullable
+    private String parentLightId;
+
+    public IntegrationScene(String userId, IntegrationType type, String name,
+                            String integrationId, List<String> lightIds, @Nullable String parentLightId) {
         super(UUID.randomUUID().toString(), type);
         this.userId = userId;
         this.name = name;
         this.integrationId = integrationId;
         this.lightIds = lightIds;
+        this.parentLightId = parentLightId;
     }
 
     public IntegrationScene() {
@@ -58,6 +65,15 @@ public class IntegrationScene extends IntegrationAuth implements Parcelable {
 
     public void setLightIds(List<String> lightIds) {
         this.lightIds = lightIds;
+    }
+
+    @Nullable
+    public String getParentLightId() {
+        return parentLightId;
+    }
+
+    public void setParentLightId(@Nullable String parentLightId) {
+        this.parentLightId = parentLightId;
     }
 
     public static final Creator<IntegrationScene> CREATOR = new Creator<IntegrationScene>() {

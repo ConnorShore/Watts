@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.room.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,10 @@ import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Scene;
 
 import java.util.ArrayList;
+
+import util.UIMessageUtil;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
 {
@@ -44,6 +49,21 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
     {
         Scene scene = sceneArrayList.get(position);
         holder.sceneName.setText(scene.getName());
+        holder.setScene.setOnClickListener(view -> {
+            sceneManager.activateScene(scene, new WattsCallback<Void, Void>() {
+                @Override
+                public Void apply(Void var, WattsCallbackStatus status) {
+                    if(!status.success) {
+                        Log.e(LOG_TAG, status.message);
+                        UIMessageUtil.showShortToastMessage(context, "Failed to activate scene " + scene.getName());
+                        return null;
+                    }
+
+                    UIMessageUtil.showShortToastMessage(context, "Activated scene " + scene.getName());
+                    return null;
+                }
+            });
+        });
     }
 
     @Override

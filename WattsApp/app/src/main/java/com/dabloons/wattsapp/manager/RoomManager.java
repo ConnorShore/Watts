@@ -91,6 +91,26 @@ public class RoomManager
         setRoomLightState(room, state, callback);
     }
 
+    public void getRoomForId(String roomId, WattsCallback<Room, Void> callback) {
+        roomRepository.getUserDefinedRooms(new WattsCallback<ArrayList<Room>, Void>() {
+            @Override
+            public Void apply(ArrayList<Room> rooms, WattsCallbackStatus status) {
+                if(!status.success) {
+                    callback.apply(null, new WattsCallbackStatus(false, status.message));
+                    return null;
+                }
+                for(Room r : rooms) {
+                    if(r.getUid().equals(roomId)) {
+                        callback.apply(r, new WattsCallbackStatus(true));
+                        return null;
+                    }
+                }
+                callback.apply(null, new WattsCallbackStatus(false, "No room with id was found: " + roomId));
+                return null;
+            }
+        });
+    }
+
     public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
     {
         roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {

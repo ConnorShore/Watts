@@ -77,7 +77,7 @@ public class NanoleafService extends HttpService {
 
             JsonObject bodyObj = new JsonObject();
             JsonObject value = new JsonObject();
-            value.addProperty("value", state.on);
+            value.addProperty("value", state.isOn());
             bodyObj.add("on", value);
             RequestBody body = createRequestBody(bodyObj);
 

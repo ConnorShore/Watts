@@ -41,12 +41,12 @@ public class LightManager {
     private NanoleafService nanoleafService = NanoleafService.getInstance();
 
     public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(true, 1.0f);
+        LightState state = new LightState(true, 1.0f, null, null);
         setLightState(light, state, callback);
     }
 
     public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(false, 0.0f);
+        LightState state = new LightState(false, 0.0f, null, null);
         setLightState(light, state, callback);
     }
 

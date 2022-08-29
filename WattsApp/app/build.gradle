@@ -86,6 +86,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
 
     //color wheel
-    implementation "com.github.skydoves:colorpickerpreference:2.0.6"
+    implementation "com.github.skydoves:colorpickerview:2.2.4"
 
 }

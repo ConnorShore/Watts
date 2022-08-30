@@ -96,6 +96,10 @@ public final class SceneRepository
         });
     }
 
+    public Task<Void> deleteScene(Scene scene) {
+        return getSceneCollection().document(scene.getUid()).delete();
+    }
+
     public void deleteScenesForUser(WattsCallback<Void, Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getSceneCollection(), callback);
     }

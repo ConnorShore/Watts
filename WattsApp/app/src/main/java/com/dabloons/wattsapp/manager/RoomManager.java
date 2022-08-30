@@ -69,7 +69,7 @@ public class RoomManager
 
         List<IntegrationType> integrationsUsed = integrationsUsedInLights(lights);
 
-        roomRepository.addLightsToRoom(room, lights).addOnCompleteListener(task -> {
+        roomRepository.setRoomLights(room, lights).addOnCompleteListener(task -> {
             // Lights have been added to room in DB
             if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE))
                 createPhillipsHueGroup(room, callback);
@@ -108,24 +108,30 @@ public class RoomManager
         });
     }
 
-    public List<IntegrationType> getRoomIntegrationTypes(Room room)
-    {
-        List<IntegrationType> ret = new ArrayList<>();
+    public void removeLightFromRoom(Room room, Light light, WattsCallback<Void, Void> callback) {
+        List<Light> lights = room.getLights();
+        lights.remove(light);
+        roomRepository.setRoomLights(room, lights)
+                .addOnCompleteListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(true));
+                })
+                .addOnFailureListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                });
+    }
 
-        for(Light light : room.getLights())
-        {
+    public List<IntegrationType> getRoomIntegrationTypes(Room room) {
+        List<IntegrationType> ret = new ArrayList<>();
+        for(Light light : room.getLights()) {
             if(!ret.contains(light.getIntegrationType()))
-            {
                 ret.add(light.getIntegrationType());
-            }
         }
 
         return ret;
     }
 
-    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
-    {
-        roomRepository.deleteRoom(roomId, callback).addOnCompleteListener(task -> {
+    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback) {
+        roomRepository.deleteRoom(roomId).addOnCompleteListener(task -> {
                     if(!task.isComplete())
                         callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
                     callback.apply(null, new WattsCallbackStatus(true));

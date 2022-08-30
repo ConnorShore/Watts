@@ -68,7 +68,7 @@ public final class RoomRepository {
         return getRoomCollection().document(roomUid).update(INTEGRATION_ID_FIELD, id);
     }
 
-    public Task<Void> addLightsToRoom(Room room, List<Light> lights) {
+    public Task<Void> setRoomLights(Room room, List<Light> lights) {
         room.setLights(lights);
         return updateRoom(room);
     }
@@ -96,7 +96,7 @@ public final class RoomRepository {
                 });
     }
 
-    public Task<Void> deleteRoom(String roomId, WattsCallback<Void, Void> callback)
+    public Task<Void> deleteRoom(String roomId)
     {
         return getRoomCollection().document(roomId).delete();
     }

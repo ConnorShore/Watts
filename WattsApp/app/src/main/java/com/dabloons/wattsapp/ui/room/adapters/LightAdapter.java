@@ -1,16 +1,15 @@
 package com.dabloons.wattsapp.ui.room.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.Looper;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +22,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
-import com.dabloons.wattsapp.ui.room.RoomActivity;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.skydoves.colorpickerview.ColorEnvelope;
@@ -32,22 +31,17 @@ import com.skydoves.colorpickerview.listeners.ColorListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import util.UIMessageUtil;
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 {
     private final String LOG_TAG = "LightAdapter";
 
     private Context context;
-    public ArrayList<Light> lightModelArrayList;
+    public List<Light> lights;
 
     private MaterialAlertDialogBuilder alertDialogBuilder;
     private AlertDialog currentColorPicker;
@@ -58,9 +52,11 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     private ColorPickerView colorPickerView;
     private float[] hsv;
 
-    public LightAdapter(Context context, ArrayList<Light> lightModelArrayList) {
+    private int position;
+
+    public LightAdapter(Context context, List<Light> lights) {
         this.context = context;
-        this.lightModelArrayList = lightModelArrayList;
+        this.lights = lights;
 
     }
 
@@ -74,7 +70,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
-        Light light = lightModelArrayList.get(position);
+        Light light = lights.get(position);
         holder.lightName.setText(light.getName());
 
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -106,23 +102,39 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 });
             }
         });
+
+        holder.lightCard.setOnLongClickListener(view -> {
+            setPosition(holder.getLayoutPosition());
+            return false;
+        });
     }
 
     @Override
     public int getItemCount() {
-        return lightModelArrayList.size();
+        return lights.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         private TextView lightName;
         private SwitchMaterial lightSwitch;
         private AppCompatSeekBar brighnessBar;
+        private MaterialCardView lightCard;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             lightName = itemView.findViewById(R.id.lightName);
             lightSwitch = itemView.findViewById(R.id.lightSwitch);
+            lightCard = itemView.findViewById(R.id.lightCard);
             itemView.setOnClickListener(this);
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         @Override
@@ -130,6 +142,15 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             initializeColorPickerDialog(v);
             initalizeListeners();
             showColorPicker();
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(R.id.ctx_menu_group_lights, R.id.ctx_menu_item_details, Menu.NONE, "View Details");
+
+            SpannableString s = new SpannableString("Delete");
+            s.setSpan(new ForegroundColorSpan(Color.RED), 0, s.length(), 0);
+            menu.add(R.id.ctx_menu_group_lights, R.id.ctx_menu_item_delete, Menu.NONE, s);
         }
 
         private void initializeColorPickerDialog(@NotNull View view) {
@@ -161,7 +182,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             });
         }
 
-        private void onColorSet() {Light light = lightModelArrayList.get(this.getAbsoluteAdapterPosition());
+        private void onColorSet() {Light light = lights.get(this.getAbsoluteAdapterPosition());
             float brightness = brighnessBar.getProgress() / 100.0f;
             float hue = (hsv[0]) / 360.0f;
             float saturation = hsv[1];
@@ -185,7 +206,5 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             currentColorPicker = alertDialogBuilder.create();
             currentColorPicker.show();
         }
-
-
     }
 }

@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -66,6 +67,9 @@ public class RoomActivity extends AppCompatActivity {
     private RecyclerView sceneDropdownRV;
     private SceneDropdownAdapter sceneDropdownAdapter;
 
+    private RoomManager roomManager = RoomManager.getInstance();
+    private SceneManager sceneManager = SceneManager.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +98,7 @@ public class RoomActivity extends AppCompatActivity {
         lightRV.setLayoutManager(gridLayoutManager);
         lightRV.setAdapter(lightAdapter);
         lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
+        registerForContextMenu(lightRV);
 
         SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
@@ -103,6 +108,7 @@ public class RoomActivity extends AppCompatActivity {
             sceneRV.setLayoutManager(gridLayoutManager1);
             sceneRV.setAdapter(sceneAdapter);
             sceneRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
+            registerForContextMenu(sceneRV);
             return null;
         });
 
@@ -117,6 +123,62 @@ public class RoomActivity extends AppCompatActivity {
             initializeListeners();
             return null;
         });
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getGroupId()) {
+            case R.id.ctx_menu_group_lights:
+                handleLightContextMenuClick(item, lightAdapter.getPosition());
+                break;
+            case R.id.ctx_menu_group_scenes:
+                handleSceneContextMenuClick(item, sceneAdapter.getPosition());
+                break;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void handleLightContextMenuClick(MenuItem item, int position) {
+        switch(item.getItemId()) {
+            case R.id.ctx_menu_item_details:
+                // Todo: Open light details dialog
+                break;
+            case R.id.ctx_menu_item_delete:
+                Light light = lightAdapter.lights.remove(position);
+                roomManager.removeLightFromRoom(currentRoom, light, (var, status) -> {
+                    if(status.success) {
+                        UIMessageUtil.showShortToastMessage(getApplicationContext(), "Successfully removed light");
+                        updateUI();
+                    }
+                    else
+                        UIMessageUtil.showShortToastMessage(getApplicationContext(), "Failed to remove light");
+                    return null;
+                });
+                break;
+        }
+    }
+
+
+    private void handleSceneContextMenuClick(MenuItem item, int position) {
+        switch(item.getItemId()) {
+            case R.id.ctx_menu_item_details:
+                // Todo: Open scene details dialog
+                break;
+            case R.id.ctx_menu_item_delete:
+                Scene scene = sceneAdapter.scenes.remove(position);
+                sceneManager.deleteScene(scene, (var, status) -> {
+                    if(status.success) {
+                        UIMessageUtil.showShortToastMessage(getApplicationContext(), "Successfully deleted scene");
+                        sceneAdapter.scenes.remove(scene);
+                        updateUI();
+                    }
+                    else
+                        UIMessageUtil.showShortToastMessage(getApplicationContext(), "Failed to delete scene");
+                    return null;
+                });
+                break;
+        }
     }
 
     private void initializeListeners() {
@@ -172,6 +234,9 @@ public class RoomActivity extends AppCompatActivity {
 
     private void updateUI()
     {
-        new Handler(Looper.getMainLooper()).post(() -> sceneAdapter.notifyDataSetChanged());
+        new Handler(Looper.getMainLooper()).post(() -> {
+            sceneAdapter.notifyDataSetChanged();
+            lightAdapter.notifyDataSetChanged();
+        });
     }
 }

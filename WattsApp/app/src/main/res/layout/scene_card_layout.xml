@@ -6,6 +6,7 @@
     android:padding="5dp">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/sceneCard"
         android:layout_height="110dp"
         android:layout_width="220dp"
         android:clickable="true"

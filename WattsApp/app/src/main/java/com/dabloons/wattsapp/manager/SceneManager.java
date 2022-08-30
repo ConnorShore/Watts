@@ -59,6 +59,16 @@ public class SceneManager {
         sceneRepository.deleteScenesForUser(callback);
     }
 
+    public void deleteScene(Scene scene, WattsCallback<Void, Void> callback) {
+        sceneRepository.deleteScene(scene)
+                .addOnCompleteListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(true));
+                })
+                .addOnFailureListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                });
+    }
+
     public void activateScene(Scene scene, WattsCallback<Void, Void> callback) {
         List<IntegrationScene> scenes = scene.getIntegrationScenes();
         roomManager.getRoomForId(scene.getRoomId(), (room, status) -> {

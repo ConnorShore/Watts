@@ -120,8 +120,17 @@ public class RoomManager
                 });
     }
 
-    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback)
-    {
+    public List<IntegrationType> getRoomIntegrationTypes(Room room) {
+        List<IntegrationType> ret = new ArrayList<>();
+        for(Light light : room.getLights()) {
+            if(!ret.contains(light.getIntegrationType()))
+                ret.add(light.getIntegrationType());
+        }
+
+        return ret;
+    }
+
+    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback) {
         roomRepository.deleteRoom(roomId).addOnCompleteListener(task -> {
                     if(!task.isComplete())
                         callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));

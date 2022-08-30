@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,17 +12,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.IntegrationSceneManager;
-import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.manager.UserManager;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
+import com.dabloons.wattsapp.service.NanoleafService;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
-import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -31,14 +39,14 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
 
     private final String LOG_TAG = "SceneDropdownAdapter";
 
-    private Context context;
-    public ArrayList<IntegrationType> integrationSceneArrayList;
-    private Map<IntegrationType, IntegrationScene> selectedScenes;
+    public List<IntegrationAuth> integrationAuths;
+    private Map<IntegrationAuth, IntegrationScene> selectedScenes;
+    private Map<IntegrationAuth, List<IntegrationScene>> sceneMap;
 
-    public SceneDropdownAdapter(Context context, ArrayList<IntegrationType> integrationSceneArrayList) {
-        this.context = context;
-        this.integrationSceneArrayList = integrationSceneArrayList;
-        this.selectedScenes = new HashMap<IntegrationType, IntegrationScene>();
+    public SceneDropdownAdapter(Map<IntegrationAuth, List<IntegrationScene>> integrationSceneMap) {
+        this.sceneMap = integrationSceneMap;
+        this.integrationAuths = new ArrayList<>(integrationSceneMap.keySet());
+        this.selectedScenes = new HashMap<>();
     }
 
     @NonNull
@@ -51,51 +59,47 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
     @Override
     public void onBindViewHolder(@NonNull SceneDropdownAdapter.Viewholder holder, int position)
     {
-        IntegrationType type = integrationSceneArrayList.get(position);
-        IntegrationSceneManager.getInstance().getIntegrationScenes(type, (scenes, status) -> {
+        IntegrationAuth auth = integrationAuths.get(position);
 
-            holder.integrationName.setText(setIntegrationName(type));
-            String[] sceneNames = getSceneNames(scenes);
-            holder.integrationSceneList.setSimpleItems(sceneNames);
-            holder.integrationSceneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    setSelectedScene(scenes.get(position));
-                }
-            });
+        List<IntegrationScene> scenesToShow = sceneMap.get(auth);
+        holder.integrationName.setText(setIntegrationName(auth));
 
-            return null;
+        String[] sceneNames = getSceneNames(scenesToShow);
+        holder.integrationSceneList.setSimpleItems(sceneNames);
+        holder.integrationSceneList.setOnItemClickListener((parent, view, position1, id) -> {
+            setSelectedScene(scenesToShow.get(position1));
         });
     }
 
     public void setSelectedScene(IntegrationScene scene)
     {
-        selectedScenes.put(scene.getIntegrationType(), scene);
+        UserManager.getInstance().getIntegrationAuthData(scene.getIntegrationType(), (integrationAuth, status) -> {
+            selectedScenes.put(integrationAuth, scene);
+            return null;
+        });
     }
 
-    public Map<IntegrationType, IntegrationScene> getSelectedScenes() {
+    public Map<IntegrationAuth, IntegrationScene> getSelectedScenes() {
         return selectedScenes;
     }
 
-    private String[] getSceneNames(List<IntegrationScene> var)
-    {
+    private String[] getSceneNames(List<IntegrationScene> var) {
         String[] ret = new String[var.size()];
 
-        for(int i = 0; i < var.size(); i++)
-        {
+        for(int i = 0; i < var.size(); i++) {
             ret[i] = var.get(i).getName();
         }
 
         return ret;
     }
 
-    private String setIntegrationName(IntegrationType type)
-    {
-        switch (type){
+    private String setIntegrationName(IntegrationAuth auth) {
+        switch (auth.getIntegrationType()){
             case PHILLIPS_HUE:
                 return "Phillips Hue";
             case NANOLEAF:
-                return "Nanoleaf";
+                NanoleafPanelIntegrationAuth panel = (NanoleafPanelIntegrationAuth) auth;
+                return "Nanoleaf [" + panel.getName() + "]";
             default:
                 return null;
         }
@@ -103,7 +107,7 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
 
     @Override
     public int getItemCount() {
-        return integrationSceneArrayList.size();
+        return integrationAuths.size();
     }
 
     public class Viewholder extends RecyclerView.ViewHolder implements AdapterView.OnClickListener {

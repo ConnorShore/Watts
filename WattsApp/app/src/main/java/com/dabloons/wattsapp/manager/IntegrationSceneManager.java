@@ -7,8 +7,11 @@ import androidx.annotation.Nullable;
 
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
+import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.IntegrationSceneRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
@@ -19,8 +22,10 @@ import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -62,6 +67,11 @@ public class IntegrationSceneManager {
 
     public void deleteUserScenes(WattsCallback<Void, Void> callback) {
         integrationSceneRepository.deleteIntegrationScenesForUser(callback);
+    }
+
+
+    public void getIntegrationScenesMap(List<IntegrationType> integrations, WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
+        buildIntegrationSceneMap(integrations, 0, new HashMap<>(), callback);
     }
 
     public void syncNanoleafEffectsToDatabase(WattsCallback<Void, Void> callback) {
@@ -120,6 +130,58 @@ public class IntegrationSceneManager {
 
             return null;
         });
+    }
+
+
+
+    private void buildIntegrationSceneMap(List<IntegrationType> integrations, int index,
+                                          Map<IntegrationAuth, List<IntegrationScene>> map,
+                                          WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
+        if(index >= integrations.size()) {
+            callback.apply(map, new WattsCallbackStatus(true));
+            return;
+        }
+
+        IntegrationType type = integrations.get(index);
+        getIntegrationScenes(type, (scenes, status) -> {
+            if(!status.success) {
+                callback.apply(null, new WattsCallbackStatus(false, status.message));
+                return null;
+            }
+
+            userManager.getIntegrationAuthData(type, (auth, status1) -> {
+                if(!status1.success) {
+                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
+                    return null;
+                }
+
+                switch (type) {
+                    case PHILLIPS_HUE:
+                        map.put(auth, scenes);
+                        break;
+                    case NANOLEAF:
+                        NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
+                        for(NanoleafPanelIntegrationAuth panel : collection.getPanelAuths()) {
+                            map.put(panel, getNanoleafPanelScenes(panel, scenes));
+                        }
+                        break;
+                }
+
+                int nextIndex = index + 1;
+                buildIntegrationSceneMap(integrations, nextIndex, map, callback);
+                return null;
+            });
+            return null;
+        });
+    }
+
+    private List<IntegrationScene> getNanoleafPanelScenes(NanoleafPanelIntegrationAuth panel, List<IntegrationScene> scenes) {
+        List<IntegrationScene> ret = new ArrayList<>();
+        for(IntegrationScene scene : scenes) {
+            if(scene.getParentLightId().equals(panel.getUid()))
+                ret.add(scene);
+        }
+        return ret;
     }
 
     private void syncIntegrationScenesToDatabase(IntegrationType type, WattsCallback<Void, Void> callback) {

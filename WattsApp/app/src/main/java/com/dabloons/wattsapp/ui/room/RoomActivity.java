@@ -19,12 +19,14 @@ import android.widget.Button;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.IntegrationSceneManager;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.manager.SceneManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
@@ -98,7 +100,6 @@ public class RoomActivity extends AppCompatActivity {
         lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
         registerForContextMenu(lightRV);
 
-
         SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
             sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), (ArrayList<Scene>) scenes);
@@ -112,9 +113,13 @@ public class RoomActivity extends AppCompatActivity {
         });
 
         alertDialogBuilder = new MaterialAlertDialogBuilder(RoomActivity.this);
-        UserManager.getInstance().getUserIntegrations((var, status) -> {
-
-            sceneDropdownAdapter = new SceneDropdownAdapter(RoomActivity.this, (ArrayList<IntegrationType>) var);
+        List<IntegrationType> integrationTypes = RoomManager.getInstance().getRoomIntegrationTypes(currentRoom);
+        IntegrationSceneManager.getInstance().getIntegrationScenesMap(integrationTypes, (map, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, "Failed to get integration scene map");
+                return null;
+            }
+            sceneDropdownAdapter = new SceneDropdownAdapter(map);
             initializeListeners();
             return null;
         });
@@ -177,10 +182,7 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     private void initializeListeners() {
-
-
         addSceneBtn.setOnClickListener(v -> {
-
             customDialogView = LayoutInflater.from(RoomActivity.this).inflate(R.layout.create_scene_dialog, null, false);
             launchCustomAlertDialog();
         });
@@ -190,39 +192,44 @@ public class RoomActivity extends AppCompatActivity {
                 finish();
                 return null;
             });
-
         });
     }
 
     private void launchCustomAlertDialog() {
         alertDialogBuilder.setView(customDialogView);
         sceneDropdownRV = customDialogView.findViewById(R.id.sceneDropdownRV);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
         sceneDropdownRV.setLayoutManager(linearLayoutManager);
         sceneDropdownRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
         sceneDropdownRV.setAdapter(sceneDropdownAdapter);
-        alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
-            Map<IntegrationType, IntegrationScene> scenes = sceneDropdownAdapter.getSelectedScenes();
-            ArrayList<IntegrationScene> scenesToAdd = new ArrayList<>();
-            for(Map.Entry<IntegrationType, IntegrationScene> scene : scenes.entrySet())
-            {
-                scenesToAdd.add(scene.getValue());
-            }
-            TextInputLayout sceneName = customDialogView.findViewById(R.id.sceneNameTextLayout);
-            SceneManager.getInstance().createScene(currentRoom.getUid(),sceneName.getEditText().getText().toString() , scenesToAdd, (var, status) -> {
-                if(status.success) {
-                    sceneAdapter.scenes.add(var);
-                    updateUI();
-                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully added scene");
-                }
-                else
-                    UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to add scene");
 
-                return null;
-            });
+        alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
+            addSceneToUser();
         }).setNegativeButton("Cancel", (dialog, which) -> {
             dialog.dismiss();
         }).show();
+    }
+
+    private void addSceneToUser() {
+        Map<IntegrationAuth, IntegrationScene> scenes = sceneDropdownAdapter.getSelectedScenes();
+        ArrayList<IntegrationScene> scenesToAdd = new ArrayList<>();
+        for(Map.Entry<IntegrationAuth, IntegrationScene> scene : scenes.entrySet())
+        {
+            scenesToAdd.add(scene.getValue());
+        }
+        TextInputLayout sceneName = customDialogView.findViewById(R.id.sceneNameTextLayout);
+        SceneManager.getInstance().createScene(currentRoom.getUid(), sceneName.getEditText().getText().toString() ,scenesToAdd, (var, status) -> {
+            if(status.success) {
+                sceneAdapter.scenes.add(var);
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully added scene");
+            }
+            else
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to add scene");
+
+            updateUI();
+            return null;
+        });
     }
 
     private void updateUI()

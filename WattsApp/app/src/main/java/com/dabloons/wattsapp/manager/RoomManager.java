@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -111,6 +112,32 @@ public class RoomManager
     public void removeLightFromRoom(Room room, Light light, WattsCallback<Void, Void> callback) {
         List<Light> lights = room.getLights();
         lights.remove(light);
+
+        List<IntegrationType> integrationsUsed = integrationsUsedInLights(lights);
+
+        if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE)) {
+            phillipsHueService.setGroupLights(room, lights, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if(!response.isSuccessful()) {
+                        callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                        return;
+                    }
+
+                    setRoomRepositoryLights(room, lights, callback);
+                }
+            });
+        }
+
+        setRoomRepositoryLights(room, lights, callback);
+    }
+
+    private void setRoomRepositoryLights(Room room, List<Light> lights, WattsCallback<Void, Void> callback) {
         roomRepository.setRoomLights(room, lights)
                 .addOnCompleteListener(task -> {
                     callback.apply(null, new WattsCallbackStatus(true));
@@ -287,5 +314,25 @@ public class RoomManager
 
     private void resetIntegrationsToResolve() {
         this.integrationsToResolve.clear();
+    }
+
+    /**
+     * Debug only
+     */
+    public void getAllPhillipsHueGroups() {
+        phillipsHueService.getAllGroups(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                System.out.println();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                ResponseBody responseData = response.body();
+                String responseDataStr = new String(responseData.bytes());
+                JsonObject jsonObj = JsonParser.parseString(responseDataStr).getAsJsonObject();
+                System.out.println();
+            }
+        });
     }
 }

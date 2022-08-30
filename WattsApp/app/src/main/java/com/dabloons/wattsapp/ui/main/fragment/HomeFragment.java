@@ -27,6 +27,7 @@ import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.repository.RoomRepository;
+import com.dabloons.wattsapp.service.PhillipsHueService;
 import com.dabloons.wattsapp.ui.room.RoomActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.room.adapters.LightItemAdapter;
@@ -90,6 +91,12 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         roomRV = v.findViewById(R.id.idRVCourse);
+
+// Debug button
+//        Button b = v.findViewById(R.id.getGroups);
+//        b.setOnClickListener(view -> {
+//            RoomManager.getInstance().getAllPhillipsHueGroups();
+//        });
 
         alertDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
         Button addRoom = (Button) v.findViewById(R.id.addRoomButton);

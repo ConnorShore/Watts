@@ -188,7 +188,7 @@ public class RoomActivity extends AppCompatActivity {
         });
 
         deleteRoomBtn.setOnClickListener(v -> {
-            RoomManager.getInstance().deleteRoom(currentRoom.getUid(), (var, status) -> {
+            RoomManager.getInstance().deleteRoom(currentRoom, (var, status) -> {
                 finish();
                 return null;
             });

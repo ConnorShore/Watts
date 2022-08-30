@@ -17,7 +17,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Callback;
@@ -110,7 +112,6 @@ public class PhillipsHueService extends HttpService {
             String accessToken = auth.getAccessToken();
             String username = auth.getUsername();
 
-
             JsonObject jsonObj = new JsonObject();
             jsonObj.addProperty("name", room.getName());
             jsonObj.addProperty("type", "LightGroup");
@@ -124,6 +125,18 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/groups";
             makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
+            return null;
+        });
+    }
+
+    public void deleteGroup(Room room, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            String url = username + "/groups/" + room.getIntegrationId();
+            makeRequestAsync(url, RequestType.DELETE, getStandardHeaders(accessToken), callback);
             return null;
         });
     }

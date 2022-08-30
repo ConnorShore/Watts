@@ -221,7 +221,7 @@ public class RoomActivity extends AppCompatActivity {
         TextInputLayout sceneName = customDialogView.findViewById(R.id.sceneNameTextLayout);
         SceneManager.getInstance().createScene(currentRoom.getUid(), sceneName.getEditText().getText().toString() ,scenesToAdd, (var, status) -> {
             if(status.success) {
-                sceneAdapter.sceneArrayList.add(var);
+                sceneAdapter.scenes.add(var);
                 UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully added scene");
             }
             else

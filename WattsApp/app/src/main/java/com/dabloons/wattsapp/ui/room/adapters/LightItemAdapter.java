@@ -11,12 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
+import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.Viewholder>{
 
@@ -24,10 +33,36 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
     private Context context;
     public List<T> lightItems;
+    public Map<IntegrationType, List<Light>> integrationTypeMap;
 
     public LightItemAdapter(Context context, List<T> lightList) {
         this.context = context;
         this.lightItems = lightList;
+        integrationTypeMap = new HashMap<>();
+        if(lightList != null && !lightList.isEmpty())
+        {
+            if(lightList.get(0) instanceof Light)
+            {
+                setIntegrationTypeMap((List<Light>) lightItems);
+            }
+        }
+    }
+
+    private void setIntegrationTypeMap(List<Light> lightItems)
+    {
+        for(Light item : lightItems)
+        {
+            if(integrationTypeMap.containsKey(item.getIntegrationType()))
+            {
+                integrationTypeMap.get(item.getIntegrationType()).add(item);
+            }
+            else
+            {
+                List<Light> lights = new ArrayList<>();
+                lights.add(item);
+                integrationTypeMap.put(item.getIntegrationType(), lights);
+            }
+        }
     }
 
     @NonNull
@@ -78,6 +113,13 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
         });
     }
 
+    public List<Light> getLightsFromIntegrationMap(IntegrationType type)
+    {
+        return this.integrationTypeMap.get(type);
+    }
+
+
+
     @Override
     public int getItemCount() {
         return lightItems.size();
@@ -115,6 +157,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView lightName;
+
         private TextView lightIntegration;
 
         public Viewholder(@NonNull View itemView) {

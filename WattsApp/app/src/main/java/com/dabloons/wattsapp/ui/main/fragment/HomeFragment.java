@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +22,17 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.RoomManager;
+import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.repository.RoomRepository;
 import com.dabloons.wattsapp.ui.room.RoomActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.room.adapters.LightItemAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -99,7 +105,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private void launchCustomAlertDialog()
     {
         TextInputLayout roomName = customDialogView.findViewById(R.id.roomNameTextLayout);
-
+        ChipGroup integrationChipGroup = customDialogView.findViewById(R.id.integrationChipGroup);
+        addIntegrationChips(integrationChipGroup);
         LightManager.getInstance().getLights((lights, success) -> {
             LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
             mLightItemAdapter = new LightItemAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) lights);
@@ -107,6 +114,33 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             lightRV.setAdapter(mLightItemAdapter);
             roomAdapter.setClickListener(HomeFragment.this::onClick);
             return null;
+        });
+
+        integrationChipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                if(checkedIds.size() == 0)
+                {
+                    mLightItemAdapter.setLights(new ArrayList());
+                    updateUIChips();
+                }
+                else if(checkedIds.size() == group.getChildCount())
+                {
+                    LightManager.getInstance().getLights((lights, success) -> {
+                        mLightItemAdapter.setLights(lights);
+                        updateUIChips();
+                        return null;
+                    });
+                }
+                else {
+                    for (int id : checkedIds) {
+                        List<Light> integrationlights = mLightItemAdapter.getLightsFromIntegrationMap(IntegrationType.values()[id]);
+                        mLightItemAdapter.setLights(integrationlights);
+                        updateUIChips();
+
+                    }
+                }
+            }
         });
 
         alertDialogBuilder.setView(customDialogView)
@@ -154,6 +188,27 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                 return null;
             });
         }
+
+    }
+
+    public void updateUIChips()
+    {
+        new Handler(Looper.getMainLooper()).post(() -> mLightItemAdapter.notifyDataSetChanged());
+    }
+
+    private void addIntegrationChips(ChipGroup chipGroup)
+    {
+
+        UserManager.getInstance().getUserIntegrations((integrationTypes, status) -> {
+            for(IntegrationType type : integrationTypes)
+            {
+                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.integration_chip, chipGroup, false);
+                chip.setText(type.name());
+                chip.setId(type.ordinal());
+                chipGroup.addView(chip);
+            }
+            return null;
+        });
 
     }
 

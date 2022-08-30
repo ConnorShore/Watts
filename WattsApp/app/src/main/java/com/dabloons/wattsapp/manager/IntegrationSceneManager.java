@@ -74,56 +74,6 @@ public class IntegrationSceneManager {
         buildIntegrationSceneMap(integrations, 0, new HashMap<>(), callback);
     }
 
-    private void buildIntegrationSceneMap(List<IntegrationType> integrations, int index,
-                                          Map<IntegrationAuth, List<IntegrationScene>> map,
-                                          WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
-        if(index >= integrations.size()) {
-            callback.apply(map, new WattsCallbackStatus(true));
-            return;
-        }
-
-        IntegrationType type = integrations.get(index);
-        getIntegrationScenes(type, (scenes, status) -> {
-            if(!status.success) {
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
-            }
-
-            userManager.getIntegrationAuthData(type, (auth, status1) -> {
-                if(!status1.success) {
-                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
-                    return null;
-                }
-
-                switch (type) {
-                    case PHILLIPS_HUE:
-                        map.put(auth, scenes);
-                        break;
-                    case NANOLEAF:
-                        NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
-                        for(NanoleafPanelIntegrationAuth panel : collection.getPanelAuths()) {
-                            map.put(panel, getNanoleafPanelScenes(panel, scenes));
-                        }
-                        break;
-                }
-
-                int nextIndex = index + 1;
-                buildIntegrationSceneMap(integrations, nextIndex, map, callback);
-                return null;
-            });
-            return null;
-        });
-    }
-
-    private List<IntegrationScene> getNanoleafPanelScenes(NanoleafPanelIntegrationAuth panel, List<IntegrationScene> scenes) {
-        List<IntegrationScene> ret = new ArrayList<>();
-        for(IntegrationScene scene : scenes) {
-            if(scene.getParentLightId().equals(panel.getUid()))
-                ret.add(scene);
-        }
-        return ret;
-    }
-
     public void syncNanoleafEffectsToDatabase(WattsCallback<Void, Void> callback) {
         integrationSceneRepository.getAllIntegrationScenes(IntegrationType.NANOLEAF, (existingScenes, status) -> {
             if(!status.success) {
@@ -180,6 +130,58 @@ public class IntegrationSceneManager {
 
             return null;
         });
+    }
+
+
+
+    private void buildIntegrationSceneMap(List<IntegrationType> integrations, int index,
+                                          Map<IntegrationAuth, List<IntegrationScene>> map,
+                                          WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
+        if(index >= integrations.size()) {
+            callback.apply(map, new WattsCallbackStatus(true));
+            return;
+        }
+
+        IntegrationType type = integrations.get(index);
+        getIntegrationScenes(type, (scenes, status) -> {
+            if(!status.success) {
+                callback.apply(null, new WattsCallbackStatus(false, status.message));
+                return null;
+            }
+
+            userManager.getIntegrationAuthData(type, (auth, status1) -> {
+                if(!status1.success) {
+                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
+                    return null;
+                }
+
+                switch (type) {
+                    case PHILLIPS_HUE:
+                        map.put(auth, scenes);
+                        break;
+                    case NANOLEAF:
+                        NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
+                        for(NanoleafPanelIntegrationAuth panel : collection.getPanelAuths()) {
+                            map.put(panel, getNanoleafPanelScenes(panel, scenes));
+                        }
+                        break;
+                }
+
+                int nextIndex = index + 1;
+                buildIntegrationSceneMap(integrations, nextIndex, map, callback);
+                return null;
+            });
+            return null;
+        });
+    }
+
+    private List<IntegrationScene> getNanoleafPanelScenes(NanoleafPanelIntegrationAuth panel, List<IntegrationScene> scenes) {
+        List<IntegrationScene> ret = new ArrayList<>();
+        for(IntegrationScene scene : scenes) {
+            if(scene.getParentLightId().equals(panel.getUid()))
+                ret.add(scene);
+        }
+        return ret;
     }
 
     private void syncIntegrationScenesToDatabase(IntegrationType type, WattsCallback<Void, Void> callback) {
@@ -271,7 +273,7 @@ public class IntegrationSceneManager {
         });
     }
 
-    public List<IntegrationScene> getNanoleafScenesFromResponse(Light light, JsonArray responseArray) {
+    private List<IntegrationScene> getNanoleafScenesFromResponse(Light light, JsonArray responseArray) {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         List<IntegrationScene> ret = new ArrayList<>();
         Iterator<JsonElement> responseIt = responseArray.iterator();

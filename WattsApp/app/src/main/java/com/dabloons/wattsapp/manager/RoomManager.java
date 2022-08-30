@@ -130,11 +130,31 @@ public class RoomManager
         return ret;
     }
 
-    public void deleteRoom(String roomId, WattsCallback<Void, Void> callback) {
-        roomRepository.deleteRoom(roomId).addOnCompleteListener(task -> {
+    public void deleteRoom(Room room, WattsCallback<Void, Void> callback) {
+        roomRepository.deleteRoom(room.getUid()).addOnCompleteListener(task -> {
                     if(!task.isComplete())
                         callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
-                    callback.apply(null, new WattsCallbackStatus(true));
+
+
+                    List<IntegrationType> integrationsUsed = integrationsUsedInLights(room.getLights());
+                    if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE)) {
+                        phillipsHueService.deleteGroup(room, new Callback() {
+                            @Override
+                            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                            }
+
+                            @Override
+                            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                                if(response.isSuccessful())
+                                    callback.apply(null, new WattsCallbackStatus(true));
+                                else
+                                    callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                            }
+                        });
+                    } else {
+                        callback.apply(null, new WattsCallbackStatus(true));
+                    }
                 })
                 .addOnFailureListener(task -> {
                     callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
@@ -161,11 +181,15 @@ public class RoomManager
                 String responseData = response.body().string();
                 JsonArray arr = JsonParser.parseString(responseData).getAsJsonArray();
                 JsonObject successObj = arr.get(0).getAsJsonObject();
-                String integrationId = successObj.get("success")
-                        .getAsJsonObject().get("id").getAsString();
-                room.setIntegrationId(integrationId);
-                roomRepository.setRoomIntegrationId(room.getUid(), integrationId); // may need to do onSuccessListener
-                callback.apply(null, new WattsCallbackStatus(true));
+                try {
+                    String integrationId = successObj.get("success")
+                            .getAsJsonObject().get("id").getAsString();
+                    room.setIntegrationId(integrationId);
+                    roomRepository.setRoomIntegrationId(room.getUid(), integrationId); // may need to do onSuccessListener
+                    callback.apply(null, new WattsCallbackStatus(true));
+                } catch (Exception e) {
+                    callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                }
             }
         });
     }

@@ -22,7 +22,8 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if(getSupportActionBar() != null)
+            getSupportActionBar().hide();
         initBinding();
     }
 

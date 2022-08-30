@@ -39,14 +39,14 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
 
     private final String LOG_TAG = "SceneDropdownAdapter";
 
-    private Context context;
     public List<IntegrationAuth> integrationAuths;
     private Map<IntegrationAuth, IntegrationScene> selectedScenes;
+    private Map<IntegrationAuth, List<IntegrationScene>> sceneMap;
 
-    public SceneDropdownAdapter(Context context, ArrayList<IntegrationAuth> integrationAuths) {
-        this.context = context;
-        this.integrationAuths = integrationAuths;
-        this.selectedScenes = new HashMap<IntegrationAuth, IntegrationScene>();
+    public SceneDropdownAdapter(Map<IntegrationAuth, List<IntegrationScene>> integrationSceneMap) {
+        this.sceneMap = integrationSceneMap;
+        this.integrationAuths = new ArrayList<>(integrationSceneMap.keySet());
+        this.selectedScenes = new HashMap<>();
     }
 
     @NonNull
@@ -59,61 +59,47 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
     @Override
     public void onBindViewHolder(@NonNull SceneDropdownAdapter.Viewholder holder, int position)
     {
-        IntegrationType type = integrationAuths.get(position).getIntegrationType();
+        IntegrationAuth auth = integrationAuths.get(position);
 
-        IntegrationSceneManager.getInstance().getIntegrationScenes(type, (scenes, status) -> {
+        List<IntegrationScene> scenesToShow = sceneMap.get(auth);
+        holder.integrationName.setText(setIntegrationName(auth));
 
-            holder.integrationName.setText(setIntegrationName(type));
-            String[] sceneNames = getSceneNames(scenes);
-            holder.integrationSceneList.setSimpleItems(sceneNames);
-            holder.integrationSceneList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    setSelectedScene(scenes.get(position));
-                }
-            });
-
-            return null;
+        String[] sceneNames = getSceneNames(scenesToShow);
+        holder.integrationSceneList.setSimpleItems(sceneNames);
+        holder.integrationSceneList.setOnItemClickListener((parent, view, position1, id) -> {
+            setSelectedScene(scenesToShow.get(position1));
         });
-
     }
 
     public void setSelectedScene(IntegrationScene scene)
     {
-        UserManager.getInstance().getIntegrationAuthData(scene.getIntegrationType(), new WattsCallback<IntegrationAuth, Void>() {
-            @Override
-            public Void apply(IntegrationAuth integrationAuth, WattsCallbackStatus status)
-            {
-                selectedScenes.put(integrationAuth, scene);
-                return null;
-            }
+        UserManager.getInstance().getIntegrationAuthData(scene.getIntegrationType(), (integrationAuth, status) -> {
+            selectedScenes.put(integrationAuth, scene);
+            return null;
         });
-
     }
 
     public Map<IntegrationAuth, IntegrationScene> getSelectedScenes() {
         return selectedScenes;
     }
 
-    private String[] getSceneNames(List<IntegrationScene> var)
-    {
+    private String[] getSceneNames(List<IntegrationScene> var) {
         String[] ret = new String[var.size()];
 
-        for(int i = 0; i < var.size(); i++)
-        {
+        for(int i = 0; i < var.size(); i++) {
             ret[i] = var.get(i).getName();
         }
 
         return ret;
     }
 
-    private String setIntegrationName(IntegrationType type)
-    {
-        switch (type){
+    private String setIntegrationName(IntegrationAuth auth) {
+        switch (auth.getIntegrationType()){
             case PHILLIPS_HUE:
                 return "Phillips Hue";
             case NANOLEAF:
-                return "Nanoleaf";
+                NanoleafPanelIntegrationAuth panel = (NanoleafPanelIntegrationAuth) auth;
+                return "Nanoleaf [" + panel.getName() + "]";
             default:
                 return null;
         }

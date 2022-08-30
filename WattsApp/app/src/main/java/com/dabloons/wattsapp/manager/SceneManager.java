@@ -6,7 +6,9 @@ import androidx.annotation.NonNull;
 
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.SceneRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
@@ -15,6 +17,7 @@ import com.dabloons.wattsapp.service.PhillipsHueService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;

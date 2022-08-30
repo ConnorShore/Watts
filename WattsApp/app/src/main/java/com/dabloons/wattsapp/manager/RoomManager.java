@@ -113,9 +113,7 @@ public class RoomManager
         List<Light> lights = room.getLights();
         lights.remove(light);
 
-        List<IntegrationType> integrationsUsed = integrationsUsedInLights(lights);
-
-        if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE)) {
+        if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE) {
             phillipsHueService.setGroupLights(room, lights, new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {

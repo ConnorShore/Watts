@@ -39,7 +39,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
         this.context = context;
         this.lightItems = lightList;
         integrationTypeMap = new HashMap<>();
-        if(!lightList.isEmpty() && lightList != null)
+        if(lightList != null && !lightList.isEmpty())
         {
             if(lightList.get(0) instanceof Light)
             {

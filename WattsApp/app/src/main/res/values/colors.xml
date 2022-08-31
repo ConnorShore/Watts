@@ -9,8 +9,17 @@
     <color name="white">#FFFFFFFF</color>
     <color name="connected">#408F43</color>
 
-    <!--    THEME  -->
-    <color name="seed">#6750A4</color>
+    <!-- WATTS THEME -->
+    <color name="app_orange">#EB7A52</color>
+    <color name="app_purple">#8B5FBF</color>
+    <color name="app_dark_blue_300">#1E2337</color>
+    <color name="app_dark_blue_500">#151A29</color>
+    <color name="app_dark_blue_900">#0A0C16</color>
+    <color name="app_light_grey">#B5BEC6</color>
+    <color name="app_white">#FBFFFE</color>
+
+    <!-- DEFAULT THEME  -->
+    <color name="seed">#FF5722</color>
     <color name="md_theme_dark_surfaceTint">#D0BCFF</color>
     <color name="md_theme_dark_surfaceTintColor">#D0BCFF</color>
     <color name="md_theme_dark_onErrorContainer">#F2B8B5</color>

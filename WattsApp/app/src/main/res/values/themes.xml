@@ -1,8 +1,49 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.WattsApp" parent="Theme.Material3.Dark.NoActionBar">
-        <item name="windowActionBar">false</item>
+
+    <style name="Theme.Watts" parent="Theme.WattsApp.Default">
+        <item name="colorSurface">@color/app_dark_blue_500</item>
+        <item name="colorOnSurface">@color/app_white</item>
+        <item name="colorPrimary">@color/app_orange</item>
+        <item name="colorPrimarySurface">@color/app_orange</item>
+        <item name="colorPrimaryContainer">@color/app_orange</item>
+        <item name="colorPrimaryInverse">@color/app_orange</item>
+        <item name="colorOnPrimary">@color/app_white</item>
+        <item name="colorOnPrimaryContainer">@color/app_white</item>
+        <item name="colorSecondary">@color/app_dark_blue_300</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="buttonStyle">@style/Widget.Watts.Button.ElevatedButton</item>
+    </style>
+
+    <!-- STYLE FOR MAIN ACTIVITY -->
+    <style name="AppTheme.NoTitle" parent="Theme.Watts">
         <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="actionBarTheme">@null</item>
+    </style>
+
+    <!-- STYLE SIGN-IN ACTIVITY -->
+    <style name="LoginTheme" parent="Theme.Watts">
+<!--        <item name="colorPrimary">@color/colorPrimary</item>-->
+<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+<!--        <item name="colorButtonNormal">@color/colorAccent</item>-->
+<!--        <item name="colorControlNormal">@android:color/darker_gray</item>-->
+<!--        <item name="colorControlActivated">@android:color/darker_gray</item>-->
+<!--        <item name="colorControlHighlight">@android:color/darker_gray</item>-->
+<!--        <item name="android:textColor">@android:color/white</item>-->
+<!--        <item name="android:textColorPrimary">@android:color/darker_gray</item>-->
+<!--        <item name="android:textColorSecondary">@android:color/darker_gray</item>-->
+<!--        <item name="android:windowBackground">@android:color/white</item>-->
+<!--        <item name="windowActionBar">false</item>-->
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        <item name="android:textColorHint">@android:color/darker_gray</item>-->
+    </style>
+
+    <!-- Default application theme. -->
+    <style name="Theme.WattsApp.Default" parent="Theme.Material3.Dark">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
         <!-- Primary brand color. -->
         <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>
         <item name="colorOnError">@color/md_theme_dark_onError</item>

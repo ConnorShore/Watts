@@ -8,6 +8,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.viewbinding.ViewBinding;
 
 /**
@@ -24,6 +25,7 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
         super.onCreate(savedInstanceState);
         if(getSupportActionBar() != null)
             getSupportActionBar().hide();
+
         initBinding();
     }
 

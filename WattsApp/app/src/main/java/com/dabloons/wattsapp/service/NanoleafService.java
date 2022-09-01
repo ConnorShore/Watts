@@ -84,23 +84,26 @@ public class NanoleafService extends HttpService {
             // On prop
             JsonObject onValue = new JsonObject();
             onValue.addProperty("value", state.isOn());
+            bodyObj.add("on", onValue);
 
             // Brightness prop
             JsonObject brightnessValue = new JsonObject();
             brightnessValue.addProperty("value", (int)(state.getBrightness() * BRIGHTNESS_LIMIT));
+            bodyObj.add("brightness", brightnessValue);
 
             // Hue prop
-            JsonObject hueValue = new JsonObject();
-            hueValue.addProperty("value", (int)(state.getHue() * HUE_LIMIT));
+            if(state.getHue() != null) {
+                JsonObject hueValue = new JsonObject();
+                hueValue.addProperty("value", (int)(state.getHue() * HUE_LIMIT));
+                bodyObj.add("hue", hueValue);
+            }
 
             // Saturation Value
-            JsonObject satValue = new JsonObject();
-            satValue.addProperty("value", (int)(state.getSaturation() * SATURATION_LIMIT));
-
-            bodyObj.add("on", onValue);
-            bodyObj.add("brightness", brightnessValue);
-            bodyObj.add("hue", hueValue);
-            bodyObj.add("sat", satValue);
+            if(state.getSaturation() != null) {
+                JsonObject satValue = new JsonObject();
+                satValue.addProperty("value", (int)(state.getSaturation() * SATURATION_LIMIT));
+                bodyObj.add("sat", satValue);
+            }
 
             RequestBody body = createRequestBody(bodyObj);
 

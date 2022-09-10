@@ -48,7 +48,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/md_theme_dark_onTertiaryContainer"
             android:orientation="vertical">
 
             <!--Text View to display Course Name-->

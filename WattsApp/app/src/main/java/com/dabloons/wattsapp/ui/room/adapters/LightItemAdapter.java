@@ -95,7 +95,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
         holder.lightName.setText(name);
         holder.lightIntegration.setText(integration);
-        holder.itemView.setBackgroundColor(selected ? this.context.getColor(R.color.md_theme_dark_onPrimary) : this.context.getColor(R.color.md_theme_dark_surfaceVariant));
+        holder.itemView.setBackgroundColor(selected ? this.context.getColor(R.color.app_purple) : this.context.getColor(R.color.app_purple_on_tertiary));
         boolean passSelected = selected;// need final value for the callback
         holder.itemView.setOnClickListener(v -> {
             boolean finalSelected = passSelected;
@@ -109,7 +109,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
                 finalSelected = !((NanoleafPanelIntegrationAuth) model).isSelected();
                 l.setSelected(finalSelected);
             }
-            holder.itemView.setBackgroundColor(finalSelected ? WattsApplication.getAppContext().getColor(R.color.md_theme_dark_onPrimary) : WattsApplication.getAppContext().getColor(R.color.md_theme_dark_surfaceVariant));
+            holder.itemView.setBackgroundColor(finalSelected ? WattsApplication.getAppContext().getColor(R.color.app_purple) : WattsApplication.getAppContext().getColor(R.color.app_purple_on_tertiary));
         });
     }
 

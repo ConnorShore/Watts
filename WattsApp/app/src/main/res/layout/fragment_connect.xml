@@ -40,12 +40,14 @@
                 android:layout_width="@dimen/default_btn_width"
                 style="@style/Widget.Material3.Button.ElevatedButton.Icon"
                 app:icon="@drawable/ic_sync_48px"
-                android:backgroundTint="@color/md_theme_dark_inversePrimary"
+                android:drawableTint="?colorOnPrimary"
+                android:backgroundTint="?colorPrimary"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginBottom="10dp"
                 android:layout_gravity="bottom"
                 android:text="@string/sync_lights"
+                android:textColor="?colorOnPrimary"
                 android:textSize="14sp"/>
         </LinearLayout>
 
@@ -65,8 +67,9 @@
                 android:layout_gravity="bottom"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/md_theme_dark_inversePrimary"
+                android:backgroundTint="?colorPrimary"
                 android:text="Connect"
+                android:textColor="?colorOnPrimary"
                 android:textSize="14sp"
                 app:icon="@drawable/ic_add_48px"
                 app:layout_constraintBottom_toBottomOf="parent"

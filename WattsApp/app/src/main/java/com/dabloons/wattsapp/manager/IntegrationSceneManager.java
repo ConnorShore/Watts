@@ -287,14 +287,14 @@ public class IntegrationSceneManager {
         return ret;
     }
 
-    private List<IntegrationScene> removeDuplicateIntegrationScenes(List<IntegrationScene> existingLights, List<IntegrationScene> lights) {
+    private List<IntegrationScene> removeDuplicateIntegrationScenes(List<IntegrationScene> existingScenes, List<IntegrationScene> scenes) {
         List<String> existingIds = new ArrayList<>();
-        for(IntegrationScene s : existingLights) {
+        for(IntegrationScene s : existingScenes) {
             existingIds.add(s.getIntegrationId());
         }
 
         List<IntegrationScene> ret = new ArrayList<>();
-        for(IntegrationScene l : lights) {
+        for(IntegrationScene l : scenes) {
             if(!existingIds.contains(l.getIntegrationId()))
                 ret.add(l);
         }

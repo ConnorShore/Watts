@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.Watts" parent="Theme.Material3.Dark">
-        <item name="windowActionBar">true</item>-->
-        <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">@color/app_dark_blue_500</item>
+
         <item name="colorSurface">@color/app_dark_blue_500</item>
         <item name="colorOnSurface">@color/app_white</item>
         <item name="colorPrimary">@color/app_orange_primary</item>
@@ -23,9 +23,8 @@
 <!--        <item name="colorErrorContainer">@color/md_theme_dark_errorContainer</item>-->
         <item name="colorOnError">@color/app_white</item>
 <!--        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>-->
-        <item name="android:colorBackground">@color/app_dark_blue_300</item>
         <item name="colorOnBackground">@color/app_light_grey</item>
-<!--        <item name="colorSurfaceVariant">@color/md_theme_dark_surfaceVariant</item>-->
+        <item name="colorSurfaceVariant">@color/app_dark_blue_300</item>
 <!--        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>-->
         <item name="colorOutline">@color/app_light_grey</item>
 <!--        <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>-->
@@ -33,6 +32,8 @@
 <!--        <item name="colorPrimaryInverse">@color/md_theme_dark_inversePrimary</item>-->
 
         <item name="android:statusBarColor" tools:targetApi="l">@color/app_dark_blue_900</item>
+        <item name="windowActionBar">true</item>-->
+        <item name="windowNoTitle">true</item>
         <item name="buttonStyle">@style/Widget.Watts.Button.ElevatedButton</item>
     </style>
 

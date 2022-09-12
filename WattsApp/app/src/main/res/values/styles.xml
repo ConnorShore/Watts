@@ -34,7 +34,7 @@
     <style name="Widget.Watts.Card.SelectableLargeCard" parent="Widget.Material3.CardView.Outlined">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
         <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
         <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
         <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>

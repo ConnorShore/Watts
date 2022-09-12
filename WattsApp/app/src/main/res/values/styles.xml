@@ -1,8 +1,51 @@
 <resources>
+    <!-- BUTTONS -->
+    <style name="Widget.Watts.Button.PrimaryElevatedButton" parent="Widget.Material3.Button.ElevatedButton.Icon">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="colorButtonNormal">?attr/colorPrimary</item>
+        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:layout_width">@dimen/default_btn_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/primary_elevated_btn_padding</item>
+        <item name="android:paddingBottom">@dimen/primary_elevated_btn_padding</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:layout_marginStart">@dimen/primary_elevated_btn_margin_horz</item>
+        <item name="android:layout_marginEnd">@dimen/primary_elevated_btn_margin_horz</item>
+        <item name="android:layout_marginBottom">@dimen/primary_elevated_btn_margin_vert</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+    </style>
+
     <style name="Widget.Watts.Button.ElevatedButton" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="colorButtonNormal">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
+
+    <style name="Widget.Watts.Button.WideElevatedButton" parent="Widget.Watts.Button.ElevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- CARDS -->
+    <style name="Widget.Watts.Card.SelectableLargeCard" parent="Widget.Material3.CardView.Outlined">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
+        <item name="strokeColor">?attr/colorOutline</item>
+        <item name="strokeWidth">@dimen/default_outline_size</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:checkable">true</item>
+    </style>
+
 </resources>

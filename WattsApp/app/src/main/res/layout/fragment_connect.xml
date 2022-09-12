@@ -38,17 +38,9 @@
             <Button
                 android:id="@+id/sync_lights_btn"
                 android:layout_width="@dimen/default_btn_width"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                style="@style/Widget.Watts.Button.PrimaryElevatedButton"
                 app:icon="@drawable/ic_sync_48px"
-                android:drawableTint="?colorOnPrimary"
-                android:backgroundTint="?colorPrimary"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginBottom="10dp"
-                android:layout_gravity="bottom"
-                android:text="@string/sync_lights"
-                android:textColor="?colorOnPrimary"
-                android:textSize="14sp"/>
+                android:text="@string/sync_lights"/>
         </LinearLayout>
 
         <LinearLayout
@@ -61,16 +53,8 @@
 
             <Button
                 android:id="@+id/connect_to_integration_Btn"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-                android:layout_width="@dimen/default_btn_width"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="?colorPrimary"
+                style="@style/Widget.Watts.Button.PrimaryElevatedButton"
                 android:text="Connect"
-                android:textColor="?colorOnPrimary"
-                android:textSize="14sp"
                 app:icon="@drawable/ic_add_48px"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />

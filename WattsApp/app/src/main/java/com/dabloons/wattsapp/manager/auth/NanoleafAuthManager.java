@@ -6,6 +6,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.NetworkService;
+import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
@@ -124,21 +125,40 @@ public class NanoleafAuthManager {
 
     private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Integer, Void> callback) {
         List<NanoleafPanelIntegrationAuth> finalAuths = removeUnconnectedAuths(panelAuths);
-        NanoleafPanelAuthCollection authCollection = new NanoleafPanelAuthCollection(finalAuths);
-        userManager.addIntegrationAuthData(IntegrationType.NANOLEAF, authCollection, (var, status) -> {
+        userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (collection, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
                 callback.apply(null, status);
                 return null;
             }
 
-            lightManager.syncNanoleafLightsToDatabase(authCollection, (var1, status1) -> {
+            NanoleafPanelAuthCollection authCollection;
+            if(collection == null)
+                authCollection = new NanoleafPanelAuthCollection(finalAuths);
+            else {
+                authCollection = (NanoleafPanelAuthCollection) collection;
+                for(NanoleafPanelIntegrationAuth auth : finalAuths) {
+                    authCollection.addNanoleafPanelAuth(auth);
+                }
+            }
+
+            userManager.addIntegrationAuthData(IntegrationType.NANOLEAF, authCollection, (var, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
+                    callback.apply(null, status);
                     return null;
                 }
 
-                callback.apply(finalAuths.size(), status1);
+                lightManager.syncNanoleafLightsToDatabase(authCollection, (var1, status11) -> {
+                    if(!status11.success) {
+                        Log.e(LOG_TAG, status11.message);
+                        return null;
+                    }
+
+                    callback.apply(finalAuths.size(), status11);
+                    return null;
+                });
+
                 return null;
             });
 

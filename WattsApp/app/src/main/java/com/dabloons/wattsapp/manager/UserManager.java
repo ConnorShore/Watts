@@ -93,7 +93,7 @@ public class UserManager {
                             if(task.isComplete())
                                 callback.apply(null, new WattsCallbackStatus(true));
                             else
-                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: " + type));
+                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: nanoleaf"));
                         })
                         .addOnFailureListener(task -> {
                             callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));

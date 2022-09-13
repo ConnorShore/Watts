@@ -1,75 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    style="@style/Widget.Watts.Card.SelectableLargeCard"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bosphere.fadingedgelayout.FadingEdgeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:fel_edge="top|left|bottom|right"
+    app:fel_size_top="24dp"
+    app:fel_size_bottom="24dp"
+    app:fel_size_left="14dp"
+    app:fel_size_right="14dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clickable="true"
-    android:focusable="true"
-    android:checkable="true">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="horizontal">
+        app:cardBackgroundColor="?attr/colorPrimary">
 
-        <!--Text View to display Course Name-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|top|bottom"
-            android:orientation="vertical">
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Watts.Card.SelectableLargeCard"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_margin="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-                <TextView
-                    android:id="@+id/integrationName"
+                android:layout_height="100dp"
+                android:orientation="horizontal">
+
+                <!--Text View to display Course Name-->
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="TEST"
-                    android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|top|bottom"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+                        <TextView
+                            android:id="@+id/integrationName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:text="TEST"
+                            android:textColor="@color/white"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <Button
+                            style="@style/Widget.Material3.Button.ElevatedButton"
+                            android:id="@+id/delete_integration_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:backgroundTint="?colorError"
+                            android:textColor="?colorOnPrimary"
+                            android:textSize="10dp"
+                            android:text="Disconnect"
+                            />
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/integrationConnectedStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="connected_status"/>
+                </LinearLayout>
             </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <Button
-                    style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:id="@+id/delete_integration_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:backgroundTint="?colorError"
-                    android:textColor="?colorOnPrimary"
-                    android:textSize="10dp"
-                    android:text="Disconnect"
-                    />
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center">
-
-            <TextView
-                android:id="@+id/integrationConnectedStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="connected_status"/>
-        </LinearLayout>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</com.bosphere.fadingedgelayout.FadingEdgeLayout>

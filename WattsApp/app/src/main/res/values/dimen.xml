@@ -15,5 +15,5 @@
     <dimen name="primary_elevated_btn_padding">18dp</dimen>
 
     <dimen name="default_card_margin_horz">10dp</dimen>
-    <dimen name="default_card_margin_vert">4dp</dimen>
+    <dimen name="default_card_margin_vert">0dp</dimen>
 </resources>

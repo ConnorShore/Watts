@@ -16,6 +16,7 @@ import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -100,11 +101,14 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView roomName;
         private SwitchMaterial roomSwitch;
+        private MaterialCardView selectableCard;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             roomName = itemView.findViewById(R.id.roomName);
             roomSwitch = itemView.findViewById(R.id.roomSwitch);
+            selectableCard = itemView.findViewById(R.id.roomSelectableCard);
+            selectableCard.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 

@@ -3,7 +3,7 @@
     <style name="Widget.Watts.Button.PrimaryElevatedButton" parent="Widget.Material3.Button.ElevatedButton.Icon">
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="colorButtonNormal">?attr/colorPrimary</item>
-        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
+        <item name="cornerRadius">@dimen/primary_elevated_btn_corner_radius</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:layout_width">@dimen/default_btn_width</item>
         <item name="android:layout_height">wrap_content</item>
@@ -31,6 +31,26 @@
     </style>
 
     <!-- CARDS -->
+    <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
+        <item name="cardElevation">8dp</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableLargeCardOutlined" parent="Widget.Watts.Card.SelectableLargeCard">
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">@dimen/default_outline_size</item>
+    </style>
+
+    <style name="Widget.Watts.Card.BackgroundGlowCard" parent="Widget.Material3.CardView.Filled">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/default_glow_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_glow_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_glow_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_glow_card_margin_vert</item>
+        <item name="cardBackgroundColor">?attr/colorPrimary</item>
+    </style>
+
+
     <style name="Widget.Watts.Card.SelectableLargeCard" parent="Widget.Watts.Card.Selectable">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -39,11 +59,6 @@
         <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
         <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
         <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
-<!--        <item name="strokeColor">?attr/colorPrimary</item>-->
-<!--        <item name="strokeWidth">@dimen/default_outline_size</item>-->
-        <item name="cardElevation">10dp</item>
-        <item name="android:outlineAmbientShadowColor">?attr/colorPrimary</item>
-        <item name="android:outlineSpotShadowColor">?attr/colorPrimary</item>
         <item name="cardPreventCornerOverlap">true</item>
         <item name="cardUseCompatPadding">true</item>
     </style>
@@ -52,6 +67,18 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:checkable">true</item>
+    </style>
+
+
+    <!-- MISC -->
+    <style name="Widget.Watts.FadeLayout.LargeCard" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fel_edge">top|left|bottom|right</item>
+        <item name="fel_size_top">@dimen/large_card_fade_vert</item>
+        <item name="fel_size_bottom">@dimen/large_card_fade_vert</item>
+        <item name="fel_size_left">@dimen/large_card_fade_horz</item>
+        <item name="fel_size_right">@dimen/large_card_fade_horz</item>
     </style>
 
 </resources>

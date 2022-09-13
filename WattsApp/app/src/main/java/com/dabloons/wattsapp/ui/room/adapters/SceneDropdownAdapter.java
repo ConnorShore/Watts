@@ -1,6 +1,5 @@
 package com.dabloons.wattsapp.ui.room.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,29 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
-import com.dabloons.wattsapp.manager.IntegrationSceneManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
-import com.dabloons.wattsapp.model.integration.IntegrationType;
-import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
-import com.dabloons.wattsapp.service.NanoleafService;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonParser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdapter.Viewholder> {
 

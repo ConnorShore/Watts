@@ -25,6 +25,11 @@ public class NanoleafPanelAuthCollection extends IntegrationAuth {
     }
 
     public void addNanoleafPanelAuth(NanoleafPanelIntegrationAuth auth) {
+        if(this.panelAuths.contains(auth)) {
+            Log.w(LOG_TAG, "Panel auth already contains panel. Skipping adding this panel: " + auth.getName());
+            return;
+        }
+
         this.panelAuths.add(auth);
     }
 

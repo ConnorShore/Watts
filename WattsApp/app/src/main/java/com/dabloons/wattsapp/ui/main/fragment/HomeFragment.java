@@ -55,7 +55,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     private RecyclerView lightRV;
 
     // Arraylist for storing data
-    private ArrayList<Room> roomModelList;
     private RoomAdapter roomAdapter;
     private LightItemAdapter mLightItemAdapter;
 
@@ -66,20 +65,17 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-            RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
-                roomModelList = rooms;
+        RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
+            roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
-                roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
-                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
+            // in below two lines we are setting layout manager and adapter to our recycler view.
+            roomRV.setLayoutManager(linearLayoutManager);
+            roomRV.setAdapter(roomAdapter);
+            roomAdapter.setClickListener(this);
 
-
-                // in below two lines we are setting layoutmanager and adapter to our recycler view.
-                roomRV.setLayoutManager(linearLayoutManager);
-                roomRV.setAdapter(roomAdapter);
-                roomAdapter.setClickListener(this);
-
-                return null;
-            });
+            return null;
+        });
     }
 
     @Override
@@ -123,29 +119,26 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             return null;
         });
 
-        integrationChipGroup.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
-            @Override
-            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
-                if(checkedIds.size() == 0)
-                {
-                    mLightItemAdapter.setLights(new ArrayList());
+        integrationChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if(checkedIds.size() == 0)
+            {
+                mLightItemAdapter.setLights(new ArrayList());
+                updateUIChips();
+            }
+            else if(checkedIds.size() == group.getChildCount())
+            {
+                LightManager.getInstance().getLights((lights, success) -> {
+                    mLightItemAdapter.setLights(lights);
                     updateUIChips();
-                }
-                else if(checkedIds.size() == group.getChildCount())
-                {
-                    LightManager.getInstance().getLights((lights, success) -> {
-                        mLightItemAdapter.setLights(lights);
-                        updateUIChips();
-                        return null;
-                    });
-                }
-                else {
-                    for (int id : checkedIds) {
-                        List<Light> integrationlights = mLightItemAdapter.getLightsFromIntegrationMap(IntegrationType.values()[id]);
-                        mLightItemAdapter.setLights(integrationlights);
-                        updateUIChips();
+                    return null;
+                });
+            }
+            else {
+                for (int id : checkedIds) {
+                    List<Light> integrationlights = mLightItemAdapter.getLightsFromIntegrationMap(IntegrationType.values()[id]);
+                    mLightItemAdapter.setLights(integrationlights);
+                    updateUIChips();
 
-                    }
                 }
             }
         });

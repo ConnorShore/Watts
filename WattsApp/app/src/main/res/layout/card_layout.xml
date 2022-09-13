@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/roomGlowCard"
         style="@style/Widget.Watts.Card.BackgroundGlowCard">
 
         <com.google.android.material.card.MaterialCardView

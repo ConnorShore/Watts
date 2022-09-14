@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Room;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.UIMessageUtil;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 {
@@ -32,6 +35,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     private ArrayList<Room> mRoomModelArrayList;
     private OnItemClickListener clickListener;
 
+    private final RoomManager roomManager = RoomManager.getInstance();
+    private final LightManager lightManager = LightManager.getInstance();
 
     public RoomAdapter(Context context, ArrayList<Room> roomModelArrayList) {
         this.context = context;
@@ -50,6 +55,20 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     {
         Room room = mRoomModelArrayList.get(position);
         holder.roomName.setText(room.getName());
+
+
+        isRoomLightOn(room, (on, status) -> {
+            if(on)
+                holder.roomSwitch.setChecked(true);
+            else
+                holder.roomSwitch.setChecked(false);
+
+            setSwitchOnClickListener(holder, room);
+            return null;
+        });
+    }
+
+    private void setSwitchOnClickListener(@NonNull Viewholder holder, Room room) {
         holder.roomSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
                 RoomManager.getInstance().turnOnRoomLights(room, (var, status) -> {
@@ -65,7 +84,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
             }
             else
             {
-                RoomManager.getInstance().turnOffRoomLights(room, (var, status) -> {
+                roomManager.turnOffRoomLights(room, (var, status) -> {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (status.success)
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off lights for room: " + room.getName());
@@ -84,6 +103,20 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     }
 
     public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
+
+    private void isRoomLightOn(Room room, WattsCallback<Boolean, Void> callback) {
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            for(Light l : lights) {
+                if(l.getLightState().isOn()) {
+                    callback.apply(true, new WattsCallbackStatus(true));
+                    return null;
+                }
+            }
+
+            callback.apply(false, new WattsCallbackStatus(true));
+            return null;
+        });
+    }
 
     @Override
     public int getItemCount() {

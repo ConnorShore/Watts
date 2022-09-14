@@ -29,9 +29,10 @@
     <string name="document_nanoleaf">nanoleaf</string>
 
     <!-- REPOSITORY FIELDS -->
+    <string name="field_uid">uid</string>
     <string name="field_userId">userId</string>
     <string name="field_username">username</string>
-    <string name="field_lights">lights</string>
+    <string name="field_light_ids">lightIds</string>
     <string name="field_scenes">scenes</string>
     <string name="field_integrationId">integrationId</string>
     <string name="field_integration_type">integrationType</string>

@@ -2,6 +2,7 @@ package util;
 
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
@@ -29,7 +30,7 @@ public class RepositoryUtil {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         List<Light> ret = new ArrayList<>();
         for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
-            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF);
+            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF, new LightState());
             ret.add(light);
         }
         return ret;

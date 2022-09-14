@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
@@ -32,6 +33,7 @@ import com.dabloons.wattsapp.ui.room.RoomActivity;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.dabloons.wattsapp.ui.room.adapters.LightItemAdapter;
 import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -41,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.RequestCodes;
+import util.UIUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -53,6 +56,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
     private RecyclerView roomRV;
     private RecyclerView lightRV;
+    private TextView emptyViewText;
 
     // Arraylist for storing data
     private RoomAdapter roomAdapter;
@@ -67,6 +71,9 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         super.onCreate(savedInstanceState);
         RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
             roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
+
+            UIUtil.toggleViews(rooms.size(), emptyViewText, roomRV);
+
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
             // in below two lines we are setting layout manager and adapter to our recycler view.
@@ -87,6 +94,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         roomRV = v.findViewById(R.id.idRVCourse);
+        emptyViewText = v.findViewById(R.id.emptyRoomListText);
 
 // Debug button
 //        Button b = v.findViewById(R.id.getGroups);
@@ -177,13 +185,25 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     {
         if(newRoom)
         {
-            new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewText, roomRV);
+                roomAdapter.notifyDataSetChanged();
+            });
         }
         else {
             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
 
                 roomAdapter.setRoomList(rooms);
-                new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());
+
+                UIUtil.toggleViews(rooms.size(), emptyViewText, roomRV);
+
+
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                    roomAdapter.notifyDataSetChanged();
+                });
+
 
                 return null;
             });

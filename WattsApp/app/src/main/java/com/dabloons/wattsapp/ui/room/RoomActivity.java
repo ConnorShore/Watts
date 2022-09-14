@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
@@ -30,6 +31,7 @@ import com.dabloons.wattsapp.model.Scene;
 import com.dabloons.wattsapp.model.integration.IntegrationAuth;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
+import com.dabloons.wattsapp.ui.main.fragment.HomeFragment;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneDropdownAdapter;
@@ -44,6 +46,7 @@ import java.util.Map;
 
 import util.ItemOffsetDecoration;
 import util.UIMessageUtil;
+import util.UIUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
@@ -61,9 +64,11 @@ public class RoomActivity extends AppCompatActivity {
 
     private RecyclerView lightRV;
     private LightAdapter lightAdapter;
+    private TextView lightPlaceHolder;
 
     private RecyclerView sceneRV;
     private SceneAdapter sceneAdapter;
+    private TextView scenePlaceHolder;
 
     private RecyclerView sceneDropdownRV;
     private SceneDropdownAdapter sceneDropdownAdapter;
@@ -97,6 +102,9 @@ public class RoomActivity extends AppCompatActivity {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
 
             lightRV = findViewById(R.id.roomLightRV);
+            lightPlaceHolder = findViewById(R.id.emptyRoomLightListText);
+
+            UIUtil.toggleViews(lights.size(), lightPlaceHolder, lightRV);
             lightRV.setLayoutManager(gridLayoutManager);
             lightRV.setAdapter(lightAdapter);
             lightRV.addItemDecoration(new ItemOffsetDecoration(getApplicationContext(),R.dimen.light_card_offset));
@@ -109,9 +117,13 @@ public class RoomActivity extends AppCompatActivity {
             sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), scenes);
             GridLayoutManager gridLayoutManager1 = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
             sceneRV = findViewById(R.id.roomSceneRV);
+            scenePlaceHolder = findViewById(R.id.emptyRoomSceneListText);
             sceneRV.setLayoutManager(gridLayoutManager1);
             sceneRV.setAdapter(sceneAdapter);
             sceneRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
+
+            UIUtil.toggleViews(scenes.size(), scenePlaceHolder, sceneRV);
+
             registerForContextMenu(sceneRV);
             return null;
         });
@@ -200,6 +212,7 @@ public class RoomActivity extends AppCompatActivity {
 
         deleteRoomBtn.setOnClickListener(v -> {
             RoomManager.getInstance().deleteRoom(currentRoom, (var, status) -> {
+
                 finish();
                 return null;
             });
@@ -238,6 +251,7 @@ public class RoomActivity extends AppCompatActivity {
             else
                 UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to add scene");
 
+            UIUtil.toggleViews(scenes.size(), scenePlaceHolder, sceneRV);
             updateUI();
             return null;
         });

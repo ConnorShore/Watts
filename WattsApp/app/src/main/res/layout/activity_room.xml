@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:weightSum="100"
     android:layout_height="match_parent"
     >
 
     <com.google.android.material.appbar.AppBarLayout
     android:layout_width="match_parent"
+        android:layout_weight="2"
     android:layout_height="wrap_content">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -21,12 +23,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Note: A RecyclerView can also be used -->
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="bottom"
+        android:layout_weight="50"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
@@ -44,19 +46,29 @@
             android:padding="@dimen/light_card_offset"
             android:orientation="horizontal"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
 
-
-
+            <TextView
+                android:id="@+id/emptyRoomLightListText"
+                style="@style/Widget.Watts.TextView.Placeholder"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/no_room_lights_place_holder" />
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_weight="50"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Scenes"
+            android:layout_gravity="start"
             android:paddingLeft="12dp"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -69,6 +81,20 @@
             android:orientation="horizontal">
 
         </androidx.recyclerview.widget.RecyclerView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/emptyRoomSceneListText"
+                style="@style/Widget.Watts.TextView.Placeholder"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/no_room_scenes_place_holder" />
+        </LinearLayout>
+
 
 
     </LinearLayout>

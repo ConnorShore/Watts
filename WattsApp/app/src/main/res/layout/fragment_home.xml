@@ -11,12 +11,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRVCourse"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/emptyRoomListText"
+            style="@style/Widget.Watts.TextView.Placeholder"
+            android:text="@string/no_rooms_place_holder"
+            />
+
     </LinearLayout>
 
     <LinearLayout

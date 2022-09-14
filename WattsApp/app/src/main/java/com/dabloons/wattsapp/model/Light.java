@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.google.firebase.firestore.Exclude;
+import com.google.gson.Gson;
 
 import java.util.UUID;
 
@@ -15,20 +16,7 @@ public class Light implements Parcelable {
     private String name;
     private String integrationId;
     private IntegrationType integrationType;
-
-    @Exclude
-    private boolean isSelected;
-
-    public Light(){ }
-
-    public Light(String userId, String name, String integrationId, IntegrationType integrationType) {
-        this.uid = UUID.randomUUID().toString();
-        this.userId = userId;
-        this.name = name;
-        this.integrationId = integrationId;
-        this.integrationType = integrationType;
-        this.isSelected = false;
-    }
+    private LightState lightState;
 
     protected Light(Parcel in) {
         uid = in.readString();
@@ -36,6 +24,7 @@ public class Light implements Parcelable {
         name = in.readString();
         integrationId = in.readString();
         integrationType = IntegrationType.valueOf(in.readString());
+        lightState = in.readParcelable(LightState.class.getClassLoader());
         isSelected = in.readByte() != 0;
     }
 
@@ -50,6 +39,37 @@ public class Light implements Parcelable {
             return new Light[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(userId);
+        dest.writeString(name);
+        dest.writeString(integrationId);
+        dest.writeString(integrationType.name());
+        dest.writeParcelable(lightState, flags);
+        dest.writeByte((byte) (isSelected ? 1 : 0));
+    }
+
+    @Exclude
+    private boolean isSelected;
+
+    public Light(){ }
+
+    public Light(String userId, String name, String integrationId, IntegrationType integrationType, LightState lightState) {
+        this.uid = UUID.randomUUID().toString();
+        this.userId = userId;
+        this.name = name;
+        this.integrationId = integrationId;
+        this.integrationType = integrationType;
+        this.isSelected = false;
+        this.lightState = lightState;
+    }
 
     public String getUid() {
         return uid;
@@ -96,18 +116,11 @@ public class Light implements Parcelable {
 
     public void setSelected(boolean selected) { this.isSelected = selected; }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public LightState getLightState() {
+        return lightState;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(uid);
-        dest.writeString(userId);
-        dest.writeString(name);
-        dest.writeString(integrationId);
-        dest.writeString(integrationType.name());
-        dest.writeByte((byte) (isSelected ? 1 : 0));
+    public void setLightState(LightState lightState) {
+        this.lightState = lightState;
     }
 }

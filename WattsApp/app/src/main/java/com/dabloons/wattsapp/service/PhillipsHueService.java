@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
@@ -107,45 +108,51 @@ public class PhillipsHueService extends HttpService {
     }
 
     public void createGroupWithLights(Room room, Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
-            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
-            String accessToken = auth.getAccessToken();
-            String username = auth.getUsername();
+        LightManager.getInstance().getLightsForIds(room.getLightIds(), (lights, status) -> {
+            userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status1) -> {
+                PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth) var;
+                String accessToken = auth.getAccessToken();
+                String username = auth.getUsername();
 
-            JsonObject jsonObj = new JsonObject();
-            jsonObj.addProperty("name", room.getName());
-            jsonObj.addProperty("type", "LightGroup");
-            JsonArray lightsArr = new JsonArray();
-            for(Light light : room.getLights()) {
-                if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
-                    lightsArr.add(light.getIntegrationId());
-            }
-            jsonObj.add("lights", lightsArr);
-            RequestBody body = createRequestBody(jsonObj);
+                JsonObject jsonObj = new JsonObject();
+                jsonObj.addProperty("name", room.getName());
+                jsonObj.addProperty("type", "LightGroup");
+                JsonArray lightsArr = new JsonArray();
+                for (Light light : lights) {
+                    if (light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
+                        lightsArr.add(light.getIntegrationId());
+                }
+                jsonObj.add("lights", lightsArr);
+                RequestBody body = createRequestBody(jsonObj);
 
-            String url = username + "/groups";
-            makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
+                String url = username + "/groups";
+                makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
+                return null;
+            });
             return null;
         });
     }
 
-    public void setGroupLights(Room room, List<Light> lights, Callback callback) {
-        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
-            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
-            String accessToken = auth.getAccessToken();
-            String username = auth.getUsername();
+    public void setGroupLights(Room room, Callback callback) {
+        LightManager.getInstance().getLightsForIds(room.getLightIds(), (lights, status) -> {
+            userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status1) -> {
+                PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
+                String accessToken = auth.getAccessToken();
+                String username = auth.getUsername();
 
-            JsonObject jsonObj = new JsonObject();
-            JsonArray lightsArr = new JsonArray();
-            for(Light light : lights) {
-                if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
-                    lightsArr.add(light.getIntegrationId());
-            }
-            jsonObj.add("lights", lightsArr);
-            RequestBody body = createRequestBody(jsonObj);
+                JsonObject jsonObj = new JsonObject();
+                JsonArray lightsArr = new JsonArray();
+                for(Light light : lights) {
+                    if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
+                        lightsArr.add(light.getIntegrationId());
+                }
+                jsonObj.add("lights", lightsArr);
+                RequestBody body = createRequestBody(jsonObj);
 
-            String url = username + "/groups/" + room.getIntegrationId();
-            makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+                String url = username + "/groups/" + room.getIntegrationId();
+                makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
+                return null;
+            });
             return null;
         });
     }
@@ -193,7 +200,7 @@ public class PhillipsHueService extends HttpService {
 
     public void setRoomLightsState(Room room, LightState state, Callback callback) {
         // Dont need to make any calls if no lights
-        if(room.getLights().size() == 0) {
+        if(room.getLightIds().size() == 0) {
             try {
                 callback.onResponse(null, null);
             } catch(IOException e) {

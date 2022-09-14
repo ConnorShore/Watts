@@ -8,6 +8,11 @@
     <dimen name="default_btn_width">150dp</dimen>
     <dimen name="default_outline_size">1dp</dimen>
 
+    <dimen name="tile_text_size">12dp</dimen>
+
+    <dimen name="default_card_elevation">8dp</dimen>
+    <dimen name="low_card_elevation">3dp</dimen>
+
     <dimen name="default_btn_corner_radius">10dp</dimen>
 
     <dimen name="primary_elevated_btn_margin_horz">24dp</dimen>
@@ -23,6 +28,9 @@
     <dimen name="default_glow_card_margin_vert">2dp</dimen>
 
     <dimen name="default_card_fade">24dp</dimen>
+
     <dimen name="large_card_fade_horz">14dp</dimen>
     <dimen name="large_card_fade_vert">24dp</dimen>
+
+    <dimen name="light_card_offset">2dp</dimen>
 </resources>

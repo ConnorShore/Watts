@@ -11,21 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
-import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
-import com.dabloons.wattsapp.ui.main.adapters.RoomAdapter;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.Viewholder>{
 
@@ -95,7 +89,8 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
         holder.lightName.setText(name);
         holder.lightIntegration.setText(integration);
-        holder.itemView.setBackgroundColor(selected ? this.context.getColor(R.color.app_purple) : this.context.getColor(R.color.app_purple_on_tertiary));
+        holder.lightItemCard.setStrokeColor(this.context.getColor(R.color.app_orange_on_primary_container));
+        holder.lightItemCard.setCardBackgroundColor(selected ? this.context.getColor(R.color.app_orange_on_primary_container) : this.context.getColor(R.color.light_item_background));
         boolean passSelected = selected;// need final value for the callback
         holder.itemView.setOnClickListener(v -> {
             boolean finalSelected = passSelected;
@@ -109,7 +104,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
                 finalSelected = !((NanoleafPanelIntegrationAuth) model).isSelected();
                 l.setSelected(finalSelected);
             }
-            holder.itemView.setBackgroundColor(finalSelected ? WattsApplication.getAppContext().getColor(R.color.app_purple) : WattsApplication.getAppContext().getColor(R.color.app_purple_on_tertiary));
+            holder.lightItemCard.setCardBackgroundColor(finalSelected ? WattsApplication.getAppContext().getColor(R.color.app_orange_on_primary_container) : this.context.getColor(R.color.light_item_background));
         });
     }
 
@@ -157,12 +152,13 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener  {
         private TextView lightName;
-
+        private MaterialCardView lightItemCard;
         private TextView lightIntegration;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             lightName = itemView.findViewById(R.id.lightListName);
+            lightItemCard = itemView.findViewById(R.id.lightItemCard);
             lightIntegration = itemView.findViewById(R.id.listListIntegration);
             itemView.setOnClickListener(this);
         }

@@ -68,6 +68,9 @@ public class UserManager {
                             callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
                         });
                 break;
+            default:
+                Log.e(LOG_TAG, "Unknown integration for retrieving auth data");
+                break;
         }
     }
 

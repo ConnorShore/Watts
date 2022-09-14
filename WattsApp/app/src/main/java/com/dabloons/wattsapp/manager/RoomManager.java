@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,6 +34,7 @@ public class RoomManager
     private RoomRepository roomRepository = RoomRepository.getInstance();
     private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
     private NanoleafService nanoleafService = NanoleafService.getInstance();
+    private LightManager lightManager = LightManager.getInstance();
 
     private UserManager userManager = UserManager.getInstance();
 
@@ -69,8 +71,8 @@ public class RoomManager
         }
 
         List<IntegrationType> integrationsUsed = integrationsUsedInLights(lights);
-
-        roomRepository.setRoomLights(room, lights).addOnCompleteListener(task -> {
+        List<String> lightIds = lights.stream().map(Light::getUid).collect(Collectors.toList());
+        roomRepository.setRoomLights(room, lightIds).addOnCompleteListener(task -> {
             // Lights have been added to room in DB
             if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE))
                 createPhillipsHueGroup(room, callback);
@@ -110,11 +112,11 @@ public class RoomManager
     }
 
     public void removeLightFromRoom(Room room, Light light, WattsCallback<Void, Void> callback) {
-        List<Light> lights = room.getLights();
-        lights.remove(light);
+        List<String> lightIds = room.getLightIds();
+        lightIds.remove(light.getUid());
 
         if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE) {
-            phillipsHueService.setGroupLights(room, lights, new Callback() {
+            phillipsHueService.setGroupLights(room, new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
@@ -127,63 +129,70 @@ public class RoomManager
                         return;
                     }
 
-                    setRoomRepositoryLights(room, lights, callback);
+                    setRoomRepositoryLights(room, callback);
                 }
             });
         }
 
-        setRoomRepositoryLights(room, lights, callback);
+        setRoomRepositoryLights(room, callback);
     }
 
-    private void setRoomRepositoryLights(Room room, List<Light> lights, WattsCallback<Void, Void> callback) {
-        roomRepository.setRoomLights(room, lights)
-                .addOnCompleteListener(task -> {
-                    callback.apply(null, new WattsCallbackStatus(true));
-                })
-                .addOnFailureListener(task -> {
-                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
-                });
+    public void getRoomIntegrationTypes(Room room, WattsCallback<List<IntegrationType>, Void> callback) {
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            List<IntegrationType> ret = new ArrayList<>();
+            for(Light light : lights) {
+                if(!ret.contains(light.getIntegrationType()))
+                    ret.add(light.getIntegrationType());
+            }
+
+            callback.apply(ret, new WattsCallbackStatus(true));
+            return null;
+        });
     }
 
-    public List<IntegrationType> getRoomIntegrationTypes(Room room) {
-        List<IntegrationType> ret = new ArrayList<>();
-        for(Light light : room.getLights()) {
-            if(!ret.contains(light.getIntegrationType()))
-                ret.add(light.getIntegrationType());
-        }
+    public void getRoomLightsOfIntegration(Room room, IntegrationType type, WattsCallback<List<Light>, Void> callback) {
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            List<Light> ret = new ArrayList<>();
+            for(Light light : lights) {
+                if(light.getIntegrationType() == type)
+                    ret.add(light);
+            }
 
-        return ret;
+            callback.apply(ret, new WattsCallbackStatus(true));
+            return null;
+        });
     }
 
     public void deleteRoom(Room room, WattsCallback<Void, Void> callback) {
         roomRepository.deleteRoom(room.getUid()).addOnCompleteListener(task -> {
-                    if(!task.isComplete())
-                        callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
+            if(!task.isComplete())
+                callback.apply(null, new WattsCallbackStatus(false, "Failed to delete room"));
 
+            integrationsUsedInLights(room.getLightIds(), (integrationsUsed, status) -> {
+                if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE)) {
+                    phillipsHueService.deleteGroup(room, new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                        }
 
-                    List<IntegrationType> integrationsUsed = integrationsUsedInLights(room.getLights());
-                    if(integrationsUsed.contains(IntegrationType.PHILLIPS_HUE)) {
-                        phillipsHueService.deleteGroup(room, new Callback() {
-                            @Override
-                            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
-                            }
-
-                            @Override
-                            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                                if(response.isSuccessful())
-                                    callback.apply(null, new WattsCallbackStatus(true));
-                                else
-                                    callback.apply(null, new WattsCallbackStatus(false, response.message()));
-                            }
-                        });
-                    } else {
-                        callback.apply(null, new WattsCallbackStatus(true));
-                    }
-                })
-                .addOnFailureListener(task -> {
-                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
-                });
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            if(response.isSuccessful())
+                                callback.apply(null, new WattsCallbackStatus(true));
+                            else
+                                callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                        }
+                    });
+                } else {
+                    callback.apply(null, new WattsCallbackStatus(true));
+                }
+                return null;
+            });
+        })
+        .addOnFailureListener(task -> {
+            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+        });
     }
 
     public void deleteRoomsForUser(WattsCallback<Void, Void> callback) {
@@ -226,13 +235,19 @@ public class RoomManager
                 switch (integration) {
                     case PHILLIPS_HUE:
                         setPhillipsHueRoomLightState(room, state, (var, status1) -> {
-                            resolveIntegration(integration, callback);
+                            resolveIntegration(integration, (var12, status22) -> {
+                                setRoomLightStateInDB(room, state, callback);
+                                return null;
+                            });
                             return null;
                         });
                         break;
                     case NANOLEAF:
                         setNanoleafRoomLightState(room, state, (var, status1) -> {
-                            resolveIntegration(integration, callback);
+                            resolveIntegration(integration, (var1, status2) -> {
+                                setRoomLightStateInDB(room, state, callback);
+                                return null;
+                            });
                             return null;
                         });
                         break;
@@ -241,6 +256,36 @@ public class RoomManager
 
             return null;
         });
+    }
+
+    private void setRoomRepositoryLights(Room room, WattsCallback<Void, Void> callback) {
+        roomRepository.setRoomLights(room, room.getLightIds())
+                .addOnCompleteListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(true));
+                })
+                .addOnFailureListener(task -> {
+                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                });
+    }
+
+    private void setRoomLightStateInDB(Room room, LightState state, WattsCallback<Void, Void> callback) {
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            updateLightStatesForLights(lights, state);
+            lightManager.updateMultipleLights(lights, callback);
+            return null;
+        });
+    }
+
+    private void updateLightStatesForLights(List<Light> lights, LightState state) {
+        for(Light l : lights) {
+            LightState ls = l.getLightState();
+            ls.setOn(state.isOn());
+            ls.setBrightness(state.getBrightness());
+            if(state.getHue() != null)
+                ls.setHue(state.getHue());
+            if(state.getSaturation() != null)
+                ls.setSaturation(state.getSaturation());
+        }
     }
 
     private void setPhillipsHueRoomLightState(Room room, LightState state, WattsCallback<Void, Void> callback) {
@@ -258,9 +303,11 @@ public class RoomManager
     }
 
     private void setNanoleafRoomLightState(Room room, LightState state, WattsCallback<Void, Void> callback) {
-        List<Light> nanoleafs = room.getLightOfIntegration(IntegrationType.NANOLEAF);
-        ConcurrentLinkedQueue<Light> remaining = new ConcurrentLinkedQueue<>(nanoleafs);
-        setEachNanoleafLightState(remaining, state, callback);
+        getRoomLightsOfIntegration(room, IntegrationType.NANOLEAF, (nanoleafs, status) -> {
+            ConcurrentLinkedQueue<Light> remaining = new ConcurrentLinkedQueue<>(nanoleafs);
+            setEachNanoleafLightState(remaining, state, callback);
+            return null;
+        });
     }
 
     private void setEachNanoleafLightState(ConcurrentLinkedQueue<Light> remaining, LightState state, WattsCallback<Void, Void> callback) {
@@ -288,12 +335,24 @@ public class RoomManager
         });
     }
 
+    private void integrationsUsedInLights(List<String> lightIds, WattsCallback<List<IntegrationType>, Void> callback) {
+        lightManager.getLightsForIds(lightIds, (lights, status) -> {
+
+            List<IntegrationType> ret = new ArrayList<>();
+            for(Light l : lights)
+                if(!ret.contains(l.getIntegrationType()))
+                    ret.add(l.getIntegrationType());
+
+            callback.apply(ret, new WattsCallbackStatus(true));
+            return null;
+        });
+    }
+
     private List<IntegrationType> integrationsUsedInLights(List<Light> lights) {
         List<IntegrationType> ret = new ArrayList<>();
         for(Light l : lights)
             if(!ret.contains(l.getIntegrationType()))
                 ret.add(l.getIntegrationType());
-
         return ret;
     }
 

@@ -37,7 +37,17 @@
 
     <!-- CARDS -->
     <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
-        <item name="cardElevation">8dp</item>
+        <item name="cardElevation">@dimen/default_card_elevation</item>
+
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
+        <item name="cardElevation">@dimen/low_card_elevation</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableListCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
+        <item name="cardElevation">@dimen/default_card_elevation</item>
+        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
     </style>
 
     <style name="Widget.Watts.Card.SelectableLargeCardOutlined" parent="Widget.Watts.Card.SelectableLargeCard">
@@ -55,10 +65,39 @@
         <item name="cardBackgroundColor">?attr/colorPrimary</item>
     </style>
 
+    <style name="Widget.Watts.Card.BackgroundGlowCardTile" parent="Widget.Watts.Card.BackgroundGlowCard">
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
 
     <style name="Widget.Watts.Card.SelectableLargeCard" parent="Widget.Watts.Card.Selectable">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+        <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableListCard" parent="Widget.Watts.Card.Selectable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+        <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:padding">2dp</item>
         <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
         <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
         <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
@@ -84,6 +123,16 @@
         <item name="fel_size_bottom">@dimen/large_card_fade_vert</item>
         <item name="fel_size_left">@dimen/large_card_fade_horz</item>
         <item name="fel_size_right">@dimen/large_card_fade_horz</item>
+    </style>
+
+    <style name="Widget.Watts.FadeLayout.Tile" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fel_edge">top|left|bottom|right</item>
+        <item name="fel_size_top">10dp</item>
+        <item name="fel_size_bottom">10dp</item>
+        <item name="fel_size_left">10dp</item>
+        <item name="fel_size_right">10dp</item>
     </style>
 
 </resources>

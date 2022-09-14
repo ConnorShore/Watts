@@ -2,15 +2,17 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.CardView.Elevated"
+    android:id="@+id/lightItemCard"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardBackgroundColor="@color/white"
+    android:layout_height="75dp"
+    app:strokeColor="@color/app_orange_on_primary_container"
+    app:strokeWidth="1dp"
     android:clickable="true"
     android:focusable="true"
     android:checkable="true"
-    app:cardElevation="8dp"
-    app:cardMaxElevation="10dp"
+    app:cardElevation="1dp"
+    app:cardCornerRadius="10dp"
     app:cardPreventCornerOverlap="true"
     app:cardUseCompatPadding="true">
 
@@ -29,6 +31,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingLeft="10dp"
         android:orientation="horizontal">
 
         <LinearLayout

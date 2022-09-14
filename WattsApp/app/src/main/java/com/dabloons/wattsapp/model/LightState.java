@@ -1,8 +1,9 @@
 package com.dabloons.wattsapp.model;
 
-import javax.annotation.Nullable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class LightState {
+public class LightState implements Parcelable {
     private boolean on;
     private float brightness;
     private Float hue;
@@ -32,8 +33,38 @@ public class LightState {
 
     public LightState()
     {
-
+        this.on = false;
+        this.brightness = 0;
+        this.hue = null;
+        this.saturation = null;
     }
+
+    protected LightState(Parcel in) {
+        on = in.readByte() != 0;
+        brightness = in.readFloat();
+        if (in.readByte() == 0) {
+            hue = null;
+        } else {
+            hue = in.readFloat();
+        }
+        if (in.readByte() == 0) {
+            saturation = null;
+        } else {
+            saturation = in.readFloat();
+        }
+    }
+
+    public static final Creator<LightState> CREATOR = new Creator<LightState>() {
+        @Override
+        public LightState createFromParcel(Parcel in) {
+            return new LightState(in);
+        }
+
+        @Override
+        public LightState[] newArray(int size) {
+            return new LightState[size];
+        }
+    };
 
     public boolean isOn() {
         return on;
@@ -55,7 +86,7 @@ public class LightState {
         return hue;
     }
 
-    public void setHue(float hue) {
+    public void setHue(Float hue) {
         this.hue = hue;
     }
 
@@ -63,7 +94,30 @@ public class LightState {
         return saturation;
     }
 
-    public void setSaturation(float saturation) {
+    public void setSaturation(Float saturation) {
         this.saturation = saturation;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (on ? 1 : 0));
+        dest.writeFloat(brightness);
+        if (hue == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(hue);
+        }
+        if (saturation == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeFloat(saturation);
+        }
     }
 }

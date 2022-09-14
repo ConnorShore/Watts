@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/lightCard"
-    android:layout_height="110dp"
-    android:layout_width="110dp"
-    android:clickable="true"
-    android:elevation="10dp"
-    android:backgroundTint="?colorSurface"
-    android:focusable="true"
-    android:checkable="true" >
+<com.bosphere.fadingedgelayout.FadingEdgeLayout
+    style="@style/Widget.Watts.FadeLayout.Tile"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/lightGlowCard"
+        style="@style/Widget.Watts.Card.BackgroundGlowCardTile">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/lightCard"
+            style="@style/Widget.Watts.Card.SelectableTileCardElevated">
 
-        <TextView
-            android:id="@+id/lightName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="top"
-            android:layout_weight="1"
-            />
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/lightSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:checked="false"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/lightName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/tile_text_size"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/lightSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:checked="false"/>
+
+            </LinearLayout>
 
 
-</com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</com.bosphere.fadingedgelayout.FadingEdgeLayout>
 

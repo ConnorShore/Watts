@@ -20,6 +20,7 @@ import android.widget.Button;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.IntegrationSceneManager;
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.manager.SceneManager;
 import com.dabloons.wattsapp.manager.UserManager;
@@ -69,6 +70,7 @@ public class RoomActivity extends AppCompatActivity {
 
     private RoomManager roomManager = RoomManager.getInstance();
     private SceneManager sceneManager = SceneManager.getInstance();
+    private LightManager lightManager = LightManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,18 +92,21 @@ public class RoomActivity extends AppCompatActivity {
         //tool bar back button listener
         toolbar.setNavigationOnClickListener(v -> finish());
 
-        lightAdapter = new LightAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) currentRoom.getLights());
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
+        lightManager.getLightsForIds(currentRoom.getLightIds(), (lights, status) -> {
+            lightAdapter = new LightAdapter(WattsApplication.getAppContext(), lights);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
 
-        lightRV = findViewById(R.id.roomLightRV);
-        lightRV.setLayoutManager(gridLayoutManager);
-        lightRV.setAdapter(lightAdapter);
-        lightRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
-        registerForContextMenu(lightRV);
+            lightRV = findViewById(R.id.roomLightRV);
+            lightRV.setLayoutManager(gridLayoutManager);
+            lightRV.setAdapter(lightAdapter);
+            lightRV.addItemDecoration(new ItemOffsetDecoration(getApplicationContext(),R.dimen.light_card_offset));
+            registerForContextMenu(lightRV);
+            return null;
+        });
 
-        SceneManager.getInstance().getAllScenes(currentRoom.getUid(), (scenes, status) -> {
+        sceneManager.getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
-            sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), (ArrayList<Scene>) scenes);
+            sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), scenes);
             GridLayoutManager gridLayoutManager1 = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
             sceneRV = findViewById(R.id.roomSceneRV);
             sceneRV.setLayoutManager(gridLayoutManager1);
@@ -112,14 +117,21 @@ public class RoomActivity extends AppCompatActivity {
         });
 
         alertDialogBuilder = new MaterialAlertDialogBuilder(RoomActivity.this);
-        List<IntegrationType> integrationTypes = RoomManager.getInstance().getRoomIntegrationTypes(currentRoom);
-        IntegrationSceneManager.getInstance().getIntegrationScenesMap(integrationTypes, (map, status) -> {
+        roomManager.getRoomIntegrationTypes(currentRoom, (integrationTypes, status) -> {
             if(!status.success) {
-                Log.e(LOG_TAG, "Failed to get integration scene map");
+                Log.e(LOG_TAG, status.message);
                 return null;
             }
-            sceneDropdownAdapter = new SceneDropdownAdapter(map);
-            initializeListeners();
+
+            IntegrationSceneManager.getInstance().getIntegrationScenesMap(integrationTypes, (map, status1) -> {
+                if(!status1.success) {
+                    Log.e(LOG_TAG, "Failed to get integration scene map");
+                    return null;
+                }
+                sceneDropdownAdapter = new SceneDropdownAdapter(map);
+                initializeListeners();
+                return null;
+            });
             return null;
         });
     }

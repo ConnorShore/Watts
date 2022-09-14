@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.UIMessageUtil;
+import util.WattsCallback;
+import util.WattsCallbackStatus;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 {
@@ -39,6 +42,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     private ArrayList<Room> mRoomModelArrayList;
     private OnItemClickListener clickListener;
 
+    private final RoomManager roomManager = RoomManager.getInstance();
+    private final LightManager lightManager = LightManager.getInstance();
 
     public RoomAdapter(Context context, ArrayList<Room> roomModelArrayList) {
         this.context = context;
@@ -67,6 +72,20 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
         Room room = mRoomModelArrayList.get(position);
         holder.roomName.setText(room.getName());
         holder.glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+
+
+        isRoomLightOn(room, (on, status) -> {
+            if(on)
+                holder.roomSwitch.setChecked(true);
+            else
+                holder.roomSwitch.setChecked(false);
+
+            setSwitchOnClickListener(holder, room);
+            return null;
+        });
+    }
+
+    private void setSwitchOnClickListener(@NonNull Viewholder holder, Room room) {
         holder.roomSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
                 int color = 0xFFFF5722; // todo: set to average color of all lights that will be on
@@ -106,6 +125,20 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     }
 
     public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
+
+    private void isRoomLightOn(Room room, WattsCallback<Boolean, Void> callback) {
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            for(Light l : lights) {
+                if(l.getLightState().isOn()) {
+                    callback.apply(true, new WattsCallbackStatus(true));
+                    return null;
+                }
+            }
+
+            callback.apply(false, new WattsCallbackStatus(true));
+            return null;
+        });
+    }
 
     @Override
     public int getItemCount() {

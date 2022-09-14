@@ -76,17 +76,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         int brightness = (int)(light.getLightState().getBrightness() * 100);
         holder.brighnessBar.setProgress(brightness);
 
-//        float hsv[] = {light.getLightState().getHue() * 360, light.getLightState().getSaturation(), 1.0f};
-//        int color = Color.HSVToColor(hsv);
-//        try {
-//            holder.colorPickerView.setHsvPaletteDrawable();
-//            holder.colorPickerView.selectByHsvColor(color);
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
                 lightManager.turnOnLight(light, (var, status) -> {
@@ -236,9 +225,9 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 colorPickerView.setHsvPaletteDrawable();
                 colorPickerView.selectByHsvColor(color);
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, e.getMessage());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.e(LOG_TAG, ex.getMessage());
             }
             currentColorPicker.show();
         }

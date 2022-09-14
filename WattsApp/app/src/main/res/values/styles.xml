@@ -37,16 +37,16 @@
 
     <!-- CARDS -->
     <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
-        <item name="cardElevation">8dp</item>
+        <item name="cardElevation">@dimen/default_card_elevation</item>
 
     </style>
 
     <style name="Widget.Watts.Card.SelectableTileCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
-        <item name="cardElevation">8dp</item>
+        <item name="cardElevation">@dimen/low_card_elevation</item>
     </style>
 
     <style name="Widget.Watts.Card.SelectableListCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
-        <item name="cardElevation">8dp</item>
+        <item name="cardElevation">@dimen/default_card_elevation</item>
         <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
     </style>
 
@@ -65,14 +65,8 @@
         <item name="cardBackgroundColor">?attr/colorPrimary</item>
     </style>
 
-    <style name="Widget.Watts.Card.BackgroundGlowCardTile" parent="Widget.Material3.CardView.Filled">
+    <style name="Widget.Watts.Card.BackgroundGlowCardTile" parent="Widget.Watts.Card.BackgroundGlowCard">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/default_glow_card_margin_horz</item>
-        <item name="android:layout_marginRight">@dimen/default_glow_card_margin_horz</item>
-        <item name="android:layout_marginTop">@dimen/default_glow_card_margin_vert</item>
-        <item name="android:layout_marginBottom">@dimen/default_glow_card_margin_vert</item>
-        <item name="cardBackgroundColor">?attr/colorPrimary</item>
     </style>
 
 
@@ -101,8 +95,9 @@
     </style>
 
     <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">
-        <item name="android:layout_width">110dp</item>
-        <item name="android:layout_height">110dp</item>
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:padding">2dp</item>
         <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
         <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
         <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>

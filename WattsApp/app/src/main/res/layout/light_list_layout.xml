@@ -2,31 +2,20 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Material3.CardView.Elevated"
-    android:id="@+id/lightItemCard"
-    android:layout_width="match_parent"
-    android:layout_height="75dp"
-    app:strokeColor="@color/app_orange_on_primary_container"
-    app:strokeWidth="1dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:checkable="true"
-    app:cardElevation="1dp"
-    app:cardCornerRadius="10dp"
-    app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true">
+    style="@style/Widget.Watts.Card.SelectableListCard"
+    android:id="@+id/lightItemCard">
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="75dp"-->
+<!--    app:strokeColor="@color/app_orange_on_primary_container"-->
+<!--    app:strokeWidth="1dp"-->
+<!--    android:clickable="true"-->
+<!--    android:focusable="true"-->
+<!--    android:checkable="true"-->
+<!--    app:cardElevation="1dp"-->
+<!--    app:cardCornerRadius="10dp"-->
+<!--    app:cardPreventCornerOverlap="true"-->
+<!--    app:cardUseCompatPadding="true">-->
 
-    <!--
-        In the above cardview widget
-        cardelevation property will give elevation to your card view
-        card corner radius will provide radius to your card view
-        card background color will give background color to your card view
-        card max elevation will give the cardview maximum elevation
-        card prevent corner overlap will add padding to CardView on v20 and
-        before to prevent intersections between the Card content and rounded corners.
-        card use compact padding will add padding in API v21+ as well to have the same
-        measurements with previous versions.
-    -->
 
     <LinearLayout
         android:layout_width="match_parent"

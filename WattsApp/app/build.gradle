@@ -88,4 +88,6 @@ dependencies {
     //color wheel
     implementation "com.github.skydoves:colorpickerview:2.2.4"
 
+    // fading edges on layouts
+    implementation 'com.github.bosphere.android-fadingedgelayout:fadingedgelayout:1.0.0'
 }

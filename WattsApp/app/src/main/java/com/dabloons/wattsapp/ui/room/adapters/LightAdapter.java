@@ -65,6 +65,15 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         return new Viewholder(view);
     }
 
+    private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int color) {
+        if(on) {
+            glowCard.setCardBackgroundColor(color);
+        }
+        else {
+            glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
@@ -76,8 +85,12 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         int brightness = (int)(light.getLightState().getBrightness() * 100);
         holder.brighnessBar.setProgress(brightness);
 
+        holder.glowCard.setCardBackgroundColor(Color.TRANSPARENT);
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
+                int color = 0xFFFF5722; // todo: set to average color of all lights that will be on
+                toggleBackgroundGlow(true, holder.glowCard, color);
+
                 lightManager.turnOnLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
@@ -92,6 +105,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             }
             else
             {
+                toggleBackgroundGlow(false, holder.glowCard, Color.TRANSPARENT);
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
@@ -131,15 +145,18 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         private AppCompatSeekBar brighnessBar;
         private MaterialCardView lightCard;
         private ColorPickerView colorPickerView;
+        private MaterialCardView glowCard;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             lightName = itemView.findViewById(R.id.lightName);
             lightSwitch = itemView.findViewById(R.id.lightSwitch);
             lightCard = itemView.findViewById(R.id.lightCard);
+            glowCard = itemView.findViewById(R.id.lightGlowCard);
 
             init(itemView);
 
+            lightCard.setOnClickListener(this);
             itemView.setOnClickListener(this);
             itemView.setOnCreateContextMenuListener(this);
         }
@@ -153,6 +170,8 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         public void onClick(View v) {
             showColorPicker();
         }
+
+
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

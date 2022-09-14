@@ -15,6 +15,7 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 
@@ -68,12 +69,16 @@ public class IntegrationAdapter extends RecyclerView.Adapter<IntegrationAdapter.
         private TextView integrationName;
         private TextView integrationConnectStatus;
         private Button deleteIntegrationButton;
+        private MaterialCardView selectableCard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             integrationConnectStatus = itemView.findViewById(R.id.integrationConnectedStatus);
             integrationName = itemView.findViewById(R.id.integrationName);
             deleteIntegrationButton = itemView.findViewById(R.id.delete_integration_btn);
+
+            selectableCard = itemView.findViewById(R.id.integrationSelectableCard);
+            selectableCard.setOnClickListener(this);
         }
 
         @Override

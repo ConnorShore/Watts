@@ -1,70 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    app:cardBackgroundColor="@color/cardview_dark_background"
-    android:clickable="true"
-    android:focusable="true"
-    android:checkable="true"
-    style="@style/Widget.Material3.CardView.Filled"
-    app:cardElevation="8dp"
-    app:cardMaxElevation="10dp"
-    app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true">
+<com.bosphere.fadingedgelayout.FadingEdgeLayout
+    style="@style/Widget.Watts.FadeLayout.LargeCard"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        In the above cardview widget
-        cardelevation property will give elevation to your card view
-        card corner radius will provide radius to your card view
-        card background color will give background color to your card view
-        card max elevation will give the cardview maximum elevation
-        card prevent corner overlap will add padding to CardView on v20 and
-        before to prevent intersections between the Card content and rounded corners.
-        card use compact padding will add padding in API v21+ as well to have the same
-        measurements with previous versions.
-    -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/roomGlowCard"
+        style="@style/Widget.Watts.Card.BackgroundGlowCard">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="horizontal">
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/roomSelectableCard"
+            style="@style/Widget.Watts.Card.SelectableLargeCardElevated">
 
-        <!--Text View to display Course Name-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|top">
-
-            <TextView
-                android:id="@+id/roomName"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:gravity="left"
-                android:text="TEST"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:layout_height="100dp"
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <!--Text View to display Course Name-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center|top">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5">
+                    <TextView
+                        android:id="@+id/roomName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="left"
+                        android:text="TEST"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/roomSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:checked="false"/>
+                </LinearLayout>
 
-        </LinearLayout>
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/roomSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:checked="false"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
+</com.bosphere.fadingedgelayout.FadingEdgeLayout>

@@ -1,36 +1,137 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!-- BUTTONS -->
+    <style name="Widget.Watts.Button.PrimaryElevatedButton" parent="Widget.Material3.Button.ElevatedButton.Icon">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="colorButtonNormal">?attr/colorPrimary</item>
+        <item name="cornerRadius">@dimen/primary_elevated_btn_corner_radius</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:layout_width">@dimen/default_btn_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/primary_elevated_btn_padding</item>
+        <item name="android:paddingBottom">@dimen/primary_elevated_btn_padding</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:layout_marginStart">@dimen/primary_elevated_btn_margin_horz</item>
+        <item name="android:layout_marginEnd">@dimen/primary_elevated_btn_margin_horz</item>
+        <item name="android:layout_marginBottom">@dimen/primary_elevated_btn_margin_vert</item>
+        <item name="android:layout_gravity">bottom</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
 
-    <!-- STYLE FOR MAIN ACTIVITY -->
-    <style name="AppTheme.NoTitle" parent="AppTheme">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="actionBarTheme">@null</item>
+    <style name="Widget.Watts.Button.ElevatedButton" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="colorButtonNormal">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
-    <!-- STYLE SIGN-IN ACTIVITY -->
-    <style name="LoginTheme" parent="AppTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorButtonNormal">@color/colorAccent</item>
-        <item name="colorControlNormal">@android:color/darker_gray</item>
-        <item name="colorControlActivated">@android:color/darker_gray</item>
-        <item name="colorControlHighlight">@android:color/darker_gray</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textColorPrimary">@android:color/darker_gray</item>
-        <item name="android:textColorSecondary">@android:color/darker_gray</item>
-        <item name="android:windowBackground">@android:color/white</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:textColorHint">@android:color/darker_gray</item>
+    <style name="Widget.Watts.Button.WideElevatedButton" parent="Widget.Watts.Button.ElevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
+
+    <style name="SplashTheme" parent="Theme.Watts">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">#F67707</item>
+    </style>
+
+    <!-- CARDS -->
+    <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
+        <item name="cardElevation">@dimen/default_card_elevation</item>
+
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
+        <item name="cardElevation">@dimen/low_card_elevation</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableListCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
+        <item name="cardElevation">@dimen/default_card_elevation</item>
+        <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableLargeCardOutlined" parent="Widget.Watts.Card.SelectableLargeCard">
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">@dimen/default_outline_size</item>
+    </style>
+
+    <style name="Widget.Watts.Card.BackgroundGlowCard" parent="Widget.Material3.CardView.Filled">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/default_glow_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_glow_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_glow_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_glow_card_margin_vert</item>
+        <item name="cardBackgroundColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Widget.Watts.Card.BackgroundGlowCardTile" parent="Widget.Watts.Card.BackgroundGlowCard">
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+
+    <style name="Widget.Watts.Card.SelectableLargeCard" parent="Widget.Watts.Card.Selectable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+        <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableListCard" parent="Widget.Watts.Card.Selectable">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/light_item_list_height</item>
+        <item name="strokeColor">@color/app_orange_on_primary_container</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
+        <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginRight">@dimen/default_card_margin_horz</item>
+        <item name="android:layout_marginTop">@dimen/default_card_margin_vert</item>
+        <item name="android:layout_marginBottom">@dimen/default_card_margin_vert</item>
+        <item name="cardPreventCornerOverlap">true</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+    <style name="Widget.Watts.Card.Selectable" parent="Widget.Material3.CardView.Elevated">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:checkable">true</item>
+    </style>
+
+    <!-- MISC -->
+    <style name="Widget.Watts.FadeLayout.LargeCard" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fel_edge">top|left|bottom|right</item>
+        <item name="fel_size_top">@dimen/large_card_fade_vert</item>
+        <item name="fel_size_bottom">@dimen/large_card_fade_vert</item>
+        <item name="fel_size_left">@dimen/large_card_fade_horz</item>
+        <item name="fel_size_right">@dimen/large_card_fade_horz</item>
+    </style>
+
+    <style name="Widget.Watts.FadeLayout.Tile" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fel_edge">top|left|bottom|right</item>
+        <item name="fel_size_top">10dp</item>
+        <item name="fel_size_bottom">10dp</item>
+        <item name="fel_size_left">10dp</item>
+        <item name="fel_size_right">10dp</item>
+    </style>
+
+    <dimen name="light_item_list_height">75dp</dimen>
 </resources>

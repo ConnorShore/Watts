@@ -1,6 +1,8 @@
 package com.dabloons.wattsapp.ui.main.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -40,6 +42,10 @@ public class AccountFragment extends Fragment {
 
         result.findViewById(R.id.signOutButton).setOnClickListener( v -> {
             userManager.signOut(this.getContext()).addOnSuccessListener(aVoid -> {
+                SharedPreferences sharedPref = getActivity().getApplicationContext().getSharedPreferences("TEST", 0);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean(getString(R.string.logged_in), false);
+                editor.apply();
                 this.getActivity().finish();
             });
         });

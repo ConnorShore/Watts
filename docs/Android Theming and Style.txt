@@ -1,0 +1,85 @@
+Android Theming and Style:
+
+Styles vs themes:
+    - Style is meant to set onto a particular view (i.e. button, card, etc)
+        - Set attributes like gravity, textAppearance, etc
+    - Themes are meant for overall appearance of app
+        - Set theme attributes such as colorPRimary, windowBackground, actionBarSize
+        - Can access theme attributes in layout xmls via "?attr/colorPrimary" for instance (?attr looks up value in current theme)
+        - Use theme attributes as much as possible because when you decide to change colorPrimary for a theme,
+          then don't have to change it everywhere, just one place
+    - Setting style on a view will only apply style to that view
+    - Setting theme ona  view will cascade that theme to all sub-views
+
+Theme Overlays:
+    - A technique of using themes to do something specific
+    - You declare an empty parent
+    - Only declare attributes you want to set (i.e. only colorPrimary and colorSecond)
+    - This will allow hidden parent theme attributes to not override existing style
+
+Using themes and styles in your apps:
+    - Colors
+        -State lists
+            -Stateful wrapper around colors
+            -Use same state system as drawables
+                -i.e. different button color if its pressed or not
+            -Example: (this would be defined in colors.xml)
+            {
+                <selector>
+                    <item android:color="@color/brand_color_bright"
+                        android:state_checked="true">
+                    <item android:color="@color/brand_color">
+                </selector>
+            }
+            - Order the items from most specific to least specific 
+              (i.e. don't have the selected one last as the first color will match all states, hence always be used)
+            - Can also use alpha and can match theme attributes
+    - Organizations:
+        - Use literal color names
+            - Recommended to have colors in colors.xml have names that aren't colorPrimary, colorAccent, etc, 
+            its best to have them literally represent what the color is.  I.e.: brand_blue, brand_blue_dark, brand_pink, etc
+        - Use consistent style names
+            - Embed types into naming system
+            - I.e. "Theme.AppName.Blue" and "Widget.AppName.Toolbar.Green"
+        - Splitting files based on purpose
+            -Don't put everything in styles.xml, put themes in themes.xml, widget styles in styles.xml, colors in colors.xml, etc
+
+Material Theming:
+    - Idea of making the app personal to your brand
+    - Material UI provides good base, but customize futher to really make the app feel personal to the brand
+    - Focuses on 3 customization aspects:
+        1) Typography 
+        2) Shape 
+        3) Color
+    - Color
+        - colorPrimary/colorSecondary are main couple colors used
+        - ColorPrimaryVariant/colorSecondaryVariant are to provide contrast to primary/secondary colors
+        - colorSurface is the background
+        - colorOn* attributes are for things ontop of the primary secondary, surface, etc (ie. colorOnPrimary) like text and icons
+    - Typeography
+        - Recommends using a typed scale (having small discrete number of text styles)
+        - Have stuff universally defined like Headline1-6, Subtitle1-2, Body, Button, etc
+            -textAppearanceHeadline1
+            -textAppearanceHeadline2
+            -textAppearanceSubtitle1
+            -textAppearanceBody1
+            -etc
+        - These are set as theme attributes usually
+    - Shape
+        - Use shape meaningfully to give meaning
+        - Usually defined with ShapeAppearances
+            -Example (defined in style)
+            {
+                <style name="ShapeAppearance.Owl.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+                    <item name="cornerFaily">rounded</item>
+                    <item name="cornerSize">0px</item>
+                    <item name="cornerSizeTopLeft">@dimen/small_comp_tl_radius</item>
+                </style>
+            }
+            - Can then use the styles in the app's theme
+            - Example (defined in theme)
+            {
+                <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Owl.SmallComponent</item>
+                <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Owl.MediumComponent</item>
+            }
+            - Ideas of theme overlays can be applied here as well to make it a shape overlay

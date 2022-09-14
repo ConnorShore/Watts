@@ -128,6 +128,13 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             else if(checkedIds.size() == group.getChildCount())
             {
                 LightManager.getInstance().getLights((lights, success) -> {
+                    for(int i = 0; i < lights.size(); i++)
+                    {
+                        if(mLightItemAdapter.currSelectedlightItems.containsKey(lights.get(i).getUid()))
+                        {
+                            lights.get(i).setSelected(true);
+                        }
+                    }
                     mLightItemAdapter.setLights(lights);
                     updateUIChips();
                     return null;
@@ -136,6 +143,13 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             else {
                 for (int id : checkedIds) {
                     List<Light> integrationlights = mLightItemAdapter.getLightsFromIntegrationMap(IntegrationType.values()[id]);
+                    for(int i = 0; i < integrationlights.size(); i++)
+                    {
+                        if(mLightItemAdapter.currSelectedlightItems.containsKey(integrationlights.get(i).getUid()))
+                        {
+                            integrationlights.get(i).setSelected(true);
+                        }
+                    }
                     mLightItemAdapter.setLights(integrationlights);
                     updateUIChips();
 
@@ -149,13 +163,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                     String name = roomName.getEditText().getText().toString();
                     RoomManager.getInstance().createRoom(name, (room, status) -> {
                         Room newRoom = room;
-                        List<Light> lightsToAdd =  new ArrayList<>();
-                        for(int i = 0; i < mLightItemAdapter.getItemCount(); i++) {
-                            Light currLight = (Light) mLightItemAdapter.lightItems.get(i);
-                            if(currLight.isSelected()) {
-                                lightsToAdd.add(currLight);
-                            }
-                        }
+                        List<Light> lightsToAdd = new ArrayList<>(mLightItemAdapter.currSelectedlightItems.values());
                         RoomManager.getInstance().addLightsToRoom(newRoom, lightsToAdd, (var, success) -> {
                             roomAdapter.getRoomList().add(newRoom);
                             updateUI(true);

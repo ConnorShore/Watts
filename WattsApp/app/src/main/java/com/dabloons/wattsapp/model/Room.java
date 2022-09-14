@@ -14,7 +14,7 @@ public class Room implements Parcelable {
     private String userId;
     private String integrationId;
     private String name;
-    private List<Light> lights;
+    private List<String> lightIds;
     private List<Scene> scenes;
 
     public Room() { }
@@ -23,14 +23,14 @@ public class Room implements Parcelable {
         this.uid = uid;
         this.userId = userId;
         this.name = name;
-        this.lights = new ArrayList<>();
+        this.lightIds = new ArrayList<>();
     }
 
-    public Room(String uid, String userId, String name, List<Light> lights) {
+    public Room(String uid, String userId, String name, List<String> lightIds) {
         this.uid = uid;
         this.userId = userId;
         this.name = name;
-        this.lights = lights;
+        this.lightIds = lightIds;
     }
 
     protected Room(Parcel in) {
@@ -38,7 +38,8 @@ public class Room implements Parcelable {
         userId = in.readString();
         integrationId = in.readString();
         name = in.readString();
-        lights = in.createTypedArrayList(Light.CREATOR);
+        lightIds = in.createStringArrayList();
+        scenes = in.createTypedArrayList(Scene.CREATOR);
     }
 
     public static final Creator<Room> CREATOR = new Creator<Room>() {
@@ -52,19 +53,6 @@ public class Room implements Parcelable {
             return new Room[size];
         }
     };
-
-    public List<Light> getLightOfIntegration(IntegrationType type) {
-        List<Light> ret = new ArrayList<>();
-        for(Light l : lights) {
-            if(l.getIntegrationType() == type)
-                ret.add(l);
-        }
-        return ret;
-    }
-
-    public void addLight(Light light) {
-        this.lights.add(light);
-    }
 
     public String getUid() {
         return uid;
@@ -90,9 +78,9 @@ public class Room implements Parcelable {
         this.name = name;
     }
 
-    public List<Light> getLights() { return lights; }
+    public List<String> getLightIds() { return lightIds; }
 
-    public void setLights(List<Light> lights) { this.lights = lights; }
+    public void setLightIds(List<String> lightIds) { this.lightIds = lightIds; }
 
     public String getIntegrationId() {
         return integrationId;
@@ -102,6 +90,14 @@ public class Room implements Parcelable {
         this.integrationId = integrationId;
     }
 
+    public List<Scene> getScenes() {
+        return scenes;
+    }
+
+    public void setScenes(List<Scene> scenes) {
+        this.scenes = scenes;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -109,12 +105,11 @@ public class Room implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
-        dest.writeString(this.uid);
-        dest.writeString(this.userId);
-        dest.writeString(this.integrationId);
-        dest.writeString(this.name);
-        dest.writeTypedList(this.lights);
-
+        dest.writeString(uid);
+        dest.writeString(userId);
+        dest.writeString(integrationId);
+        dest.writeString(name);
+        dest.writeStringList(lightIds);
+        dest.writeTypedList(scenes);
     }
 }

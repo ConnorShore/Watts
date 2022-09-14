@@ -6,6 +6,7 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.service.PhillipsHueService;
 import com.google.android.gms.tasks.Task;
@@ -32,24 +33,23 @@ public final class LightRepository {
 
     private static volatile LightRepository instance;
 
-    private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
-
     private final String LIGHT_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_lights);
     private final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
+    private final String LIGHT_ID = WattsApplication.getResourceString(R.string.field_uid);
     private final String INTEGRATION_TYPE_FIELD = WattsApplication.getResourceString(R.string.field_integration_type);
 
     // Create User in Firestore
-    public Task<Void> createLight(String integrationId, IntegrationType type, String name) {
+    public Task<Void> createLight(String integrationId, IntegrationType type, String name, LightState lightState) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return null;
 
         String userId = user.getUid();
 
-        Light lightToCreate = new Light(userId, name, integrationId, type);
+        Light lightToCreate = new Light(userId, name, integrationId, type, lightState);
         return getLightCollection().document(lightToCreate.getUid()).set(lightToCreate);
     }
 
-    public Task<Void> storeMultipleLights(List<Light> lights) {
+    public Task<Void> setMultipleLights(List<Light> lights) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return null;
 
@@ -59,6 +59,13 @@ public final class LightRepository {
             batch.set(ref, light);
         }
         return batch.commit();
+    }
+
+    public Task<Void> updateLight(Light light) {
+        FirebaseUser user = UserManager.getInstance().getCurrentUser();
+        if(user == null) return null;
+
+        return getLightCollection().document(light.getUid()).set(light);
     }
 
     public void getAllLightsForType(IntegrationType type, WattsCallback<List<Light>, Void> callback) {
@@ -89,6 +96,25 @@ public final class LightRepository {
 
     public void deleteLightsForUser(WattsCallback<Void, Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getLightCollection(), callback);
+    }
+
+    public void getLightsForIds(List<String> lightIds, WattsCallback<List<Light>, Void> callback) {
+        FirebaseUser user = UserManager.getInstance().getCurrentUser();
+        if(user == null) return;
+
+        getLightCollection().get().addOnCompleteListener(task -> {
+            if(!task.isComplete())
+                Log.e(LOG_TAG, "Failed to get lights collection");
+
+            List<Light> ret = new ArrayList<>();
+            for (QueryDocumentSnapshot document : task.getResult()) {
+                boolean containsLight = lightIds.contains(document.get(LIGHT_ID).toString());
+                if(containsLight)
+                    ret.add(document.toObject(Light.class));
+            }
+
+            callback.apply(ret, new WattsCallbackStatus(true));
+        });
     }
 
     // Get the User Collection Reference

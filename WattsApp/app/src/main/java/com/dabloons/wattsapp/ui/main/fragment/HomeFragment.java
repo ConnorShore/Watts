@@ -209,9 +209,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             }
             return null;
         });
-
     }
-
 
     @Override
     public void onClick(View view, int position)

@@ -38,7 +38,7 @@ public final class RoomRepository {
     private final String ROOM_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_rooms);
 
     private final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
-    private final String LIGHTS_FIELD = WattsApplication.getResourceString(R.string.field_lights);
+    private final String LIGHT_IDS_FIELD = WattsApplication.getResourceString(R.string.field_light_ids);
     private final String INTEGRATION_ID_FIELD = WattsApplication.getResourceString(R.string.field_integrationId);
 
     private RoomRepository() { }
@@ -61,15 +61,15 @@ public final class RoomRepository {
     }
 
     public Task<Void> updateRoom(Room room) {
-        return getRoomCollection().document(room.getUid()).update(LIGHTS_FIELD, room.getLights());
+        return getRoomCollection().document(room.getUid()).update(LIGHT_IDS_FIELD, room.getLightIds());
     }
 
     public Task<Void> setRoomIntegrationId(String roomUid, String id) {
         return getRoomCollection().document(roomUid).update(INTEGRATION_ID_FIELD, id);
     }
 
-    public Task<Void> setRoomLights(Room room, List<Light> lights) {
-        room.setLights(lights);
+    public Task<Void> setRoomLights(Room room, List<String> lightIds) {
+        room.setLightIds(lightIds);
         return updateRoom(room);
     }
 

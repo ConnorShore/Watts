@@ -57,7 +57,6 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
-//                        .setTheme(R.style.LoginTheme)
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false, true)
                         .build(),

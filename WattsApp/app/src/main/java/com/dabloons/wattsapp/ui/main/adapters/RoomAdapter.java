@@ -91,7 +91,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 int color = 0xFFFF5722; // todo: set to average color of all lights that will be on
                 toggleBackgroundGlow(true, holder.glowCard, color);
 
-                RoomManager.getInstance().turnOnRoomLights(room, (var, status) -> {
+                roomManager.turnOnRoomLights(room, (var, status) -> {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (status.success)
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on lights for room: " + room.getName());

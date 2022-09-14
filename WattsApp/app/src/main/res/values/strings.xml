@@ -39,4 +39,6 @@
     <string name="phillips_hue">Phillips Hue</string>
     <string name="nanoleaf">Nanoleaf</string>
     <string name="sync_lights">Sync Lights</string>
+    <string name="logged_in">loggedIn</string>
+    <string name="yes_logged_in">YES</string>
 </resources>

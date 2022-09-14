@@ -30,6 +30,11 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.Watts">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">#F67707</item>
+    </style>
+
     <!-- CARDS -->
     <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
         <item name="cardElevation">8dp</item>

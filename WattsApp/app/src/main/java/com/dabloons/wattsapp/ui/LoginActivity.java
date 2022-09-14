@@ -3,8 +3,11 @@ package com.dabloons.wattsapp.ui;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.databinding.ActivityLoginBinding;
@@ -90,6 +93,10 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     private void startMainActivity() {
         Intent mainActivity = new Intent(this, MainActivity.class);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("TEST", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(getString(R.string.logged_in), true);
+        editor.apply();
         startActivityForResult(mainActivity, RequestCodes.RC_MAIN_ACTIVITY);
     }
 

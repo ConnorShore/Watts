@@ -21,7 +21,7 @@
     <color name="app_white">#FBFFFE</color>
     <color name="app_green_secondary">#003918</color>
     <color name="app_green_on_secondary">#5ADF83</color>
-    <color name="app_green_secondary_container">#005225</color>
+    <color name="app_green_secondary_container">#FF5722</color>
     <color name="app_purple_tertiary">#2000A4</color>
     <color name="app_purple_on_tertiary">#C4C0FF</color>
     <color name="app_purple_tertiary_container">#3828C2</color>

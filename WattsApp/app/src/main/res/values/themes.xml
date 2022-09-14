@@ -24,7 +24,7 @@
         <item name="colorOnError">@color/app_white</item>
 <!--        <item name="colorOnErrorContainer">@color/md_theme_dark_onErrorContainer</item>-->
         <item name="colorOnBackground">@color/app_light_grey</item>
-        <item name="colorSurfaceVariant">@color/app_dark_blue_300</item>
+        <item name="colorSurfaceVariant">@color/app_dark_blue_100</item>
 <!--        <item name="colorOnSurfaceVariant">@color/md_theme_dark_onSurfaceVariant</item>-->
         <item name="colorOutline">@color/app_light_grey</item>
 <!--        <item name="colorOnSurfaceInverse">@color/md_theme_dark_inverseOnSurface</item>-->

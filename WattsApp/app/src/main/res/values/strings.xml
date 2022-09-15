@@ -65,4 +65,7 @@
     <string name="color_picker_hue_max">360</string>
     <string name="color_picker_saturation_max">1</string>
     <string name="color_picker_brightness_max">1</string>
+
+    <!-- SHARED PREFERENCES -->
+    <string name="shared_preference_login">login</string>
 </resources>

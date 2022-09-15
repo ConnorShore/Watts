@@ -31,6 +31,7 @@ public class AccountFragment extends Fragment {
 
     private UserManager userManager = UserManager.getInstance();
 
+    private final String SHARED_PREFERENCE_LOGIN = WattsApplication.getResourceString(R.string.shared_preference_login);
 
     public AccountFragment() {
 
@@ -44,7 +45,7 @@ public class AccountFragment extends Fragment {
 
         result.findViewById(R.id.signOutButton).setOnClickListener( v -> {
             userManager.signOut(this.getContext()).addOnSuccessListener(aVoid -> {
-                SharedPreferences sharedPref = getActivity().getApplicationContext().getSharedPreferences("TEST", 0);
+                SharedPreferences sharedPref = getActivity().getApplicationContext().getSharedPreferences(SHARED_PREFERENCE_LOGIN, 0);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putBoolean(getString(R.string.logged_in), false);
                 editor.apply();

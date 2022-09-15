@@ -140,25 +140,35 @@ public class LightManager {
     }
 
     public void syncLights() {
+        syncLightsWithCallback((var, status) -> {
+            if(status.success)
+                UIMessageUtil.showShortToastMessage(
+                        WattsApplication.getAppContext(),
+                        "Successfully synced lights");
+            else
+                UIMessageUtil.showShortToastMessage(
+                        WattsApplication.getAppContext(),
+                        "Failed to sync lights");
+
+            return null;
+        });
+    }
+
+    public void syncLightsWithCallback(WattsCallback<Void, Void> callback) {
         UserManager.getInstance().getUserIntegrations((integrations, successStatus) -> {
             if(!successStatus.success) {
                 Log.e(LOG_TAG, "Failed to get user integration when syncing lights: " + successStatus.message);
+                callback.apply(null, successStatus);
+                return null;
+            }
+
+            if(integrations.size() == 0) {
+                callback.apply(null, new WattsCallbackStatus(true));
                 return null;
             }
 
             for(IntegrationType type : integrations) {
-                syncLightsToDatabase(type, (nil, status) -> {
-                    if(status.success)
-                        UIMessageUtil.showShortToastMessage(
-                                WattsApplication.getAppContext(),
-                                "Successfully synced lights: " + type);
-                    else
-                        UIMessageUtil.showShortToastMessage(
-                                WattsApplication.getAppContext(),
-                                "Failed to sync lights: " + type);
-
-                    return null;
-                });
+                syncLightsToDatabase(type, callback);
             }
 
             return null;

@@ -96,8 +96,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
-                int color = getAverageColorOfLights(lights); // todo: set to average color of all lights that will be on
-                toggleBackgroundGlow(true, holder.glowCard, color);
 
                 lightManager.turnOnLight(light, (var, status) -> {
                     if(!status.success) {
@@ -107,11 +105,11 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         return null;
                     }
 
+                    setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
                     return null;
                 });
             } else {
-                toggleBackgroundGlow(false, holder.glowCard, Color.TRANSPARENT);
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
@@ -120,6 +118,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         return null;
                     }
 
+                    setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                     return null;
                 });
@@ -132,6 +131,21 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         });
     }
 
+    private void setBackgroundGlowForLight(Light light, MaterialCardView glowCard) {
+        if(light.getLightState().isOn()) {
+            float hue = light.getLightState().getHue() != null
+                    ? light.getLightState().getHue() * HUE_MAX
+                    : 0.0f;
+            float saturation = light.getLightState().getSaturation() != null
+                    ? light.getLightState().getSaturation() * SATURATION_MAX
+                    : 0.0f;
+
+            int color = Color.HSVToColor(new float[] {hue, saturation, BRIGHTNESS_MAX});
+            toggleBackgroundGlow(true, glowCard, color);
+        } else {
+            toggleBackgroundGlow(false, glowCard, 0);
+        }
+    }
 
     private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int color) {
         if(on) {
@@ -140,32 +154,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         else {
             glowCard.setCardBackgroundColor(Color.TRANSPARENT);
         }
-    }
-
-    private int getAverageColorOfLights(List<Light> lights) {
-        float averageHue = 0.0f;
-        float averageSaturation = 0.0f;
-        int numCounted = 0;
-        for(Light light : lights) {
-            LightState state = light.getLightState();
-            if(state.getHue() != null && state.getSaturation() != null) {
-                if(light.getIntegrationType() == IntegrationType.NANOLEAF
-                        && state.getHue() == 0
-                        && state.getSaturation() == 0)
-                    continue;
-                averageHue += state.getHue();
-                averageSaturation += state.getSaturation();
-                numCounted++;
-            }
-        }
-
-        averageHue /= numCounted;
-        averageSaturation /= numCounted;
-
-        averageHue *= 360.0f;
-
-        float hsv[] = {averageHue, averageSaturation, 1.0f};
-        return Color.HSVToColor(hsv);
     }
 
     @Override

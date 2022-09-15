@@ -55,12 +55,12 @@ public class LightManager {
     private final int NANOLEAF_BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_brightness_max));
 
     public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(true, 1.0f, null, null);
+        LightState state = new LightState(true, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 
     public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(false, 0.0f, null, null);
+        LightState state = new LightState(false, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 

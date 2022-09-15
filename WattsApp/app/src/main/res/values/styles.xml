@@ -112,6 +112,18 @@
         <item name="android:checkable">true</item>
     </style>
 
+    <!-- PLACEHOLDER TEXT -->
+    <style name="Widget.Watts.TextView.Placeholder" parent="">
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/app_light_grey</item>
+        <item name="android:textAppearance">@style/FirebaseUI.Text.Heading</item>
+    </style>
+
     <!-- MISC -->
     <style name="Widget.Watts.FadeLayout.LargeCard" parent="">
         <item name="android:layout_width">match_parent</item>

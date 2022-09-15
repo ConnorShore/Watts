@@ -57,7 +57,7 @@ public class ConnectFragment extends Fragment {
     private RecyclerView discoveredLightsRV;
 
     private AlertDialog popupDialog;
-    private MaterialAlertDialogBuilder popupDialogBuilder;
+//    private MaterialAlertDialogBuilder popupDialogBuilder;
 
     private View discoveryView;
     private View selectLightsView;
@@ -72,8 +72,9 @@ public class ConnectFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
 
         syncLightsBtn = result.findViewById(R.id.sync_lights_btn);
-        popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
+//        popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
 
+        initializePopupItems();
         initializeListeners(result);
         emptyViewText = result.findViewById(R.id.emptyIntegrationListText);
 
@@ -159,7 +160,10 @@ public class ConnectFragment extends Fragment {
     }
 
     private void launchPopupWindow() {
-        initializePopupItems();
+        closePopupWindow();
+        MaterialAlertDialogBuilder popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
+        if(discoveryView.getParent() != null)
+            ((ViewGroup)discoveryView.getParent()).removeView(discoveryView);
         popupDialogBuilder.setView(discoveryView)
                 .setTitle("Discover Lights")
                 .setNegativeButton("Cancel", (dialog, which) -> {
@@ -196,6 +200,9 @@ public class ConnectFragment extends Fragment {
         new Handler(Looper.getMainLooper()).post(() -> {
             TextView loadingTxt = loadingView.findViewById(R.id.loading_text);
             loadingTxt.setText("Adding devices...");
+            MaterialAlertDialogBuilder popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
+            if(loadingView.getParent() != null)
+                ((ViewGroup)loadingView.getParent()).removeView(loadingView);
             popupDialogBuilder.setView(loadingView)
                     .setPositiveButton("", null)
                     .setNegativeButton("", null);
@@ -208,6 +215,9 @@ public class ConnectFragment extends Fragment {
     private void setSelectLightsView() {
         closePopupWindow();
         new Handler(Looper.getMainLooper()).post(() -> {
+            MaterialAlertDialogBuilder popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
+            if(selectLightsView.getParent() != null)
+                ((ViewGroup)selectLightsView.getParent()).removeView(selectLightsView);
             popupDialogBuilder.setView(selectLightsView)
                 .setTitle("Select Lights To Add")
                 .setPositiveButton("Confirm", (dialogInterface, i) ->  {
@@ -246,6 +256,7 @@ public class ConnectFragment extends Fragment {
     }
 
     private void closePopupWindow() {
-        popupDialog.dismiss();
+        if(popupDialog != null)
+            popupDialog.dismiss();
     }
 }

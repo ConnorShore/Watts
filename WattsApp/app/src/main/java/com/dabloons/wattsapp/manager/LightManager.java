@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
@@ -22,7 +23,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -43,13 +46,21 @@ public class LightManager {
     private PhillipsHueService phillipsHueService = PhillipsHueService.getInstance();
     private NanoleafService nanoleafService = NanoleafService.getInstance();
 
+    private final int PHILLIPS_HUE_HUE_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_hue_max));
+    private final int PHILLIPS_HUE_SATURATION_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_saturation_max));
+    private final int PHILLIPS_HUE_BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_brightness_max));
+
+    private final int NANOLEAF_HUE_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_hue_max));
+    private final int NANOLEAF_SATURATION_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_saturation_max));
+    private final int NANOLEAF_BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_brightness_max));
+
     public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(true, 1.0f, null, null);
+        LightState state = new LightState(true, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 
     public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
-        LightState state = new LightState(false, 0.0f, null, null);
+        LightState state = new LightState(false, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 
@@ -154,10 +165,73 @@ public class LightManager {
                 return null;
             }
 
-            List<Light> lights = RepositoryUtil.createNanoleafLightsFromAuthCollection(collection);
-            updateAndCreateLightsInDatabase(lights, existingLights, callback);
+            // get nanoleaf panel light state
+            getNanoleafPanelLightStates(collection, (states, status1) -> {
+                if(!status1.success) {
+                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
+                    return null;
+                }
+
+                List<Light> lights = RepositoryUtil.createNanoleafLightsFromAuthCollection(collection, states);
+                updateAndCreateLightsInDatabase(lights, existingLights, callback);
+                return null;
+            });
+
             return null;
         });
+    }
+
+    private void getNanoleafPanelLightStates(NanoleafPanelAuthCollection collection, WattsCallback<Map<String, LightState>, Void> callback) {
+        List<NanoleafPanelIntegrationAuth> panels = collection.getPanelAuths();
+        getNanoleafPanelLightState(panels, 0, new HashMap<>(), callback);
+    }
+
+    private void getNanoleafPanelLightState(List<NanoleafPanelIntegrationAuth> panels, int index,
+                                            Map<String, LightState> states, WattsCallback<Map<String, LightState>, Void> callback) {
+        if(index >= panels.size()) {
+            callback.apply(states, new WattsCallbackStatus(true));
+            return;
+        }
+
+        NanoleafPanelIntegrationAuth panel = panels.get(index);
+        nanoleafService.getLightState(panel, new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(LOG_TAG, e.getMessage());
+                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if(!response.isSuccessful()) {
+                    Log.e(LOG_TAG, response.message());
+                    callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                    return;
+                }
+
+                String responseBody = response.body().string();
+                LightState state = getNanoleafPanelLightStateFromResponse(responseBody);
+                states.put(panel.getName(), state);
+                int nextIndex = index + 1;
+                getNanoleafPanelLightState(panels, nextIndex, states, callback);
+            }
+        });
+    }
+
+    private LightState getNanoleafPanelLightStateFromResponse(String response) {
+        JsonObject bodyObj = JsonParser.parseString(response).getAsJsonObject();
+
+        boolean on = bodyObj.get("on").getAsJsonObject().get("value").getAsBoolean();
+        float hue = bodyObj.get("hue").getAsJsonObject().get("value").getAsFloat();
+        float saturation = bodyObj.get("sat").getAsJsonObject().get("value").getAsFloat();
+        float brightness = bodyObj.get("brightness").getAsJsonObject().get("value").getAsFloat();
+
+        hue /= NANOLEAF_HUE_MAX;
+        saturation /= NANOLEAF_SATURATION_MAX;
+        brightness /= NANOLEAF_BRIGHTNESS_MAX;
+
+        LightState state = new LightState(on, brightness, hue, saturation);
+        return state;
     }
 
     public void getLights(WattsCallback<List<Light>, Void> callback)
@@ -224,6 +298,7 @@ public class LightManager {
     }
 
     private void syncNanoleafLightsToDatabase(WattsCallback<Void, Void> callback) {
+        // Todo: get current light panel states and sync to database
         UserManager.getInstance().getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
             if(!status.success || auth == null) {
                 callback.apply(null, new WattsCallbackStatus(false, status.message));
@@ -260,6 +335,11 @@ public class LightManager {
             float brightness = state.get("bri").getAsFloat();
             Float hue = state.get("hue").getAsFloat();
             Float saturation = state.get("sat").getAsFloat();
+
+            // limit hue and saturation
+            hue /= PHILLIPS_HUE_HUE_MAX;
+            saturation /= PHILLIPS_HUE_SATURATION_MAX;
+            brightness /= PHILLIPS_HUE_BRIGHTNESS_MAX;
 
             LightState lightState = new LightState(on, brightness, hue, saturation);
             Light light = new Light(userId, name, integrationId, IntegrationType.PHILLIPS_HUE, lightState);
@@ -298,7 +378,6 @@ public class LightManager {
             else {
                 Light el = getExistingLightById(l.getIntegrationId(), existingLights);
                 el.setLightState(l.getLightState());
-                // update light state of current lights
             }
         }
 

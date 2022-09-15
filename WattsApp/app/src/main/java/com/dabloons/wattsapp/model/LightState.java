@@ -13,9 +13,7 @@ public class LightState implements Parcelable {
         this.on = isOn;
 
         // limit brightness between 0 and 1
-        this.brightness = Math.min(brightness, 1.0f);
-        this.brightness = Math.max(this.brightness, 0.0f);
-
+        this.brightness = brightness;
         this.hue = hue;
         this.saturation = saturation;
     }
@@ -23,10 +21,7 @@ public class LightState implements Parcelable {
     public LightState(boolean isOn, float brightness) {
         this.on = isOn;
 
-        // limit brightness between 0 and 1
-        this.brightness = Math.min(brightness, 1.0f);
-        this.brightness = Math.max(this.brightness, 0.0f);
-
+        this.brightness = brightness;
         this.hue = null;
         this.saturation = null;
     }

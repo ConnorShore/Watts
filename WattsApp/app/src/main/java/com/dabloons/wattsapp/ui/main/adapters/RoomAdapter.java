@@ -21,13 +21,16 @@ import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.RoomManager;
 import com.dabloons.wattsapp.model.Light;
+import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.Room;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.ui.main.OnItemClickListener;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import util.UIMessageUtil;
 import util.WattsCallback;
@@ -72,15 +75,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
         Room room = mRoomModelArrayList.get(position);
         holder.roomName.setText(room.getName());
         holder.glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+            boolean on = isRoomLightsOn(lights);
 
-
-        isRoomLightOn(room, (on, status) -> {
             if(on)
                 holder.roomSwitch.setChecked(true);
             else
                 holder.roomSwitch.setChecked(false);
 
             setSwitchOnClickListener(holder, room);
+
+            if(on)
+                toggleBackgroundGlow(true, holder.glowCard, getAverageColorOfLights(lights));
+
             return null;
         });
     }
@@ -88,18 +95,26 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     private void setSwitchOnClickListener(@NonNull Viewholder holder, Room room) {
         holder.roomSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
-                int color = 0xFFFF5722; // todo: set to average color of all lights that will be on
-                toggleBackgroundGlow(true, holder.glowCard, color);
+                lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
+                    if(!status.success) {
+                        UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
+                        return null;
+                    }
 
-                roomManager.turnOnRoomLights(room, (var, status) -> {
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        if (status.success)
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on lights for room: " + room.getName());
-                        else
-                            UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
+                    int color = getAverageColorOfLights(lights); // todo: set to average color of all lights that will be on
+                    toggleBackgroundGlow(true, holder.glowCard, color);
 
+                    roomManager.turnOnRoomLights(room, (var, status1) -> {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            if (status1.success)
+                                UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on lights for room: " + room.getName());
+                            else
+                                UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
+
+                        });
+
+                        return null;
                     });
-
                     return null;
                 });
             }
@@ -126,18 +141,37 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 
     public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
 
-    private void isRoomLightOn(Room room, WattsCallback<Boolean, Void> callback) {
-        lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
-            for(Light l : lights) {
-                if(l.getLightState().isOn()) {
-                    callback.apply(true, new WattsCallbackStatus(true));
-                    return null;
-                }
+    private int getAverageColorOfLights(List<Light> lights) {
+        float averageHue = 0.0f;
+        float averageSaturation = 0.0f;
+        int numCounted = 0;
+        for(Light light : lights) {
+            LightState state = light.getLightState();
+            if(state.getHue() != null && state.getSaturation() != null) {
+                if(light.getIntegrationType() == IntegrationType.NANOLEAF
+                    && state.getHue() == 0
+                    && state.getSaturation() == 0)
+                    continue;
+                averageHue += state.getHue();
+                averageSaturation += state.getSaturation();
+                numCounted++;
             }
+        }
 
-            callback.apply(false, new WattsCallbackStatus(true));
-            return null;
-        });
+        averageHue /= numCounted;
+        averageSaturation /= numCounted;
+
+        averageHue *= 360.0f;
+
+        float hsv[] = {averageHue, averageSaturation, 1.0f};
+        return Color.HSVToColor(hsv);
+    }
+
+    private boolean isRoomLightsOn(List<Light> roomLights) {
+        for(Light l : roomLights)
+            if(l.getLightState().isOn())
+                return true;
+        return false;
     }
 
     @Override

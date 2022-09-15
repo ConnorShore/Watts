@@ -22,6 +22,7 @@ import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -40,12 +41,14 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 {
     private final String LOG_TAG = "LightAdapter";
 
+    private final int HUE_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.color_picker_hue_max));
+    private final int SATURATION_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.color_picker_saturation_max));
+    private final int BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.color_picker_brightness_max));
+
     private Context context;
     public List<Light> lights;
 
-    private MaterialAlertDialogBuilder alertDialogBuilder;
     private AlertDialog currentColorPicker;
-    private View customDialogView;
 
     private LightManager lightManager = LightManager.getInstance();
 
@@ -65,31 +68,34 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         return new Viewholder(view);
     }
 
-    private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int color) {
-        if(on) {
-            glowCard.setCardBackgroundColor(color);
-        }
-        else {
-            glowCard.setCardBackgroundColor(Color.TRANSPARENT);
-        }
-    }
-
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
         Light light = lights.get(position);
 
         holder.lightName.setText(light.getName());
+        holder.lightTitle.setText(light.getName());
         holder.lightSwitch.setChecked(light.getLightState().isOn());
 
         int brightness = (int)(light.getLightState().getBrightness() * 100);
         holder.brighnessBar.setProgress(brightness);
 
-        holder.glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        if(light.getLightState().isOn()) {
+            float hue = light.getLightState().getHue() != null
+                    ? light.getLightState().getHue() * HUE_MAX
+                    : 0.0f;
+            float saturation = light.getLightState().getSaturation() != null
+                    ? light.getLightState().getSaturation() * SATURATION_MAX
+                    : 0.0f;
+
+            int color = Color.HSVToColor(new float[] {hue, saturation, BRIGHTNESS_MAX});
+            toggleBackgroundGlow(true, holder.glowCard, color);
+        } else {
+            toggleBackgroundGlow(false, holder.glowCard, 0);
+        }
+
         holder.lightSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked) {
-                int color = 0xFFFF5722; // todo: set to average color of all lights that will be on
-                toggleBackgroundGlow(true, holder.glowCard, color);
 
                 lightManager.turnOnLight(light, (var, status) -> {
                     if(!status.success) {
@@ -99,13 +105,11 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         return null;
                     }
 
+                    setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
                     return null;
                 });
-            }
-            else
-            {
-                toggleBackgroundGlow(false, holder.glowCard, Color.TRANSPARENT);
+            } else {
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
@@ -114,6 +118,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         return null;
                     }
 
+                    setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
                     return null;
                 });
@@ -124,6 +129,31 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             setPosition(holder.getLayoutPosition());
             return false;
         });
+    }
+
+    private void setBackgroundGlowForLight(Light light, MaterialCardView glowCard) {
+        if(light.getLightState().isOn()) {
+            float hue = light.getLightState().getHue() != null
+                    ? light.getLightState().getHue() * HUE_MAX
+                    : 0.0f;
+            float saturation = light.getLightState().getSaturation() != null
+                    ? light.getLightState().getSaturation() * SATURATION_MAX
+                    : 0.0f;
+
+            int color = Color.HSVToColor(new float[] {hue, saturation, BRIGHTNESS_MAX});
+            toggleBackgroundGlow(true, glowCard, color);
+        } else {
+            toggleBackgroundGlow(false, glowCard, 0);
+        }
+    }
+
+    private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int color) {
+        if(on) {
+            glowCard.setCardBackgroundColor(color);
+        }
+        else {
+            glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        }
     }
 
     @Override
@@ -140,12 +170,15 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
     }
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
+        private MaterialAlertDialogBuilder alertDialogBuilder;
         private TextView lightName;
+        private TextView lightTitle;
         private SwitchMaterial lightSwitch;
         private AppCompatSeekBar brighnessBar;
         private MaterialCardView lightCard;
         private ColorPickerView colorPickerView;
         private MaterialCardView glowCard;
+        private View customDialogView;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
@@ -171,8 +204,6 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
             showColorPicker();
         }
 
-
-
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(R.id.ctx_menu_group_lights, R.id.ctx_menu_item_details, Menu.NONE, "View Details");
@@ -183,10 +214,10 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         }
 
         private void initializeColorPickerDialog(@NotNull View view) {
+            customDialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.light_detail_dialog, null, false);
             alertDialogBuilder = new MaterialAlertDialogBuilder(view.getContext());
 
-            customDialogView = LayoutInflater.from(WattsApplication.getAppContext()).inflate(R.layout.light_detail_dialog, null, false);
-            alertDialogBuilder.setView(customDialogView);
+            lightTitle = customDialogView.findViewById(R.id.lightNameTitle);
 
             brighnessBar = customDialogView.findViewById(R.id.brightnessSlideBar);
             brighnessBar.setMax(100);
@@ -205,6 +236,7 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 c.RGBToHSV(rgb[1], rgb[2], rgb[3], hsv);
             });
 
+
             alertDialogBuilder.setPositiveButton("Set", (dialog, which) -> {
                 onColorSet();
                 dialog.dismiss();
@@ -213,11 +245,13 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
         }
 
         private void onColorSet() {
-            Light light = lights.get(this.getAbsoluteAdapterPosition());
             float brightness = brighnessBar.getProgress() / 100.0f;
-            float hue = (hsv[0]) / 360.0f;
-            float saturation = hsv[1];
-            LightState lightState = new LightState(true, brightness, hue, saturation);
+            float hue = (hsv[0]);
+            float saturation = hsv[1] / SATURATION_MAX;
+            toggleBackgroundGlow(true, glowCard, Color.HSVToColor(new float[] {hue, saturation, brightness}));
+
+            Light light = lights.get(this.getAbsoluteAdapterPosition());
+            LightState lightState = new LightState(true, brightness, hue / HUE_MAX, saturation);
             LightManager.getInstance().setLightState(light, lightState, (var, status) -> {
                 if(!status.success) {
                     Log.e(LOG_TAG, status.message);
@@ -232,22 +266,23 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
 
         private void showColorPicker() {
             Light light = lights.get(this.getAbsoluteAdapterPosition());
-            float hsv[] = {light.getLightState().getHue() * 360, light.getLightState().getSaturation(), 1.0f};
+
+            float hue = light.getLightState().getHue() != null ? light.getLightState().getHue() : 0.0f;
+            float saturation = light.getLightState().getSaturation() != null ? light.getLightState().getSaturation() : 0.0f;
+            float hsv[] = { hue * HUE_MAX, saturation * SATURATION_MAX, BRIGHTNESS_MAX};
             int color = Color.HSVToColor(hsv);
 
             if(currentColorPicker != null)
                 currentColorPicker.dismiss();
 
+            if(customDialogView.getParent() != null)
+                ((ViewGroup)customDialogView.getParent()).removeView(customDialogView);
+
+            alertDialogBuilder.setView(customDialogView);
             currentColorPicker = alertDialogBuilder.create();
 
-            try {
-                colorPickerView.setHsvPaletteDrawable();
-                colorPickerView.selectByHsvColor(color);
-            } catch (IllegalAccessException e) {
-                Log.e(LOG_TAG, e.getMessage());
-            } catch (Exception ex) {
-                Log.e(LOG_TAG, ex.getMessage());
-            }
+            colorPickerView.setInitialColor(color);
+
             currentColorPicker.show();
         }
     }

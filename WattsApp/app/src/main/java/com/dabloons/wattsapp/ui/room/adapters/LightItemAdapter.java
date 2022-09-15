@@ -27,11 +27,13 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
     private Context context;
     public List<T> lightItems;
+    public Map<String,Light> currSelectedlightItems;
     public Map<IntegrationType, List<Light>> integrationTypeMap;
 
     public LightItemAdapter(Context context, List<T> lightList) {
         this.context = context;
         this.lightItems = lightList;
+        currSelectedlightItems = new HashMap<>();
         integrationTypeMap = new HashMap<>();
         if(lightList != null && !lightList.isEmpty())
         {
@@ -98,6 +100,7 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
                 Light l = (Light) model;
                 finalSelected = !((Light) model).isSelected();
                 l.setSelected(finalSelected);
+                manageSelectedLights(l, finalSelected);
             }
             else if(model instanceof NanoleafPanelIntegrationAuth) {
                 NanoleafPanelIntegrationAuth l = (NanoleafPanelIntegrationAuth)model;
@@ -106,6 +109,17 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
             }
             holder.lightItemCard.setCardBackgroundColor(finalSelected ? WattsApplication.getAppContext().getColor(R.color.app_orange_on_primary_container) : this.context.getColor(R.color.light_item_background));
         });
+    }
+
+    private void manageSelectedLights(Light l, boolean finalSelected) {
+        if(finalSelected)
+        {
+            currSelectedlightItems.put(l.getUid(),l);
+        }
+        else
+        {
+            currSelectedlightItems.remove(l.getUid());
+        }
     }
 
     public List<Light> getLightsFromIntegrationMap(IntegrationType type)

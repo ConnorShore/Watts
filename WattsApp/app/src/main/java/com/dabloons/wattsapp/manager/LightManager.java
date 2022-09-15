@@ -125,7 +125,6 @@ public class LightManager {
                 Log.e(LOG_TAG, status.message);
                 UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state in db");
             }
-            return null;
         });
     }
 
@@ -149,22 +148,20 @@ public class LightManager {
                 UIMessageUtil.showShortToastMessage(
                         WattsApplication.getAppContext(),
                         "Failed to sync lights");
-
-            return null;
         });
     }
 
-    public void syncLightsWithCallback(WattsCallback<Void, Void> callback) {
+    public void syncLightsWithCallback(WattsCallback<Void> callback) {
         UserManager.getInstance().getUserIntegrations((integrations, successStatus) -> {
             if(!successStatus.success) {
                 Log.e(LOG_TAG, "Failed to get user integration when syncing lights: " + successStatus.message);
                 callback.apply(null, successStatus);
-                return null;
+                return;
             }
 
             if(integrations.size() == 0) {
-                callback.apply(null, new WattsCallbackStatus(true));
-                return null;
+                callback.apply(null);
+                return;
             }
 
             for(IntegrationType type : integrations) {

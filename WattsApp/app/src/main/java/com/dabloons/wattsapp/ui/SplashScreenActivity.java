@@ -35,7 +35,6 @@ public class SplashScreenActivity extends AppCompatActivity {
         if(UserManager.getInstance().getCurrentUser() != null) {
             LightManager.getInstance().syncLightsWithCallback((var, status) -> {
                 startNextActivity();
-                return null;
             });
         }
         else {

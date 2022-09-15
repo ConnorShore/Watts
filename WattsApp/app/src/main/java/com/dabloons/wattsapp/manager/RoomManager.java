@@ -242,13 +242,11 @@ public class RoomManager
                     case PHILLIPS_HUE:
                         setPhillipsHueRoomLightState(room, state, (var, status1) -> {
                             resolveIntegration(integration, callback);
-                            return null;
                         });
                         break;
                     case NANOLEAF:
                         setNanoleafRoomLightState(room, state, (var, status1) -> {
                             resolveIntegration(integration, callback);
-                            return null;
                         });
                         break;
                 }
@@ -260,8 +258,6 @@ public class RoomManager
                 Log.e(LOG_TAG, status.message);
                 UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set room lights in db");
             }
-
-            return null;
         });
     }
 
@@ -275,7 +271,7 @@ public class RoomManager
                 });
     }
 
-    public void setRoomLightStateInDB(Room room, LightState state, WattsCallback<Void, Void> callback) {
+    public void setRoomLightStateInDB(Room room, LightState state, WattsCallback<Void> callback) {
         lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
             updateLightStatesForLights(lights, state);
             lightManager.updateMultipleLights(lights, callback);

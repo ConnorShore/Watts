@@ -85,8 +85,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 int[] colors = getColorsForGradient(lights, false);
                 toggleBackgroundGlow(true, holder.glowCard, colors);
             }
-
-            return null;
         });
     }
 

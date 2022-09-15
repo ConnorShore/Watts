@@ -23,22 +23,20 @@
 
         <TextView
             android:id="@+id/emptyIntegrationListTextHeader"
-            style="@style/Widget.Watts.TextView.PlaceholderLargeHeader"
-            android:text="@string/no_integration_place_holder_header"
-            />
+            style="@style/Widget.Watts.TextView.PlaceholderMediumHeader"
+            android:text="@string/no_integration_place_holder_header" />
 
         <TextView
             android:id="@+id/emptyIntegrationListTextBody"
-            style="@style/Widget.Watts.TextView.PlaceholderLargeBody"
-            android:text="@string/no_integration_place_holder_body"
-            />
+            style="@style/Widget.Watts.TextView.PlaceholderMediumBody"
+            android:text="@string/no_integration_place_holder_body" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2.5"
+        android:layout_weight="5"
         android:orientation="horizontal">
 
         <LinearLayout

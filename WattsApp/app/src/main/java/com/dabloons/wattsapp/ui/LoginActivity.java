@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.databinding.ActivityLoginBinding;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.ui.main.MainActivity;
@@ -26,6 +27,8 @@ import util.UIMessageUtil;
 public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     private final String LOG_TAG = "LoginActivity";
+
+    private final String SHARED_PREFERENCE_LOGIN = WattsApplication.getResourceString(R.string.shared_preference_login);
 
     private UserManager userManager = UserManager.getInstance();
 
@@ -92,7 +95,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
 
     private void startMainActivity() {
         Intent mainActivity = new Intent(this, MainActivity.class);
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("TEST", 0);
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(SHARED_PREFERENCE_LOGIN, 0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(getString(R.string.logged_in), true);
         editor.apply();

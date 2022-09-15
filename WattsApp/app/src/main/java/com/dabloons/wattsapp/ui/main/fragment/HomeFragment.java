@@ -181,6 +181,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         }
         else {
             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
+                if(roomAdapter == null)
+                    return null;
 
                 roomAdapter.setRoomList(rooms);
                 new Handler(Looper.getMainLooper()).post(() -> roomAdapter.notifyDataSetChanged());

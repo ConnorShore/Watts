@@ -112,8 +112,10 @@ public class NanoleafAuthManager {
 
         NanoleafPanelIntegrationAuth auth = authProps.get(index);
         nanoleafService.addNanoleafUser(auth, (authToken, status) -> {
-            if(!status.success)
+            if(!status.success) {
                 Log.e(LOG_TAG, status.message);
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), status.message);
+            }
             else
                 auth.setAuthToken(authToken);
 
@@ -152,7 +154,6 @@ public class NanoleafAuthManager {
                 lightManager.syncNanoleafLightsToDatabase(authCollection, (var1, status11) -> {
                     if(!status11.success) {
                         Log.e(LOG_TAG, status11.message);
-                        return null;
                     }
 
                     callback.apply(finalAuths.size(), status11);

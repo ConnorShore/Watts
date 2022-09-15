@@ -9,6 +9,7 @@ import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class RepositoryUtil {
 
@@ -26,11 +27,15 @@ public class RepositoryUtil {
         }
     }
 
-    public static List<Light> createNanoleafLightsFromAuthCollection(NanoleafPanelAuthCollection collection) {
+    public static List<Light> createNanoleafLightsFromAuthCollection(NanoleafPanelAuthCollection collection, Map<String, LightState> states) {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         List<Light> ret = new ArrayList<>();
         for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
-            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF, new LightState());
+            LightState state = states.get(auth.getName());
+            if(state == null)
+                state = new LightState();
+
+            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF, state);
             ret.add(light);
         }
         return ret;

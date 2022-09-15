@@ -37,9 +37,9 @@ public class PhillipsHueService extends HttpService {
 
     private final String CONTENT_TYPE = "application/json";
 
-    private final int HUE_LIMIT = 65535;
-    private final int BRIGHTNESS_LIMIT = 254;
-    private final int SATURATION_LIMIT = 254;
+    private final int HUE_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_hue_max));
+    private final int BRIGHTNESS_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_brightness_max));
+    private final int SATURATION_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_saturation_max));
 
     private PhillipsHueService() {
         super();

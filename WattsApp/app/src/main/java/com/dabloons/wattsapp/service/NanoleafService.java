@@ -4,6 +4,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.R;
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.model.Light;
@@ -34,9 +36,9 @@ public class NanoleafService extends HttpService {
 
     private UserManager userManager = UserManager.getInstance();
 
-    private final int HUE_LIMIT = 360;
-    private final int BRIGHTNESS_LIMIT = 100;
-    private final int SATURATION_LIMIT = 100;
+    private final int HUE_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_hue_max));
+    private final int BRIGHTNESS_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_brightness_max));
+    private final int SATURATION_LIMIT = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_saturation_max));
 
     private NanoleafService() { super(); }
 
@@ -64,6 +66,12 @@ public class NanoleafService extends HttpService {
                 callback.apply(authToken, new WattsCallbackStatus(true));
             }
         });
+    }
+
+    public void getLightState(NanoleafPanelIntegrationAuth panel, Callback callback) {
+        setBaseUrl(panel.getBaseUrl());
+        String path = String.format("%s/state", panel.getAuthToken());
+        makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
     }
 
     public void setLightState(Light light, LightState state, Callback callback) {

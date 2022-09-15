@@ -95,7 +95,7 @@ public class ConnectFragment extends Fragment {
             integrationRV.setLayoutManager(linearLayoutManager);
             integrationRV.setAdapter(integrationAdapter);
 
-            if(integrationAdapter.integrationTypeList == null)
+            if(integrationAdapter.integrationTypeList == null || integrationAdapter.integrationTypeList.size() == 0)
             {
                 UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewText, integrationRV);
             }

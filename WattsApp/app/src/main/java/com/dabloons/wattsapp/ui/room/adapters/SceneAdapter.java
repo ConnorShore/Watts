@@ -62,11 +62,11 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
                 if(!status.success) {
                     Log.e(LOG_TAG, status.message);
                     UIMessageUtil.showShortToastMessage(context, "Failed to activate scene " + scene.getName());
-                    return null;
+                    return;
                 }
 
                 UIMessageUtil.showShortToastMessage(context, "Activated scene " + scene.getName());
-                return null;
+                return;
             });
         });
         holder.sceneCard.setOnLongClickListener(v -> {

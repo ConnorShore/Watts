@@ -42,7 +42,7 @@ public class NanoleafService extends HttpService {
 
     private NanoleafService() { super(); }
 
-    public void addNanoleafUser(NanoleafPanelIntegrationAuth authProps, WattsCallback<String, Void> callback) {
+    public void addNanoleafUser(NanoleafPanelIntegrationAuth authProps, WattsCallback<String> callback) {
         setBaseUrl(authProps.getBaseUrl());
         RequestBody emptyBody = createEmptyRequestBody();
         makeRequestWithBodyAsync("new", RequestType.POST, emptyBody, getStandardHeaders(), new Callback() {
@@ -56,14 +56,14 @@ public class NanoleafService extends HttpService {
                 if(response.code() == 403) {
                     // User hasn't put leafs in pair mode
                     String msg = String.format("Nanoleafs [%s] are not in connect mode", authProps.getName());
-                    callback.apply(null, new WattsCallbackStatus(false, msg));
+                    callback.apply(null, new WattsCallbackStatus(msg));
                     return;
                 }
 
                 String responseBody = response.body().string();
                 JsonObject resObj = JsonParser.parseString(responseBody).getAsJsonObject();
                 String authToken = resObj.get("auth_token").getAsString();
-                callback.apply(authToken, new WattsCallbackStatus(true));
+                callback.apply(authToken);
             }
         });
     }
@@ -116,7 +116,6 @@ public class NanoleafService extends HttpService {
             RequestBody body = createRequestBody(bodyObj);
 
             makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);
-            return null;
         });
     }
 
@@ -127,7 +126,6 @@ public class NanoleafService extends HttpService {
             setBaseUrl(panel.getBaseUrl());
             String path = String.format("%s/effects/effectsList", panel.getAuthToken());
             makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
-            return null;
         });
     }
 
@@ -147,7 +145,6 @@ public class NanoleafService extends HttpService {
             jsonObj.addProperty("select", effect.getIntegrationId());
             RequestBody body = createRequestBody(jsonObj);
             makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);
-            return null;
         });
     }
 

@@ -85,8 +85,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 int[] colors = getColorsForGradient(lights, false);
                 toggleBackgroundGlow(true, holder.glowCard, colors);
             }
-
-            return null;
         });
     }
 
@@ -121,7 +119,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
                     if(!status.success) {
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
-                        return null;
+                        return;
                     }
 
                     int[] colors = getColorsForGradient(lights, true);
@@ -135,10 +133,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                                 UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
 
                         });
-
-                        return null;
                     });
-                    return null;
                 });
             }
             else
@@ -151,8 +146,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                         else
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off lights for room: " + room.getName());
                     });
-
-                    return null;
                 });
             }
         });

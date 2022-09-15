@@ -51,7 +51,7 @@ public final class SceneRepository
         }
     }
 
-    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback) {
+    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null)
             return;
@@ -62,23 +62,25 @@ public final class SceneRepository
         getSceneCollection().document(sceneToCreate.getUid()).set(sceneToCreate)
             .addOnCompleteListener(task -> {
                 if(task.isComplete())
-                    callback.apply(sceneToCreate, new WattsCallbackStatus(true));
+                    callback.apply(sceneToCreate);
                 else
-                    callback.apply(sceneToCreate, new WattsCallbackStatus(false, "Failed to add scene"));
+                    callback.apply(sceneToCreate, new WattsCallbackStatus("Failed to add scene"));
             })
             .addOnFailureListener(task -> {
-                callback.apply(sceneToCreate, new WattsCallbackStatus(false, task.getMessage()));
+                callback.apply(sceneToCreate, new WattsCallbackStatus(task.getMessage()));
             });
     }
 
-    public void getAllScenes(String roomID, WattsCallback<List<Scene>, Void> callback)
+    public void getAllScenes(String roomID, WattsCallback<List<Scene>> callback)
     {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
         getSceneCollection().get().addOnCompleteListener(task -> {
-           if(!task.isComplete())
-               Log.e(LOG_TAG, "Failed to get secenes collection");
+           if(!task.isComplete()) {
+               String message = "Failed to get secenes collection";
+               Log.e(LOG_TAG, message);
+           }
 
            List<Scene> ret = new ArrayList<>();
            for(QueryDocumentSnapshot document : task.getResult())
@@ -92,7 +94,7 @@ public final class SceneRepository
                }
 
            }
-            callback.apply(ret, new WattsCallbackStatus(true));
+            callback.apply(ret);
         });
     }
 
@@ -100,7 +102,7 @@ public final class SceneRepository
         return getSceneCollection().document(scene.getUid()).delete();
     }
 
-    public void deleteScenesForUser(WattsCallback<Void, Void> callback) {
+    public void deleteScenesForUser(WattsCallback<Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getSceneCollection(), callback);
     }
 

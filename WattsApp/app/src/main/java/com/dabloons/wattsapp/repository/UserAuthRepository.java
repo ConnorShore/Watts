@@ -54,7 +54,7 @@ public final class UserAuthRepository {
         }
     }
 
-    public void getUserIntegrations(WattsCallback<List<IntegrationType>, Void> callback) {
+    public void getUserIntegrations(WattsCallback<List<IntegrationType>> callback) {
         this.getUserAuthCollection().get().addOnCompleteListener(task -> {
             if(!task.isComplete())
                 Log.e(LOG_TAG, "Failed to get lights collection");
@@ -65,7 +65,7 @@ public final class UserAuthRepository {
                 ret.add(type);
             }
 
-            callback.apply(ret, new WattsCallbackStatus(true));
+            callback.apply(ret);
         });
     }
 
@@ -111,11 +111,11 @@ public final class UserAuthRepository {
         return this.getUserAuthCollection().document(doc).set(props);
     }
 
-    public void deleteIntegrationsForUser(WattsCallback<Void, Void> callback) {
+    public void deleteIntegrationsForUser(WattsCallback<Void> callback) {
         deleteIntegrationssForUser(callback);
     }
 
-    private void deleteIntegrationssForUser(WattsCallback<Void, Void> callback) {
+    private void deleteIntegrationssForUser(WattsCallback<Void> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
@@ -127,17 +127,15 @@ public final class UserAuthRepository {
 
             batch.commit()
                     .addOnCompleteListener(task ->{
-                        callback.apply(null, new WattsCallbackStatus(true));
+                        callback.apply(null);
                     })
                     .addOnFailureListener(task -> {
-                        callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                     });
-
-            return null;
         });
     }
 
-    private void getAllDocByProp(WattsCallback<List<String>, Void> callback) {
+    private void getAllDocByProp(WattsCallback<List<String>> callback) {
         getUserAuthCollection().get().addOnCompleteListener(task -> {
             if(!task.isComplete())
                 Log.e(LOG_TAG, "Failed to get lights collection");
@@ -147,7 +145,7 @@ public final class UserAuthRepository {
                 ids.add(document.get(INTEGRATION_TYPE_PROPERTY).toString().toLowerCase());
             }
 
-            callback.apply(ids, new WattsCallbackStatus(true));
+            callback.apply(ids);
         });
     }
 

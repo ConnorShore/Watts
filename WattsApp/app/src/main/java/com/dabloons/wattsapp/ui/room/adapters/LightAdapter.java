@@ -102,25 +102,22 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                         Log.e(LOG_TAG, status.message);
 
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on light: " + light.getName());
-                        return null;
+                        return;
                     }
 
                     setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned on light: " + light.getName());
-                    return null;
                 });
             } else {
                 lightManager.turnOffLight(light, (var, status) -> {
                     if(!status.success) {
                         Log.e(LOG_TAG, status.message);
-
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off light: " + light.getName());
-                        return null;
+                        return;
                     }
 
                     setBackgroundGlowForLight(light, holder.glowCard);
                     UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Turned off light: " + light.getName());
-                    return null;
                 });
             }
         });
@@ -256,11 +253,10 @@ public class LightAdapter extends RecyclerView.Adapter<LightAdapter.Viewholder>
                 if(!status.success) {
                     Log.e(LOG_TAG, status.message);
                     UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state");
-                    return null;
+                    return;
                 }
 
                 UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Successfully set light state");
-                return null;
             });
         }
 

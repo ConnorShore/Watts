@@ -43,8 +43,8 @@ public class NanoleafAuthManager {
 
     }
 
-    public void discoverNanoleafPanelsOnNetwork(WattsCallback<NetworkService, Void> onDeviceFound,
-                                                WattsCallback<List<NanoleafPanelIntegrationAuth>, Void> onFinish) {
+    public void discoverNanoleafPanelsOnNetwork(WattsCallback<NetworkService> onDeviceFound,
+                                                WattsCallback<List<NanoleafPanelIntegrationAuth>> onFinish) {
         List<NanoleafPanelIntegrationAuth> nanoleafPanelConnections = new ArrayList<>();
 
         // Set timeout of discovery
@@ -63,10 +63,7 @@ public class NanoleafAuthManager {
                             Log.e(LOG_TAG, status1.message);
 
                         onFinish.apply(nanoleafPanelConnections, status1);
-                        return null;
                     });
-
-                    return null;
                 });
             }
         }, DISCOVERY_SEARCH_TIME_MILLISECONDS);
@@ -81,7 +78,6 @@ public class NanoleafAuthManager {
 
             NanoleafPanelIntegrationAuth auth = new NanoleafPanelIntegrationAuth(service.getName(), url, null);
             nanoleafPanelConnections.add(auth);
-            return null;
         });
     }
 
@@ -90,23 +86,22 @@ public class NanoleafAuthManager {
         nsdServiceUtil.forceEndNetworkDiscovery();
     }
 
-    public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Integer, Void> callback) {
+    public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Integer> callback) {
         getAuthTokenForProps(panels, 0, (auths, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
                 callback.apply(null, status);
-                return null;
+                return;
             }
 
             saveNanoleafPanelAuthsToDB(auths, callback);
-            return null;
         });
     }
 
     private void getAuthTokenForProps(List<NanoleafPanelIntegrationAuth> authProps,
-                                      int index, WattsCallback<List<NanoleafPanelIntegrationAuth>, Void> callback) {
+                                      int index, WattsCallback<List<NanoleafPanelIntegrationAuth>> callback) {
         if(index >= authProps.size()) {
-            callback.apply(authProps, new WattsCallbackStatus(true));
+            callback.apply(authProps);
             return;
         }
 
@@ -121,17 +116,16 @@ public class NanoleafAuthManager {
 
             int nextInd = index+1;
             getAuthTokenForProps(authProps, nextInd, callback);
-            return null;
         });
     }
 
-    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Integer, Void> callback) {
+    private void saveNanoleafPanelAuthsToDB(List<NanoleafPanelIntegrationAuth> panelAuths, WattsCallback<Integer> callback) {
         List<NanoleafPanelIntegrationAuth> finalAuths = removeUnconnectedAuths(panelAuths);
         userManager.getIntegrationAuthData(IntegrationType.NANOLEAF, (collection, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
                 callback.apply(null, status);
-                return null;
+                return;
             }
 
             NanoleafPanelAuthCollection authCollection;
@@ -148,7 +142,7 @@ public class NanoleafAuthManager {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
                     callback.apply(null, status);
-                    return null;
+                    return;
                 }
 
                 lightManager.syncNanoleafLightsToDatabase(authCollection, (var1, status11) -> {
@@ -157,13 +151,8 @@ public class NanoleafAuthManager {
                     }
 
                     callback.apply(finalAuths.size(), status11);
-                    return null;
                 });
-
-                return null;
             });
-
-            return null;
         });
     }
 

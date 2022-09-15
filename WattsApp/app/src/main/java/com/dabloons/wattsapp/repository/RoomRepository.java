@@ -44,7 +44,7 @@ public final class RoomRepository {
     private RoomRepository() { }
 
     // Create Room in Firestore
-    public void createRoom(String roomName, WattsCallback<Room, Void> callback) {
+    public void createRoom(String roomName, WattsCallback<Room> callback) {
         UUID uuid = UUID.randomUUID();
         String uid = uuid.toString();
 
@@ -53,10 +53,10 @@ public final class RoomRepository {
         CollectionReference roomCollection = getRoomCollection();
         roomCollection.document(uid).set(roomToCreate).addOnCompleteListener(task -> {
             if(task.isComplete())
-                callback.apply(roomToCreate, new WattsCallbackStatus(true));
+                callback.apply(roomToCreate);
             else
-                callback.apply(roomToCreate, new WattsCallbackStatus(false, "Failed to add room."));
-        }).addOnFailureListener(e -> callback.apply(roomToCreate, new WattsCallbackStatus(false, e.getMessage())));
+                callback.apply(roomToCreate, new WattsCallbackStatus("Failed to add room."));
+        }).addOnFailureListener(e -> callback.apply(roomToCreate, new WattsCallbackStatus(e.getMessage())));
 
     }
 
@@ -73,26 +73,21 @@ public final class RoomRepository {
         return updateRoom(room);
     }
 
-    public void getUserDefinedRooms(WattsCallback<ArrayList<Room>, Void> callback){
+    public void getUserDefinedRooms(WattsCallback<ArrayList<Room>> callback){
         ArrayList<Room> ret = new ArrayList<>();
         CollectionReference roomCollection = getRoomCollection();
         roomCollection.whereEqualTo(USER_ID_FIELD, userManager.getCurrentUser().getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>()
-                {
-                   @Override
-                   public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                       if (task.isSuccessful()) {
-                           for (QueryDocumentSnapshot document : task.getResult()) {
-                               //                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                               Room room = (Room) document.toObject(Room.class);
-                               ret.add(room);
-                           }
-                           callback.apply(ret, new WattsCallbackStatus(true));
-                       } else {
-                           callback.apply(null, new WattsCallbackStatus(false, "Failed to getUserDefinedLights"));
-                       }
-                   }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Room room = (Room) document.toObject(Room.class);
+                            ret.add(room);
+                        }
+                        callback.apply(ret);
+                    } else {
+                        callback.apply(null, new WattsCallbackStatus("Failed to getUserDefinedLights"));
+                    }
                 });
     }
 
@@ -100,7 +95,7 @@ public final class RoomRepository {
     {
         return getRoomCollection().document(roomId).delete();
     }
-    public void deleteRoomsForUser(WattsCallback<Void, Void> callback) {
+    public void deleteRoomsForUser(WattsCallback<Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getRoomCollection(), callback);
     }
 

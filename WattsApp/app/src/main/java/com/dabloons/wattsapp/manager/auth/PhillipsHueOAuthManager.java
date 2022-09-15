@@ -125,7 +125,6 @@ public class PhillipsHueOAuthManager extends OAuthManager {
 
                             endOauthConnection();
                             launchMainActivity();
-                            return null;
                         });
                     }
                 });

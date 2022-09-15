@@ -21,7 +21,6 @@ import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.IntegrationSceneManager;
 import com.dabloons.wattsapp.manager.LightManager;
-import com.dabloons.wattsapp.manager.SceneManager;
 import com.dabloons.wattsapp.manager.UserManager;
 import com.dabloons.wattsapp.manager.auth.NanoleafAuthManager;
 import com.dabloons.wattsapp.manager.auth.PhillipsHueOAuthManager;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import util.UIMessageUtil;
+import util.UIUtil;
 
 public class ConnectFragment extends Fragment {
 
@@ -51,6 +51,7 @@ public class ConnectFragment extends Fragment {
 
     private IntegrationAdapter integrationAdapter;
     private RecyclerView integrationRV;
+    private TextView emptyViewText;
 
     private LightItemAdapter<NanoleafPanelIntegrationAuth> discoveredLightsAdapter;
     private RecyclerView discoveredLightsRV;
@@ -75,6 +76,8 @@ public class ConnectFragment extends Fragment {
 
         initializePopupItems();
         initializeListeners(result);
+        emptyViewText = result.findViewById(R.id.emptyIntegrationListText);
+
 
         return result;
     }
@@ -91,6 +94,12 @@ public class ConnectFragment extends Fragment {
             integrationRV = result.findViewById(R.id.integration_RV);
             integrationRV.setLayoutManager(linearLayoutManager);
             integrationRV.setAdapter(integrationAdapter);
+
+            if(integrationAdapter.integrationTypeList == null)
+            {
+                UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewText, integrationRV);
+            }
+
 
             return null;
         });

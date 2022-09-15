@@ -114,7 +114,6 @@ public class RoomActivity extends AppCompatActivity {
             lightRV.setAdapter(lightAdapter);
             lightRV.addItemDecoration(new ItemOffsetDecoration(getApplicationContext(),R.dimen.light_card_offset));
             registerForContextMenu(lightRV);
-            return null;
         });
 
         sceneManager.getAllScenes(currentRoom.getUid(), (scenes, status) -> {
@@ -132,26 +131,23 @@ public class RoomActivity extends AppCompatActivity {
             UIUtil.toggleViews(scenes.size(), scenePlaceHolderBody, sceneRV);
 
             registerForContextMenu(sceneRV);
-            return null;
         });
 
         alertDialogBuilder = new MaterialAlertDialogBuilder(RoomActivity.this);
         roomManager.getRoomIntegrationTypes(currentRoom, (integrationTypes, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
-                return null;
+                return;
             }
 
             IntegrationSceneManager.getInstance().getIntegrationScenesMap(integrationTypes, (map, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, "Failed to get integration scene map");
-                    return null;
+                    return;
                 }
                 sceneDropdownAdapter = new SceneDropdownAdapter(map);
                 initializeListeners();
-                return null;
             });
-            return null;
         });
     }
 
@@ -183,7 +179,6 @@ public class RoomActivity extends AppCompatActivity {
                     }
                     else
                         UIMessageUtil.showShortToastMessage(getApplicationContext(), "Failed to remove light");
-                    return null;
                 });
                 break;
         }
@@ -205,7 +200,6 @@ public class RoomActivity extends AppCompatActivity {
                     }
                     else
                         UIMessageUtil.showShortToastMessage(getApplicationContext(), "Failed to delete scene");
-                    return null;
                 });
                 break;
         }
@@ -219,9 +213,7 @@ public class RoomActivity extends AppCompatActivity {
 
         deleteRoomBtn.setOnClickListener(v -> {
             RoomManager.getInstance().deleteRoom(currentRoom, (var, status) -> {
-
                 finish();
-                return null;
             });
         });
     }
@@ -261,7 +253,6 @@ public class RoomActivity extends AppCompatActivity {
             UIUtil.toggleViews(scenes.size(), scenePlaceHolderHeader, sceneRV);
             UIUtil.toggleViews(scenes.size(), scenePlaceHolderBody, sceneRV);
             updateUI();
-            return null;
         });
     }
 

@@ -46,26 +46,26 @@ public class UserManager {
         return userRepository.getUserData().continueWith(task -> task.getResult().toObject(User.class)) ;
     }
 
-    public void getIntegrationAuthData(IntegrationType type, WattsCallback<IntegrationAuth, Void> callback) {
+    public void getIntegrationAuthData(IntegrationType type, WattsCallback<IntegrationAuth> callback) {
         switch(type) {
             case PHILLIPS_HUE:
                 userAuthRepository.getIntegrationAuth(type)
                         .continueWith(task -> task.getResult().toObject(PhillipsHueIntegrationAuth.class))
                         .addOnCompleteListener(task -> {
-                            callback.apply(task.getResult(), new WattsCallbackStatus(true));
+                            callback.apply(task.getResult());
                         })
                         .addOnFailureListener(task -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                         });
                 break;
             case NANOLEAF:
                 userAuthRepository.getIntegrationAuth(type)
                         .continueWith(task -> task.getResult().toObject(NanoleafPanelAuthCollection.class))
                         .addOnCompleteListener(task -> {
-                            callback.apply(task.getResult(), new WattsCallbackStatus(true));
+                            callback.apply(task.getResult());
                         })
                         .addOnFailureListener(task -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                         });
                 break;
             default:
@@ -74,19 +74,19 @@ public class UserManager {
         }
     }
 
-    public void addIntegrationAuthData(IntegrationType type, IntegrationAuth authData, WattsCallback<Void, Void> callback) {
+    public void addIntegrationAuthData(IntegrationType type, IntegrationAuth authData, WattsCallback<Void> callback) {
         switch(type) {
             case PHILLIPS_HUE:
                 PhillipsHueIntegrationAuth phAuthData = (PhillipsHueIntegrationAuth) authData;
                 userAuthRepository.addPhillipsHueIntegrationToUser(phAuthData)
                         .addOnCompleteListener(task -> {
                             if(task.isComplete())
-                                callback.apply(null, new WattsCallbackStatus(true));
+                                callback.apply(null);
                             else
-                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: " + type));
+                                callback.apply(null, new WattsCallbackStatus("Failed to add integration auth data: " + type));
                         })
                         .addOnFailureListener(task -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                         });
                 break;
             case NANOLEAF:
@@ -94,12 +94,12 @@ public class UserManager {
                 userAuthRepository.addNanoleafIntegrationToUser(nAuth)
                         .addOnCompleteListener(task -> {
                             if(task.isComplete())
-                                callback.apply(null, new WattsCallbackStatus(true));
+                                callback.apply(null);
                             else
-                                callback.apply(null, new WattsCallbackStatus(false, "Failed to add integration auth data: nanoleaf"));
+                                callback.apply(null, new WattsCallbackStatus("Failed to add integration auth data: nanoleaf"));
                         })
                         .addOnFailureListener(task -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                         });
                 break;
             default:
@@ -107,41 +107,41 @@ public class UserManager {
         }
     }
 
-    public void getNanoleafPanelIntegrationAuth(String id, WattsCallback<NanoleafPanelIntegrationAuth, Void> callback) {
+    public void getNanoleafPanelIntegrationAuth(String id, WattsCallback<NanoleafPanelIntegrationAuth> callback) {
         userAuthRepository.getIntegrationAuth(IntegrationType.NANOLEAF)
                 .addOnCompleteListener(task -> {
                     NanoleafPanelAuthCollection collection = task.getResult().toObject(NanoleafPanelAuthCollection.class);
                     for(NanoleafPanelIntegrationAuth auth : collection.getPanelAuths()) {
                         if(auth.getUid().equals(id)) {
-                            callback.apply(auth, new WattsCallbackStatus(true));
+                            callback.apply(auth);
                             return;
                         }
                     }
-                    callback.apply(null, new WattsCallbackStatus(false, "NanoleafPanelIntegrationAuth with id does not exist: " + id));
+                    callback.apply(null, new WattsCallbackStatus("NanoleafPanelIntegrationAuth with id does not exist: " + id));
                 })
                 .addOnFailureListener(task -> {
-                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                    callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                 });
     }
 
-    public void getUserIntegrations(WattsCallback<List<IntegrationType>, Void> callback) {
+    public void getUserIntegrations(WattsCallback<List<IntegrationType>> callback) {
         userAuthRepository.getUserIntegrations(callback);
     }
 
-    public void deleteUser(Context context, WattsCallback<Void, Void> callback){
+    public void deleteUser(Context context, WattsCallback<Void> callback){
         // Delete the user account from the Firestore
         this.deleteUserEntities((var, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
+                return;
             }
 
             userAuthRepository.deleteIntegrationsForUser((var1, status1) -> {
                 if(!status.success) {
                     Log.e(LOG_TAG, status.message);
-                    callback.apply(null, new WattsCallbackStatus(false, status.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status.message));
+                    return;
                 }
 
                 userRepository.deleteUserFromFirestore()
@@ -149,19 +149,16 @@ public class UserManager {
                             userRepository.deleteUser(context)
                                     .addOnCompleteListener(task1 -> {
                                         userRepository.signOut(WattsApplication.getAppContext());
-                                        callback.apply(null, new WattsCallbackStatus(true));
+                                        callback.apply(null);
                                     })
                                     .addOnFailureListener(task1 -> {
-                                        callback.apply(null, new WattsCallbackStatus(false, task1.getMessage()));
+                                        callback.apply(null, new WattsCallbackStatus(task1.getMessage()));
                                     });
                         })
                         .addOnFailureListener(task -> {
-                            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                         });
-                return null;
             });
-
-            return null;
         });
     }
 
@@ -181,46 +178,38 @@ public class UserManager {
         return userAuthRepository.updatePropertyString(prop, value, type);
     }
 
-    private void deleteUserEntities(WattsCallback<Void, Void> callback) {
+    private void deleteUserEntities(WattsCallback<Void> callback) {
         RoomManager.getInstance().deleteRoomsForUser((var, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
+                return;
             }
 
             IntegrationSceneManager.getInstance().deleteUserScenes((var1, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
-                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status1.message));
+                    return;
                 }
 
                 SceneManager.getInstance().deleteUserScenes((var11, status11) -> {
                     if(!status11.success) {
                         Log.e(LOG_TAG, status11.message);
-                        callback.apply(null, new WattsCallbackStatus(false, status11.message));
-                        return null;
+                        callback.apply(null, new WattsCallbackStatus(status11.message));
+                        return;
                     }
 
                     LightManager.getInstance().deleteLightsForUser((var111, status111) -> {
                         if(!status111.success) {
                             Log.e(LOG_TAG, status111.message);
-                            callback.apply(null, new WattsCallbackStatus(false, status111.message));
-                            return null;
+                            callback.apply(null, new WattsCallbackStatus(status111.message));
                         }
 
-                        callback.apply(null, new WattsCallbackStatus(true));
-                        return null;
+                        callback.apply(null);
                     });
-
-                    return null;
                 });
-
-                return null;
             });
-
-            return null;
         });
     }
 

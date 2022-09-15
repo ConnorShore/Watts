@@ -54,31 +54,31 @@ public class LightManager {
     private final int NANOLEAF_SATURATION_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_saturation_max));
     private final int NANOLEAF_BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.nanoleaf_brightness_max));
 
-    public void turnOnLight(Light light, WattsCallback<Void, Void> callback) {
+    public void turnOnLight(Light light, WattsCallback<Void> callback) {
         LightState state = new LightState(true, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 
-    public void turnOffLight(Light light, WattsCallback<Void, Void> callback) {
+    public void turnOffLight(Light light, WattsCallback<Void> callback) {
         LightState state = new LightState(false, light.getLightState().getBrightness(), light.getLightState().getHue(), light.getLightState().getSaturation());
         setLightState(light, state, callback);
     }
 
-    public void deleteLightsForUser(WattsCallback<Void, Void> callback) {
+    public void deleteLightsForUser(WattsCallback<Void> callback) {
         lightRepository.deleteLightsForUser(callback);
     }
 
-    public void updateMultipleLights(List<Light> lights, WattsCallback<Void, Void> callback) {
+    public void updateMultipleLights(List<Light> lights, WattsCallback<Void> callback) {
         lightRepository.setMultipleLights(lights)
             .addOnCompleteListener(task -> {
-                callback.apply(null, new WattsCallbackStatus(true));
+                callback.apply(null);
             })
             .addOnFailureListener(task -> {
-                callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                callback.apply(null, new WattsCallbackStatus(task.getMessage()));
             });
     }
 
-    public void setLightState(Light light, LightState state, WattsCallback<Void, Void> callback) {
+    public void setLightState(Light light, LightState state, WattsCallback<Void> callback) {
         IntegrationType type = light.getIntegrationType();
         switch(light.getIntegrationType()) {
             case PHILLIPS_HUE:
@@ -86,7 +86,7 @@ public class LightManager {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(LOG_TAG, e.getMessage());
-                        callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                        callback.apply(null, new WattsCallbackStatus(e.getMessage()));
                     }
 
                     @Override
@@ -94,7 +94,7 @@ public class LightManager {
                         if(response.isSuccessful())
                             updateLightStateInDatabase(light, state, callback);
                         else
-                            callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                            callback.apply(null, new WattsCallbackStatus(response.message()));
                     }
                 });
                 break;
@@ -103,7 +103,7 @@ public class LightManager {
                     @Override
                     public void onFailure(@NonNull Call call, @NonNull IOException e) {
                         Log.e(LOG_TAG, e.getMessage());
-                        callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                        callback.apply(null, new WattsCallbackStatus(e.getMessage()));
                     }
 
                     @Override
@@ -111,7 +111,7 @@ public class LightManager {
                         if(response.isSuccessful())
                             updateLightStateInDatabase(light, state, callback);
                         else
-                            callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                            callback.apply(null, new WattsCallbackStatus(response.message()));
                     }
                 });
                 break;
@@ -121,13 +121,13 @@ public class LightManager {
         }
     }
 
-    private void updateLightStateInDatabase(Light light, LightState state, WattsCallback<Void, Void> callback) {
+    private void updateLightStateInDatabase(Light light, LightState state, WattsCallback<Void> callback) {
         light.setLightState(state);
         lightRepository.updateLight(light).addOnCompleteListener(task -> {
-            callback.apply(null, new WattsCallbackStatus(true));
+            callback.apply(null);
         })
         .addOnFailureListener(task -> {
-            callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
         });
     }
 
@@ -135,7 +135,7 @@ public class LightManager {
         UserManager.getInstance().getUserIntegrations((integrations, successStatus) -> {
             if(!successStatus.success) {
                 Log.e(LOG_TAG, "Failed to get user integration when syncing lights: " + successStatus.message);
-                return null;
+                return;
             }
 
             for(IntegrationType type : integrations) {
@@ -148,48 +148,41 @@ public class LightManager {
                         UIMessageUtil.showShortToastMessage(
                                 WattsApplication.getAppContext(),
                                 "Failed to sync lights: " + type);
-
-                    return null;
                 });
             }
-
-            return null;
         });
     }
 
-    public void syncNanoleafLightsToDatabase(NanoleafPanelAuthCollection collection, WattsCallback<Void, Void> callback) {
+    public void syncNanoleafLightsToDatabase(NanoleafPanelAuthCollection collection, WattsCallback<Void> callback) {
         lightRepository.getAllLightsForType(IntegrationType.NANOLEAF, (existingLights, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
+                return;
             }
 
             // get nanoleaf panel light state
             getNanoleafPanelLightStates(collection, (states, status1) -> {
                 if(!status1.success) {
-                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status1.message));
+                    return;
                 }
 
                 List<Light> lights = RepositoryUtil.createNanoleafLightsFromAuthCollection(collection, states);
                 updateAndCreateLightsInDatabase(lights, existingLights, callback);
-                return null;
             });
-
-            return null;
         });
     }
 
-    private void getNanoleafPanelLightStates(NanoleafPanelAuthCollection collection, WattsCallback<Map<String, LightState>, Void> callback) {
+    private void getNanoleafPanelLightStates(NanoleafPanelAuthCollection collection, WattsCallback<Map<String, LightState>> callback) {
         List<NanoleafPanelIntegrationAuth> panels = collection.getPanelAuths();
         getNanoleafPanelLightState(panels, 0, new HashMap<>(), callback);
     }
 
     private void getNanoleafPanelLightState(List<NanoleafPanelIntegrationAuth> panels, int index,
-                                            Map<String, LightState> states, WattsCallback<Map<String, LightState>, Void> callback) {
+                                            Map<String, LightState> states, WattsCallback<Map<String, LightState>> callback) {
         if(index >= panels.size()) {
-            callback.apply(states, new WattsCallbackStatus(true));
+            callback.apply(states);
             return;
         }
 
@@ -198,14 +191,14 @@ public class LightManager {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(LOG_TAG, e.getMessage());
-                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                callback.apply(null, new WattsCallbackStatus(e.getMessage()));
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(!response.isSuccessful()) {
                     Log.e(LOG_TAG, response.message());
-                    callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                    callback.apply(null, new WattsCallbackStatus(response.message()));
                     return;
                 }
 
@@ -234,23 +227,23 @@ public class LightManager {
         return state;
     }
 
-    public void getLights(WattsCallback<List<Light>, Void> callback)
+    public void getLights(WattsCallback<List<Light>> callback)
     {
         lightRepository.getAllLights(callback);
     }
 
-    public void getLightsForIntegration(IntegrationType type, WattsCallback<List<Light>, Void> callback) {
+    public void getLightsForIntegration(IntegrationType type, WattsCallback<List<Light>> callback) {
         lightRepository.getAllLightsForType(type, callback);
     }
 
-    public void getLightsForIds(List<String> lightIds, WattsCallback<List<Light>, Void> callback) {
+    public void getLightsForIds(List<String> lightIds, WattsCallback<List<Light>> callback) {
         lightRepository.getLightsForIds(lightIds, callback);
     }
 
     /*
         HELPERS
      */
-    private void syncLightsToDatabase(IntegrationType type, WattsCallback<Void, Void> callback) {
+    private void syncLightsToDatabase(IntegrationType type, WattsCallback<Void> callback) {
         switch(type) {
             case PHILLIPS_HUE:
                 syncPhillipsHueLightsToDatabase(callback);
@@ -263,13 +256,13 @@ public class LightManager {
         }
     }
 
-    private void syncPhillipsHueLightsToDatabase(WattsCallback<Void, Void> callback) {
+    private void syncPhillipsHueLightsToDatabase(WattsCallback<Void> callback) {
         lightRepository.getAllLightsForType(IntegrationType.PHILLIPS_HUE, (existingLights, status) -> {
             if(!status.success) {
                 String message = "Failed to get existing lights when syncing phillips hue lights";
                 Log.e(LOG_TAG, message);
-                callback.apply(null, new WattsCallbackStatus(false, message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(message));
+                return;
             }
 
             phillipsHueService.getAllLights(new Callback() {
@@ -277,7 +270,7 @@ public class LightManager {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String message = "Failed to retrieve phillips hue lights during sync";
                     Log.e(LOG_TAG, message);
-                    callback.apply(null, new WattsCallbackStatus(false, message));
+                    callback.apply(null, new WattsCallbackStatus(message));
                 }
 
                 @Override
@@ -288,26 +281,22 @@ public class LightManager {
                         List<Light> lights = getPhillipsHueLightsFromResponse(responseObject);
                         updateAndCreateLightsInDatabase(lights, existingLights, callback);
                     } catch (JSONException e) {
-                        callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                        callback.apply(null, new WattsCallbackStatus(e.getMessage()));
                     }
                 }
             });
-
-            return null;
         });
     }
 
-    private void syncNanoleafLightsToDatabase(WattsCallback<Void, Void> callback) {
+    private void syncNanoleafLightsToDatabase(WattsCallback<Void> callback) {
         // Todo: get current light panel states and sync to database
         UserManager.getInstance().getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
             if(!status.success || auth == null) {
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
             }
 
             NanoleafPanelAuthCollection collection = (NanoleafPanelAuthCollection) auth;
             syncNanoleafLightsToDatabase(collection, callback);
-            return null;
         });
     }
 
@@ -350,18 +339,18 @@ public class LightManager {
         return ret;
     }
 
-    private void updateAndCreateLightsInDatabase(List<Light> lights, List<Light> existingLights, WattsCallback<Void, Void> callback) {
+    private void updateAndCreateLightsInDatabase(List<Light> lights, List<Light> existingLights, WattsCallback<Void> callback) {
         List<Light> toAddLights = removeDuplicatesAndUpdateExistingLights(existingLights, lights);
         lightRepository.setMultipleLights(toAddLights).addOnCompleteListener(val -> {
             lightRepository.setMultipleLights(existingLights).addOnCompleteListener(val2 -> {
-                    callback.apply(null, new WattsCallbackStatus(true));
+                    callback.apply(null);
                 })
                 .addOnFailureListener(task -> {
-                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                    callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                 });
             })
             .addOnFailureListener(task -> {
-                callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                callback.apply(null, new WattsCallbackStatus(task.getMessage()));
             });
     }
 

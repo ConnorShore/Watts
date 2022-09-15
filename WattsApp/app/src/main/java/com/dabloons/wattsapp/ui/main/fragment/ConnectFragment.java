@@ -101,9 +101,6 @@ public class ConnectFragment extends Fragment {
                 UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewTextHeader, integrationRV);
                 UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewTextBody, integrationRV);
             }
-
-
-            return null;
         });
 
         syncLightsBtn.setOnClickListener(view -> {
@@ -135,7 +132,6 @@ public class ConnectFragment extends Fragment {
                                                 updateDevicesFoundCount(++devicesDiscoveredCt);
                                             else
                                                 Log.e(LOG_TAG, "Issue discovering device: " + status.message);
-                                            return null;
                                         },
                                         (panels, status) -> {
                                             // On finished discovering devices callback
@@ -143,7 +139,6 @@ public class ConnectFragment extends Fragment {
                                             updateDevicesFoundCount(0);
                                             setLightsForSelection(panels);
                                             setSelectLightsView();
-                                            return null;
                                         });
                                 launchPopupWindow();
                             })
@@ -249,7 +244,6 @@ public class ConnectFragment extends Fragment {
             }
 
             closePopupWindow();
-            return null;
         });
     }
 

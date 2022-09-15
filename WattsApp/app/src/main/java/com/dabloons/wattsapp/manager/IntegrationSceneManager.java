@@ -55,54 +55,50 @@ public class IntegrationSceneManager {
     }
 
     public void createIntegrationScene(IntegrationType type, String name, String integrationId,
-                            List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene, Void> callback)
+                            List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene> callback)
     {
         integrationSceneRepository.createIntegrationScene(type, name, integrationId, lightIds, parentLightId, callback);
     }
 
-    public void getIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>, Void> callback)
+    public void getIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>> callback)
     {
         integrationSceneRepository.getAllIntegrationScenes(type, callback);
     }
 
-    public void deleteUserScenes(WattsCallback<Void, Void> callback) {
+    public void deleteUserScenes(WattsCallback<Void> callback) {
         integrationSceneRepository.deleteIntegrationScenesForUser(callback);
     }
 
 
-    public void getIntegrationScenesMap(List<IntegrationType> integrations, WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
+    public void getIntegrationScenesMap(List<IntegrationType> integrations, WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>> callback) {
         buildIntegrationSceneMap(integrations, 0, new HashMap<>(), callback);
     }
 
-    public void syncNanoleafEffectsToDatabase(WattsCallback<Void, Void> callback) {
+    public void syncNanoleafEffectsToDatabase(WattsCallback<Void> callback) {
         integrationSceneRepository.getAllIntegrationScenes(IntegrationType.NANOLEAF, (existingScenes, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
+                return;
             }
 
             lightManager.getLightsForIntegration(IntegrationType.NANOLEAF, (lights, status12) -> {
                 if(!status12.success) {
                     Log.e(LOG_TAG, status.message);
-                    callback.apply(null, new WattsCallbackStatus(false, status.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status.message));
+                    return;
                 }
 
                 getAndStoreEffectsForEachLight(lights, new ArrayList<>(), 0, (integrationScenes, status1) -> {
                     integrationSceneRepository.storeMultipleIntegrationScenes(removeDuplicateIntegrationScenes(existingScenes, integrationScenes))
-                            .addOnCompleteListener(task -> {
-                                callback.apply(null, new WattsCallbackStatus(true));
-                            })
-                            .addOnFailureListener(task -> {
-                                callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
-                            });
-
-                    return null;
+                        .addOnCompleteListener(task -> {
+                            callback.apply(null);
+                        })
+                        .addOnFailureListener(task -> {
+                            callback.apply(null, new WattsCallbackStatus(task.getMessage()));
+                        });
                 });
-                return null;
             });
-            return null;
         });
     }
 
@@ -110,7 +106,7 @@ public class IntegrationSceneManager {
         UserManager.getInstance().getUserIntegrations((integrations, successStatus) -> {
             if(!successStatus.success) {
                 Log.e(LOG_TAG, "Failed to get user integration when syncing lights: " + successStatus.message);
-                return null;
+                return;
             }
 
             for(IntegrationType type : integrations) {
@@ -123,12 +119,8 @@ public class IntegrationSceneManager {
                         UIMessageUtil.showShortToastMessage(
                                 WattsApplication.getAppContext(),
                                 "Failed to sync scene: " + type);
-
-                    return null;
                 });
             }
-
-            return null;
         });
     }
 
@@ -136,23 +128,23 @@ public class IntegrationSceneManager {
 
     private void buildIntegrationSceneMap(List<IntegrationType> integrations, int index,
                                           Map<IntegrationAuth, List<IntegrationScene>> map,
-                                          WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>, Void> callback) {
+                                          WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>> callback) {
         if(index >= integrations.size()) {
-            callback.apply(map, new WattsCallbackStatus(true));
+            callback.apply(map);
             return;
         }
 
         IntegrationType type = integrations.get(index);
         getIntegrationScenes(type, (scenes, status) -> {
             if(!status.success) {
-                callback.apply(null, new WattsCallbackStatus(false, status.message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(status.message));
+                return;
             }
 
             userManager.getIntegrationAuthData(type, (auth, status1) -> {
                 if(!status1.success) {
-                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status1.message));
+                    return;
                 }
 
                 switch (type) {
@@ -169,9 +161,7 @@ public class IntegrationSceneManager {
 
                 int nextIndex = index + 1;
                 buildIntegrationSceneMap(integrations, nextIndex, map, callback);
-                return null;
             });
-            return null;
         });
     }
 
@@ -184,7 +174,7 @@ public class IntegrationSceneManager {
         return ret;
     }
 
-    private void syncIntegrationScenesToDatabase(IntegrationType type, WattsCallback<Void, Void> callback) {
+    private void syncIntegrationScenesToDatabase(IntegrationType type, WattsCallback<Void> callback) {
         switch(type) {
             case PHILLIPS_HUE:
                 syncPhillipsHueIntegrationSceneToDatabase(callback);
@@ -197,13 +187,13 @@ public class IntegrationSceneManager {
         }
     }
 
-    private void syncPhillipsHueIntegrationSceneToDatabase(WattsCallback<Void, Void> callback) {
+    private void syncPhillipsHueIntegrationSceneToDatabase(WattsCallback<Void> callback) {
         integrationSceneRepository.getAllIntegrationScenes(IntegrationType.PHILLIPS_HUE, (existingScenes, status) -> {
             if(!status.success) {
                 String message = "Failed to get existing scenes when syncing phillips hue scenes";
                 Log.e(LOG_TAG, message);
-                callback.apply(null, new WattsCallbackStatus(false, message));
-                return null;
+                callback.apply(null, new WattsCallbackStatus(message));
+                return;
             }
 
             phillipsHueService.getAllScenes(new Callback() {
@@ -211,7 +201,7 @@ public class IntegrationSceneManager {
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
                     String message = "Failed to retrieve phillips hue scenes during sync";
                     Log.e(LOG_TAG, message);
-                    callback.apply(null, new WattsCallbackStatus(false, message));
+                    callback.apply(null, new WattsCallbackStatus(message));
                 }
 
                 @Override
@@ -220,12 +210,10 @@ public class IntegrationSceneManager {
                     JsonObject responseObject = (JsonObject) JsonParser.parseString(responseData);
                     List<IntegrationScene> integrationScenes = getPhillipsHueScenesFromResponse(responseObject);
                     integrationSceneRepository.storeMultipleIntegrationScenes(removeDuplicateIntegrationScenes(existingScenes, integrationScenes)).addOnCompleteListener(val -> {
-                        callback.apply(null, new WattsCallbackStatus(true));
+                        callback.apply(null);
                     });
                 }
             });
-
-            return null;
         });
     }
 
@@ -248,9 +236,9 @@ public class IntegrationSceneManager {
         return ret;
     }
 
-    private void getAndStoreEffectsForEachLight(List<Light> lights, List<IntegrationScene> scenes, int index, WattsCallback<List<IntegrationScene>, Void> callback) {
+    private void getAndStoreEffectsForEachLight(List<Light> lights, List<IntegrationScene> scenes, int index, WattsCallback<List<IntegrationScene>> callback) {
         if(index >= lights.size()) {
-            callback.apply(scenes, new WattsCallbackStatus(true));
+            callback.apply(scenes);
             return;
         }
 
@@ -258,7 +246,7 @@ public class IntegrationSceneManager {
         nanoleafService.getEffectsForLight(light, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                callback.apply(null, new WattsCallbackStatus(e.getMessage()));
             }
 
             @Override

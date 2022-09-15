@@ -82,8 +82,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             roomRV.setLayoutManager(linearLayoutManager);
             roomRV.setAdapter(roomAdapter);
             roomAdapter.setClickListener(this);
-
-            return null;
         });
     }
 
@@ -127,7 +125,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             lightRV.setLayoutManager(linearLayoutManager1);
             lightRV.setAdapter(mLightItemAdapter);
             roomAdapter.setClickListener(HomeFragment.this::onClick);
-            return null;
         });
 
         integrationChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
@@ -148,7 +145,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                     }
                     mLightItemAdapter.setLights(lights);
                     updateUIChips();
-                    return null;
                 });
             }
             else {
@@ -163,7 +159,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                     }
                     mLightItemAdapter.setLights(integrationlights);
                     updateUIChips();
-
                 }
             }
         });
@@ -179,9 +174,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                             roomAdapter.getRoomList().add(newRoom);
                             updateUI(true);
                             dialog.dismiss();
-                            return null;
                         });
-                        return null;
                     });
 
 
@@ -194,9 +187,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
     public void updateUI(boolean newRoom)
     {
-        if(newRoom)
-        {
-
+        if(newRoom) {
             new Handler(Looper.getMainLooper()).post(() -> {
                 UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewTextHeader, roomRV);
                 UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewTextBody, roomRV);
@@ -206,24 +197,19 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         else {
             RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
                 if(roomAdapter == null)
-                    return null;
+                    return;
 
                 roomAdapter.setRoomList(rooms);
 
                 UIUtil.toggleViews(rooms.size(), emptyViewTextHeader, roomRV);
                 UIUtil.toggleViews(rooms.size(), emptyViewTextBody, roomRV);
 
-
                 new Handler(Looper.getMainLooper()).post(() -> {
 
                     roomAdapter.notifyDataSetChanged();
                 });
-
-
-                return null;
             });
         }
-
     }
 
     public void updateUIChips()
@@ -242,7 +228,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                 chip.setId(type.ordinal());
                 chipGroup.addView(chip);
             }
-            return null;
         });
     }
 

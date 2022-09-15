@@ -31,7 +31,7 @@ public class NSDServiceUtil {
 
     private AtomicBoolean resolveListenerBusy;
 
-    private ConcurrentMap<String, WattsCallback<NetworkService, Void>> onDiscoveryCallbacks;
+    private ConcurrentMap<String, WattsCallback<NetworkService>> onDiscoveryCallbacks;
     private ConcurrentLinkedQueue<NsdServiceInfo> pendingNsdServices;
     private ConcurrentLinkedQueue<NsdServiceInfo> resolvedNsdServices;
 
@@ -110,7 +110,7 @@ public class NSDServiceUtil {
         };
     }
 
-    public void discoverService(String serviceType, WattsCallback<NetworkService, Void> callback) {
+    public void discoverService(String serviceType, WattsCallback<NetworkService> callback) {
         try {
             onDiscoveryCallbacks.put(serviceType, callback);
             nsdManager.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, nsdListener);
@@ -130,9 +130,9 @@ public class NSDServiceUtil {
         onDiscoveryCallbacks.remove(serviceType);
     }
 
-    public void waitForAllServicesToResolve(WattsCallback<Void, Void> callback) {
+    public void waitForAllServicesToResolve(WattsCallback<Void> callback) {
         if(pendingNsdServices.size() == 0) {
-            callback.apply(null, new WattsCallbackStatus(true));
+            callback.apply(null);
             return;
         }
 
@@ -143,26 +143,26 @@ public class NSDServiceUtil {
             waitForAllServicesToResolve(callback);
         } catch (InterruptedException e) {
             Log.e(LOG_TAG, e.getMessage());
-            callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+            callback.apply(null, new WattsCallbackStatus(e.getMessage()));
             return;
         }
     }
 
-    public void safeEndNetworkDiscovery(WattsCallback<Boolean, Void> callback) {
+    public void safeEndNetworkDiscovery(WattsCallback<Boolean> callback) {
         if(nsdListener == null) {
-            callback.apply(true, new WattsCallbackStatus(true));
+            callback.apply(true);
             return;
         }
 
         if(onDiscoveryCallbacks.size() > 0) {
             Log.w(LOG_TAG, "There are still callbacks awaiting resolve");
-            callback.apply(false, new WattsCallbackStatus(true));
+            callback.apply(false);
             return;
         }
 
         this.nsdManager.stopServiceDiscovery(nsdListener);
         this.nsdListener = null;
-        callback.apply(true, new WattsCallbackStatus(true));
+        callback.apply(true);
     }
 
     public void forceEndNetworkDiscovery() {
@@ -218,8 +218,8 @@ public class NSDServiceUtil {
                 NetworkService retService = new NetworkService(serviceInfo.getServiceType(),
                         serviceInfo.getServiceName(), serviceInfo.getPort(), serviceInfo.getHost());
 
-                WattsCallback<NetworkService, Void> callback = onDiscoveryCallbacks.get(type);
-                callback.apply(retService, new WattsCallbackStatus(true));
+                WattsCallback<NetworkService> callback = onDiscoveryCallbacks.get(type);
+                callback.apply(retService);
             }
 
             resolveNextInQueue();

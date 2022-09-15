@@ -69,7 +69,6 @@ public class AccountFragment extends Fragment {
                                             WattsApplication.getAppContext(),
                                             "Successfully deleted user");
                                 }
-                                return null;
                             })
                     )
                     .setNegativeButton("No", null)

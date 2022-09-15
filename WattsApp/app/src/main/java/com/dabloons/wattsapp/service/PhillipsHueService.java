@@ -69,7 +69,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/lights";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -81,7 +80,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/scenes";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -103,7 +101,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = String.format("%s/groups/%s/action", username, room.getIntegrationId());
             makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -127,9 +124,7 @@ public class PhillipsHueService extends HttpService {
 
                 String url = username + "/groups";
                 makeRequestWithBodyAsync(url, RequestType.POST, body, getStandardHeaders(accessToken), callback);
-                return null;
             });
-            return null;
         });
     }
 
@@ -151,9 +146,7 @@ public class PhillipsHueService extends HttpService {
 
                 String url = username + "/groups/" + room.getIntegrationId();
                 makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
-                return null;
             });
-            return null;
         });
     }
 
@@ -165,7 +158,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/groups/" + room.getIntegrationId();
             makeRequestAsync(url, RequestType.DELETE, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -194,7 +186,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/lights/" + light.getIntegrationId() + "/state";
             makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -221,7 +212,6 @@ public class PhillipsHueService extends HttpService {
 
             String url = username + "/groups/" + room.getIntegrationId() + "/action";
             makeRequestWithBodyAsync(url, RequestType.PUT, body, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 
@@ -236,7 +226,6 @@ public class PhillipsHueService extends HttpService {
             String username = auth.getUsername();
             String url = username + "/groups";
             makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
-            return null;
         });
     }
 

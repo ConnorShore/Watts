@@ -61,7 +61,6 @@ public class SceneDropdownAdapter extends RecyclerView.Adapter<SceneDropdownAdap
     {
         UserManager.getInstance().getIntegrationAuthData(scene.getIntegrationType(), (integrationAuth, status) -> {
             selectedScenes.put(integrationAuth, scene);
-            return null;
         });
     }
 

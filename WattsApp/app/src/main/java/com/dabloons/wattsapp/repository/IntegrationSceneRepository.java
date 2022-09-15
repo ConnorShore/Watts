@@ -35,7 +35,7 @@ public class IntegrationSceneRepository {
 
 
     public void createIntegrationScene(IntegrationType type, String name, String integrationId,
-                                       List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene, Void> callback) {
+                                       List<String> lightIds, @Nullable String parentLightId, WattsCallback<IntegrationScene> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null)
             return;
@@ -46,12 +46,12 @@ public class IntegrationSceneRepository {
         getIntegrationSceneCollection().document(sceneToCreate.getUid()).set(sceneToCreate)
                 .addOnCompleteListener(task -> {
                     if(task.isComplete())
-                        callback.apply(sceneToCreate, new WattsCallbackStatus(true));
+                        callback.apply(sceneToCreate);
                     else
-                        callback.apply(sceneToCreate, new WattsCallbackStatus(false, "Failed to add integration scene"));
+                        callback.apply(sceneToCreate, new WattsCallbackStatus("Failed to add integration scene"));
                 })
                 .addOnFailureListener(task -> {
-                    callback.apply(sceneToCreate, new WattsCallbackStatus(false, task.getMessage()));
+                    callback.apply(sceneToCreate, new WattsCallbackStatus(task.getMessage()));
                 });
     }
 
@@ -67,31 +67,31 @@ public class IntegrationSceneRepository {
         return batch.commit();
     }
 
-    public void getAllIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>, Void> callback)
+    public void getAllIntegrationScenes(IntegrationType type, WattsCallback<List<IntegrationScene>> callback)
     {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
         getIntegrationSceneCollection().get().addOnCompleteListener(task -> {
-            if(!task.isComplete())
-                Log.e(LOG_TAG, "Failed to get integration secenes collection");
+            if(!task.isComplete()) {
+                String message = "Failed to get integration secenes collection";
+                Log.e(LOG_TAG, message);
+                callback.apply(null, new WattsCallbackStatus(message));
+                return;
+            }
 
             List<IntegrationScene> ret = new ArrayList<>();
-            for(QueryDocumentSnapshot document : task.getResult())
-            {
+            for(QueryDocumentSnapshot document : task.getResult()) {
                 IntegrationType it = RepositoryUtil.stringToIntegrationType((String)document.get("integrationType"));
-                if(it != null)
-                {
-                    if(it == type)
-                        ret.add(document.toObject(IntegrationScene.class));
-                }
+                if(it != null && it == type)
+                    ret.add(document.toObject(IntegrationScene.class));
 
             }
-            callback.apply(ret, new WattsCallbackStatus(true));
+            callback.apply(ret);
         });
     }
 
-    public void deleteIntegrationScenesForUser(WattsCallback<Void, Void> callback) {
+    public void deleteIntegrationScenesForUser(WattsCallback<Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getIntegrationSceneCollection(), callback);
     }
 

@@ -20,7 +20,7 @@ public class FirestoreUtil {
     private static String LOG_TAG = "FirestoreUtil";
     private static final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
 
-    public static void deleteDocumentsForUser(CollectionReference collection, WattsCallback<Void, Void> callback) {
+    public static void deleteDocumentsForUser(CollectionReference collection, WattsCallback<Void> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
@@ -32,17 +32,15 @@ public class FirestoreUtil {
 
             batch.commit()
                     .addOnCompleteListener(task ->{
-                        callback.apply(null, new WattsCallbackStatus(true));
+                        callback.apply(null);
                     })
                     .addOnFailureListener(task -> {
-                        callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+                        callback.apply(null, new WattsCallbackStatus(task.getMessage()));
                     });
-
-            return null;
         });
     }
 
-    private static void getUserDocIds(CollectionReference collection, WattsCallback<List<String>, Void> callback) {
+    private static void getUserDocIds(CollectionReference collection, WattsCallback<List<String>> callback) {
         String userId = UserManager.getInstance().getCurrentUser().getUid();
         collection.get().addOnCompleteListener(task -> {
             if(!task.isComplete())
@@ -55,7 +53,7 @@ public class FirestoreUtil {
                     ids.add(document.get("uid").toString());
             }
 
-            callback.apply(ids, new WattsCallbackStatus(true));
+            callback.apply(ids);
         });
     }
 

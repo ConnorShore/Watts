@@ -87,8 +87,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 
             if(on)
                 toggleBackgroundGlow(true, holder.glowCard, getAverageColorOfLights(lights));
-
-            return null;
         });
     }
 
@@ -98,7 +96,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                 lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
                     if(!status.success) {
                         UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
-                        return null;
+                        return;
                     }
 
                     int color = getAverageColorOfLights(lights); // todo: set to average color of all lights that will be on
@@ -112,10 +110,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                                 UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn on lights for room: " + room.getName());
 
                         });
-
-                        return null;
                     });
-                    return null;
                 });
             }
             else
@@ -128,8 +123,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                         else
                             UIMessageUtil.showShortToastMessage(buttonView.getContext(), "Failed to turn off lights for room: " + room.getName());
                     });
-
-                    return null;
                 });
             }
         });

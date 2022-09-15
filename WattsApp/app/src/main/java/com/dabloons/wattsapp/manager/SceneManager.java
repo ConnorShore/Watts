@@ -45,21 +45,21 @@ public class SceneManager {
         roomManager = RoomManager.getInstance();
     }
 
-    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene, Void> callback)
+    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene> callback)
     {
         sceneRepository.createScene(roomID, sceneName, sceneList, callback);
     }
 
-    public void getAllScenes(String roomID, WattsCallback<List<Scene>, Void> callback)
+    public void getAllScenes(String roomID, WattsCallback<List<Scene>> callback)
     {
         sceneRepository.getAllScenes(roomID, callback);
     }
 
-    public void deleteUserScenes(WattsCallback<Void, Void> callback) {
+    public void deleteUserScenes(WattsCallback<Void> callback) {
         sceneRepository.deleteScenesForUser(callback);
     }
 
-    public void deleteScene(Scene scene, WattsCallback<Void, Void> callback) {
+    public void deleteScene(Scene scene, WattsCallback<Void> callback) {
         sceneRepository.deleteScene(scene)
                 .addOnCompleteListener(task -> {
                     callback.apply(null, new WattsCallbackStatus(true));
@@ -69,26 +69,24 @@ public class SceneManager {
                 });
     }
 
-    public void activateScene(Scene scene, WattsCallback<Void, Void> callback) {
+    public void activateScene(Scene scene, WattsCallback<Void> callback) {
         List<IntegrationScene> scenes = scene.getIntegrationScenes();
         roomManager.getRoomForId(scene.getRoomId(), (room, status) -> {
             activateIntegrationScenes(room, scenes, 0, (var, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
-                    callback.apply(null, new WattsCallbackStatus(false, status1.message));
-                    return null;
+                    callback.apply(null, new WattsCallbackStatus(status1.message));
+                    return;
                 }
 
-                callback.apply(null, new WattsCallbackStatus(true));
-                return null;
+                callback.apply(null);
             });
-            return null;
         });
     }
 
-    private void activateIntegrationScenes(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void, Void> callback) {
+    private void activateIntegrationScenes(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void> callback) {
         if(index >= scenes.size()) {
-            callback.apply(null, new WattsCallbackStatus(true));
+            callback.apply(null);
             return;
         }
 
@@ -106,17 +104,17 @@ public class SceneManager {
         }
     }
 
-    private void activatePhillipsHueScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void, Void> callback) {
+    private void activatePhillipsHueScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void> callback) {
         phillipsHueService.activateScene(scene, room, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                callback.apply(null, new WattsCallbackStatus(e.getMessage()));
             }
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(!response.isSuccessful()) {
-                    callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                    callback.apply(null, new WattsCallbackStatus(response.message()));
                     return;
                 }
 
@@ -126,19 +124,19 @@ public class SceneManager {
         });
     }
 
-    private void activateNanoleafScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void, Void> callback) {
+    private void activateNanoleafScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void> callback) {
         String lightId = scene.getParentLightId();
         userManager.getNanoleafPanelIntegrationAuth(lightId, (panel, status) -> {
             nanoleafService.activateEffectForLight(panel, scene, new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    callback.apply(null, new WattsCallbackStatus(false, e.getMessage()));
+                    callback.apply(null, new WattsCallbackStatus(e.getMessage()));
                 }
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if (!response.isSuccessful()) {
-                        callback.apply(null, new WattsCallbackStatus(false, response.message()));
+                        callback.apply(null, new WattsCallbackStatus(response.message()));
                         return;
                     }
 
@@ -146,7 +144,6 @@ public class SceneManager {
                     activateIntegrationScenes(room, scenes, next, callback);
                 }
             });
-            return null;
         });
     }
 

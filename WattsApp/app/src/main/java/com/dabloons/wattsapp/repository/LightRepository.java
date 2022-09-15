@@ -68,13 +68,15 @@ public final class LightRepository {
         return getLightCollection().document(light.getUid()).set(light);
     }
 
-    public void getAllLightsForType(IntegrationType type, WattsCallback<List<Light>, Void> callback) {
+    public void getAllLightsForType(IntegrationType type, WattsCallback<List<Light>> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
         getLightCollection().get().addOnCompleteListener(task -> {
-            if(!task.isComplete())
-                Log.e(LOG_TAG, "Failed to get lights collection");
+            if(!task.isComplete()) {
+                String message = "Failed to get lights collection";
+                Log.e(LOG_TAG, message);
+            }
 
             List<Light> ret = new ArrayList<>();
             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -86,25 +88,27 @@ public final class LightRepository {
                     ret.add(document.toObject(Light.class));
             }
 
-            callback.apply(ret, new WattsCallbackStatus(true));
+            callback.apply(ret);
         });
     }
 
-    public void getAllLights(WattsCallback<List<Light>, Void> callback) {
+    public void getAllLights(WattsCallback<List<Light>> callback) {
         getAllLightsForType(IntegrationType.NONE, callback);
     }
 
-    public void deleteLightsForUser(WattsCallback<Void, Void> callback) {
+    public void deleteLightsForUser(WattsCallback<Void> callback) {
         FirestoreUtil.deleteDocumentsForUser(getLightCollection(), callback);
     }
 
-    public void getLightsForIds(List<String> lightIds, WattsCallback<List<Light>, Void> callback) {
+    public void getLightsForIds(List<String> lightIds, WattsCallback<List<Light>> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return;
 
         getLightCollection().get().addOnCompleteListener(task -> {
-            if(!task.isComplete())
-                Log.e(LOG_TAG, "Failed to get lights collection");
+            if(!task.isComplete()) {
+                String message = "Failed to get lights collection";
+                Log.e(LOG_TAG, message);
+            }
 
             List<Light> ret = new ArrayList<>();
             for (QueryDocumentSnapshot document : task.getResult()) {
@@ -113,7 +117,7 @@ public final class LightRepository {
                     ret.add(document.toObject(Light.class));
             }
 
-            callback.apply(ret, new WattsCallbackStatus(true));
+            callback.apply(ret);
         });
     }
 

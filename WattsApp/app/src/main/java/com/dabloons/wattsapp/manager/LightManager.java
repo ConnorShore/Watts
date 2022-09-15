@@ -92,7 +92,7 @@ public class LightManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if(response.isSuccessful())
-                            updateLightStateInDatabase(light, state, callback);
+                            callback.apply(null, new WattsCallbackStatus(true));
                         else
                             callback.apply(null, new WattsCallbackStatus(false, response.message()));
                     }
@@ -109,7 +109,7 @@ public class LightManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if(response.isSuccessful())
-                            updateLightStateInDatabase(light, state, callback);
+                            callback.apply(null, new WattsCallbackStatus(true));
                         else
                             callback.apply(null, new WattsCallbackStatus(false, response.message()));
                     }
@@ -119,6 +119,14 @@ public class LightManager {
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);
                 break;
         }
+
+        updateLightStateInDatabase(light, state, (var, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, status.message);
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state in db");
+            }
+            return null;
+        });
     }
 
     private void updateLightStateInDatabase(Light light, LightState state, WattsCallback<Void, Void> callback) {

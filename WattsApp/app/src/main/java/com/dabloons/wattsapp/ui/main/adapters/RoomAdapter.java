@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dabloons.wattsapp.R;
@@ -48,6 +50,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
     private final RoomManager roomManager = RoomManager.getInstance();
     private final LightManager lightManager = LightManager.getInstance();
 
+    private final int MAX_HUE = Integer.parseInt(WattsApplication.getResourceString(R.string.color_picker_hue_max));
+
     public RoomAdapter(Context context, ArrayList<Room> roomModelArrayList) {
         this.context = context;
         this.mRoomModelArrayList = roomModelArrayList;
@@ -60,21 +64,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
         return new Viewholder(view);
     }
 
-    private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int color) {
-        if(on) {
-            glowCard.setCardBackgroundColor(color);
-        }
-        else {
-            glowCard.setCardBackgroundColor(Color.TRANSPARENT);
-        }
-    }
-
     @Override
     public void onBindViewHolder(@NonNull Viewholder holder, int position)
     {
         Room room = mRoomModelArrayList.get(position);
         holder.roomName.setText(room.getName());
         holder.glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        clearSwitchOnClickListener(holder);
         lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
             boolean on = isRoomLightsOn(lights);
 
@@ -85,10 +81,39 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
 
             setSwitchOnClickListener(holder, room);
 
-            if(on)
-                toggleBackgroundGlow(true, holder.glowCard, getAverageColorOfLights(lights));
+            if(on) {
+                int[] colors = getColorsForGradient(lights, false);
+                toggleBackgroundGlow(true, holder.glowCard, colors);
+            }
+
+            return null;
         });
     }
+
+    public List<Room> getRoomList() {
+        return mRoomModelArrayList;
+    }
+
+    public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
+
+    private void toggleBackgroundGlow(boolean on, MaterialCardView glowCard, int[] colors) {
+        if(on && colors.length > 0) {
+            if(colors.length == 1) {
+                glowCard.setCardBackgroundColor(colors[0]);
+                return;
+            }
+
+            GradientDrawable gradientDrawable = new GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT, colors);
+
+            glowCard.setBackground(gradientDrawable);
+        }
+        else {
+            glowCard.setCardBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+
 
     private void setSwitchOnClickListener(@NonNull Viewholder holder, Room room) {
         holder.roomSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -99,8 +124,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
                         return;
                     }
 
-                    int color = getAverageColorOfLights(lights); // todo: set to average color of all lights that will be on
-                    toggleBackgroundGlow(true, holder.glowCard, color);
+                    int[] colors = getColorsForGradient(lights, true);
+                    toggleBackgroundGlow(true, holder.glowCard, colors);
 
                     roomManager.turnOnRoomLights(room, (var, status1) -> {
                         new Handler(Looper.getMainLooper()).post(() -> {
@@ -115,7 +140,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
             }
             else
             {
-                toggleBackgroundGlow(false, holder.glowCard, Color.TRANSPARENT);
+                toggleBackgroundGlow(false, holder.glowCard, null);
                 RoomManager.getInstance().turnOffRoomLights(room, (var, status) -> {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (status.success)
@@ -128,36 +153,27 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.Viewholder>
         });
     }
 
-    public List<Room> getRoomList() {
-        return mRoomModelArrayList;
+    private void clearSwitchOnClickListener(@NonNull Viewholder holder) {
+        holder.roomSwitch.setOnCheckedChangeListener(null);
     }
 
-    public void setRoomList(ArrayList<Room> roomList) { this.mRoomModelArrayList = roomList; }
-
-    private int getAverageColorOfLights(List<Light> lights) {
-        float averageHue = 0.0f;
-        float averageSaturation = 0.0f;
-        int numCounted = 0;
+    private int[] getColorsForGradient(List<Light> lights, boolean forceShow) {
+        List<Integer> colors = new ArrayList<>();
         for(Light light : lights) {
-            LightState state = light.getLightState();
-            if(state.getHue() != null && state.getSaturation() != null) {
-                if(light.getIntegrationType() == IntegrationType.NANOLEAF
-                    && state.getHue() == 0
-                    && state.getSaturation() == 0)
-                    continue;
-                averageHue += state.getHue();
-                averageSaturation += state.getSaturation();
-                numCounted++;
-            }
+            if(!forceShow && !light.getLightState().isOn())
+                continue;
+
+            float hue = light.getLightState().getHue() * MAX_HUE;
+            float saturation = light.getLightState().getSaturation();
+
+            float hsv[] = {hue, saturation, 1.0f};
+            int color = Color.HSVToColor(hsv);
+
+            if(!colors.contains(color))
+                colors.add(color);
         }
 
-        averageHue /= numCounted;
-        averageSaturation /= numCounted;
-
-        averageHue *= 360.0f;
-
-        float hsv[] = {averageHue, averageSaturation, 1.0f};
-        return Color.HSVToColor(hsv);
+        return colors.stream().mapToInt(Integer::intValue).toArray();
     }
 
     private boolean isRoomLightsOn(List<Light> roomLights) {

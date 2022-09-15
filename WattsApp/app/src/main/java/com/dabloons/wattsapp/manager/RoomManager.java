@@ -1,7 +1,10 @@
 package com.dabloons.wattsapp.manager;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
+import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.LightState;
 import com.dabloons.wattsapp.model.Room;
@@ -24,11 +27,14 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import util.UIMessageUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
 public class RoomManager
 {
+    private final String LOG_TAG = "RoomManager";
+
     private static volatile RoomManager instance;
 
     private RoomRepository roomRepository = RoomRepository.getInstance();
@@ -235,20 +241,27 @@ public class RoomManager
                 switch (integration) {
                     case PHILLIPS_HUE:
                         setPhillipsHueRoomLightState(room, state, (var, status1) -> {
-                            resolveIntegration(integration, (var12, status22) -> {
-                                setRoomLightStateInDB(room, state, callback);
-                            });
+                            resolveIntegration(integration, callback);
+                            return null;
                         });
                         break;
                     case NANOLEAF:
                         setNanoleafRoomLightState(room, state, (var, status1) -> {
-                            resolveIntegration(integration, (var1, status2) -> {
-                                setRoomLightStateInDB(room, state, callback);
-                            });
+                            resolveIntegration(integration, callback);
+                            return null;
                         });
                         break;
                 }
             }
+        });
+
+        setRoomLightStateInDB(room, state, (var, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, status.message);
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set room lights in db");
+            }
+
+            return null;
         });
     }
 
@@ -262,7 +275,7 @@ public class RoomManager
                 });
     }
 
-    private void setRoomLightStateInDB(Room room, LightState state, WattsCallback<Void> callback) {
+    public void setRoomLightStateInDB(Room room, LightState state, WattsCallback<Void, Void> callback) {
         lightManager.getLightsForIds(room.getLightIds(), (lights, status) -> {
             updateLightStatesForLights(lights, state);
             lightManager.updateMultipleLights(lights, callback);

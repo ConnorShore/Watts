@@ -62,7 +62,7 @@
         <item name="android:layout_marginRight">@dimen/default_glow_card_margin_horz</item>
         <item name="android:layout_marginTop">@dimen/default_glow_card_margin_vert</item>
         <item name="android:layout_marginBottom">@dimen/default_glow_card_margin_vert</item>
-        <item name="cardBackgroundColor">?attr/colorPrimary</item>
+<!--        <item name="cardBackgroundColor">?attr/colorPrimary</item>-->
     </style>
 
     <style name="Widget.Watts.Card.BackgroundGlowCardTile" parent="Widget.Watts.Card.BackgroundGlowCard">

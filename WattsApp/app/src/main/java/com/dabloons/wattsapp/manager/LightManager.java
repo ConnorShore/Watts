@@ -92,7 +92,7 @@ public class LightManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if(response.isSuccessful())
-                            updateLightStateInDatabase(light, state, callback);
+                            callback.apply(null, new WattsCallbackStatus(true));
                         else
                             callback.apply(null, new WattsCallbackStatus(response.message()));
                     }
@@ -109,7 +109,7 @@ public class LightManager {
                     @Override
                     public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                         if(response.isSuccessful())
-                            updateLightStateInDatabase(light, state, callback);
+                            callback.apply(null, new WattsCallbackStatus(true));
                         else
                             callback.apply(null, new WattsCallbackStatus(response.message()));
                     }
@@ -119,6 +119,14 @@ public class LightManager {
                 Log.w(LOG_TAG, "There is no light manager for integration type " + type);
                 break;
         }
+
+        updateLightStateInDatabase(light, state, (var, status) -> {
+            if(!status.success) {
+                Log.e(LOG_TAG, status.message);
+                UIMessageUtil.showShortToastMessage(WattsApplication.getAppContext(), "Failed to set light state in db");
+            }
+            return null;
+        });
     }
 
     private void updateLightStateInDatabase(Light light, LightState state, WattsCallback<Void> callback) {
@@ -132,23 +140,35 @@ public class LightManager {
     }
 
     public void syncLights() {
+        syncLightsWithCallback((var, status) -> {
+            if(status.success)
+                UIMessageUtil.showShortToastMessage(
+                        WattsApplication.getAppContext(),
+                        "Successfully synced lights");
+            else
+                UIMessageUtil.showShortToastMessage(
+                        WattsApplication.getAppContext(),
+                        "Failed to sync lights");
+
+            return null;
+        });
+    }
+
+    public void syncLightsWithCallback(WattsCallback<Void, Void> callback) {
         UserManager.getInstance().getUserIntegrations((integrations, successStatus) -> {
             if(!successStatus.success) {
                 Log.e(LOG_TAG, "Failed to get user integration when syncing lights: " + successStatus.message);
-                return;
+                callback.apply(null, successStatus);
+                return null;
+            }
+
+            if(integrations.size() == 0) {
+                callback.apply(null, new WattsCallbackStatus(true));
+                return null;
             }
 
             for(IntegrationType type : integrations) {
-                syncLightsToDatabase(type, (nil, status) -> {
-                    if(status.success)
-                        UIMessageUtil.showShortToastMessage(
-                                WattsApplication.getAppContext(),
-                                "Successfully synced lights: " + type);
-                    else
-                        UIMessageUtil.showShortToastMessage(
-                                WattsApplication.getAppContext(),
-                                "Failed to sync lights: " + type);
-                });
+                syncLightsToDatabase(type, callback);
             }
         });
     }

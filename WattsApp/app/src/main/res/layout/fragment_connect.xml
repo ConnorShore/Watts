@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context=".ui.main.fragment.ConnectFragment">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,9 +22,15 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-            android:id="@+id/emptyIntegrationListText"
-            style="@style/Widget.Watts.TextView.Placeholder"
-            android:text="@string/no_integration_place_holder"
+            android:id="@+id/emptyIntegrationListTextHeader"
+            style="@style/Widget.Watts.TextView.PlaceholderLargeHeader"
+            android:text="@string/no_integration_place_holder_header"
+            />
+
+        <TextView
+            android:id="@+id/emptyIntegrationListTextBody"
+            style="@style/Widget.Watts.TextView.PlaceholderLargeBody"
+            android:text="@string/no_integration_place_holder_body"
             />
 
     </LinearLayout>

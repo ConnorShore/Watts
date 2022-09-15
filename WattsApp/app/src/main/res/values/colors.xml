@@ -19,6 +19,7 @@
     <color name="app_dark_blue_500">#151A29</color>
     <color name="app_dark_blue_900">#0A0C16</color>
     <color name="app_light_grey">#B5BEC6</color>
+    <color name="app_dark_grey">#515457</color>
     <color name="app_white">#FBFFFE</color>
     <color name="app_green_secondary">#003918</color>
     <color name="app_green_on_secondary">#5ADF83</color>

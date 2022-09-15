@@ -42,10 +42,14 @@
     <string name="sync_lights">Sync Lights</string>
     <string name="logged_in">loggedIn</string>
     <string name="yes_logged_in">YES</string>
-    <string name="no_rooms_place_holder">No rooms, please add a room</string>
-    <string name="no_room_scenes_place_holder">No scenes, please create a scene</string>
-    <string name="no_room_lights_place_holder">No lights, please add lights</string>
-    <string name="no_integration_place_holder">No integration, please connect to an integration</string>
+    <string name="no_rooms_place_holder_header">No rooms</string>
+    <string name="no_rooms_place_holder_body">Your rooms will appear here</string>
+    <string name="no_room_scenes_place_holder_header">No scenes</string>
+    <string name="no_room_scenes_place_holder_body">Create a scene to appear here</string>
+    <string name="no_room_lights_place_holder_header">No lights</string>
+    <string name="no_room_lights_place_holder_body">Add a light to appear here</string>
+    <string name="no_integration_place_holder_header">No integrations</string>
+    <string name="no_integration_place_holder_body">Your integrations will appear here</string>
 
     <!-- NUMERIC VALUES -->
     <string name="splash_screen_time">1000</string>

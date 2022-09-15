@@ -56,7 +56,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
     private RecyclerView roomRV;
     private RecyclerView lightRV;
-    private TextView emptyViewText;
+    private TextView emptyViewTextHeader;
+    private TextView emptyViewTextBody;
 
     // Arraylist for storing data
     private RoomAdapter roomAdapter;
@@ -72,7 +73,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         RoomRepository.getInstance().getUserDefinedRooms((rooms, success) -> {
             roomAdapter = new RoomAdapter(WattsApplication.getAppContext(), rooms);
 
-            UIUtil.toggleViews(rooms.size(), emptyViewText, roomRV);
+            UIUtil.toggleViews(rooms.size(), emptyViewTextHeader, roomRV);
+            UIUtil.toggleViews(rooms.size(), emptyViewTextBody, roomRV);
 
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
 
@@ -94,7 +96,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
         roomRV = v.findViewById(R.id.idRVCourse);
-        emptyViewText = v.findViewById(R.id.emptyRoomListText);
+        emptyViewTextHeader = v.findViewById(R.id.emptyRoomListTextHeader);
+        emptyViewTextBody = v.findViewById(R.id.emptyRoomListTextBody);
 
 // Debug button
 //        Button b = v.findViewById(R.id.getGroups);
@@ -195,7 +198,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         {
 
             new Handler(Looper.getMainLooper()).post(() -> {
-                UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewText, roomRV);
+                UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewTextHeader, roomRV);
+                UIUtil.toggleViews(roomAdapter.getRoomList().size(), emptyViewTextBody, roomRV);
                 roomAdapter.notifyDataSetChanged();
             });
         }
@@ -206,7 +210,8 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
 
                 roomAdapter.setRoomList(rooms);
 
-                UIUtil.toggleViews(rooms.size(), emptyViewText, roomRV);
+                UIUtil.toggleViews(rooms.size(), emptyViewTextHeader, roomRV);
+                UIUtil.toggleViews(rooms.size(), emptyViewTextBody, roomRV);
 
 
                 new Handler(Looper.getMainLooper()).post(() -> {

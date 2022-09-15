@@ -21,9 +21,15 @@
             android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/emptyRoomListText"
-            style="@style/Widget.Watts.TextView.Placeholder"
-            android:text="@string/no_rooms_place_holder"
+            android:id="@+id/emptyRoomListTextHeader"
+            style="@style/Widget.Watts.TextView.PlaceholderLargeHeader"
+            android:text="@string/no_rooms_place_holder_header"
+            />
+
+        <TextView
+            android:id="@+id/emptyRoomListTextBody"
+            style="@style/Widget.Watts.TextView.PlaceholderLargeBody"
+            android:text="@string/no_rooms_place_holder_body"
             />
 
     </LinearLayout>

@@ -113,15 +113,48 @@
     </style>
 
     <!-- PLACEHOLDER TEXT -->
+    <style name="Widget.Watts.TextView.PlaceholderLargeHeader" parent="Widget.Watts.TextView.PlaceholderHeader">
+        <item name="android:textSize">48sp</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderLargeBody" parent="Widget.Watts.TextView.PlaceholderBody">
+        <item name="android:textSize">40sp</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderMediumHeader" parent="Widget.Watts.TextView.PlaceholderHeader">
+        <item name="android:textSize">42sp</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderMediumBody" parent="Widget.Watts.TextView.PlaceholderBody">
+        <item name="android:textSize">36sp</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderSmallHeader" parent="Widget.Watts.TextView.PlaceholderHeader">
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderSmallBody" parent="Widget.Watts.TextView.PlaceholderBody">
+        <item name="android:textSize">24sp</item>
+    </style>
+
+
+    <style name="Widget.Watts.TextView.PlaceholderHeader" parent="Widget.Watts.TextView.Placeholder">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Watts.TextView.PlaceholderBody" parent="Widget.Watts.TextView.Placeholder">
+    </style>
+
+
     <style name="Widget.Watts.TextView.Placeholder" parent="">
         <item name="android:visibility">gone</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/app_light_grey</item>
-        <item name="android:textAppearance">@style/FirebaseUI.Text.Heading</item>
+        <item name="android:textColor">@color/app_dark_grey</item>
+        <item name="android:layout_marginLeft">6dp</item>
+        <item name="android:layout_marginRight">6dp</item>
     </style>
 
     <!-- MISC -->

@@ -51,7 +51,8 @@ public class ConnectFragment extends Fragment {
 
     private IntegrationAdapter integrationAdapter;
     private RecyclerView integrationRV;
-    private TextView emptyViewText;
+    private TextView emptyViewTextHeader;
+    private TextView emptyViewTextBody;
 
     private LightItemAdapter<NanoleafPanelIntegrationAuth> discoveredLightsAdapter;
     private RecyclerView discoveredLightsRV;
@@ -72,11 +73,11 @@ public class ConnectFragment extends Fragment {
         View result = inflater.inflate(R.layout.fragment_connect, container, false);
 
         syncLightsBtn = result.findViewById(R.id.sync_lights_btn);
-//        popupDialogBuilder = new MaterialAlertDialogBuilder(this.getContext());
 
         initializePopupItems();
         initializeListeners(result);
-        emptyViewText = result.findViewById(R.id.emptyIntegrationListText);
+        emptyViewTextHeader = result.findViewById(R.id.emptyIntegrationListTextHeader);
+        emptyViewTextBody = result.findViewById(R.id.emptyIntegrationListTextBody);
 
 
         return result;
@@ -97,7 +98,8 @@ public class ConnectFragment extends Fragment {
 
             if(integrationAdapter.integrationTypeList == null || integrationAdapter.integrationTypeList.size() == 0)
             {
-                UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewText, integrationRV);
+                UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewTextHeader, integrationRV);
+                UIUtil.toggleViews(integrationAdapter.integrationTypeList.size(), emptyViewTextBody, integrationRV);
             }
 
 

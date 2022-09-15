@@ -8,7 +8,6 @@ public class UIUtil
 {
     public static void toggleViews(int setPlaceholder, View placeHolder, View rV)
     {
-
         new Handler(Looper.getMainLooper()).post(() ->
         {
             if(setPlaceholder == 0)

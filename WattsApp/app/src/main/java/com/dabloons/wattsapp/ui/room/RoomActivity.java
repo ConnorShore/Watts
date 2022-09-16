@@ -247,7 +247,7 @@ public class RoomActivity extends AppCompatActivity {
         sceneDropdownRV.setLayoutManager(linearLayoutManager);
         sceneDropdownRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
         sceneDropdownRV.setAdapter(sceneDropdownAdapter);
-
+        alertDialogBuilder.setTitle("Create Scene");
         alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
             addSceneToUser();
         }).setNegativeButton("Cancel", (dialog, which) -> {

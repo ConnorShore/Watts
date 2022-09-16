@@ -3,7 +3,13 @@
 <com.google.android.material.card.MaterialCardView
     android:id="@+id/integrationSelectableCard"
     style="@style/Widget.Watts.Card.SelectableLargeCardOutlined"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,32 +34,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:text="TEST"
                     android:textColor="@color/white"
                     android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <Button
-                    style="@style/Widget.Material3.Button.ElevatedButton"
-                    android:id="@+id/delete_integration_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:backgroundTint="?colorError"
-                    android:textColor="?colorOnPrimary"
-                    android:textSize="10dp"
-                    android:text="Disconnect"
-                    />
-            </LinearLayout>
-
-
 
         </LinearLayout>
 
@@ -69,6 +55,75 @@
                 android:layout_height="wrap_content"
                 android:text="connected_status"/>
         </LinearLayout>
+
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/hidden_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fixed_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/numLightsText"
+                style="@style/Widget.Watts.TextAppearance.BodyMedium"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="12dp"
+                android:text="@string/number_lights_integration"
+                android:layout_weight="1"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp">
+
+                    <Button
+                        android:id="@+id/sync_integration_button"
+                        style="@style/Widget.Watts.Button.ElevatedButton"
+                        android:layout_margin="@dimen/default_margin"
+                        android:padding="@dimen/default_margin"
+                        android:text="Sync"
+                        android:layout_width="100dp"
+                        />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:layout_marginRight="8dp">
+                    <Button
+                        android:id="@+id/delete_integration_button"
+                        style="@style/Widget.Watts.Button.ElevatedButton"
+                        android:layout_width="100dp"
+                        android:layout_margin="@dimen/default_margin"
+                        android:backgroundTint="?colorError"
+                        android:padding="@dimen/default_margin"
+                        android:text="@string/button_delete_integration"
+                        android:textColor="?colorOnError"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

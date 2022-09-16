@@ -17,12 +17,15 @@
         <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
 
-    <style name="Widget.Watts.Button.ElevatedButton" parent="Widget.Material3.Button.ElevatedButton">
+    <style name="Widget.Watts.Button.ElevatedButton" parent="Widget.Material3.Button.ElevatedButton.Icon">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="cornerRadius">@dimen/default_btn_corner_radius</item>
         <item name="backgroundTint">?attr/colorPrimary</item>
         <item name="colorButtonNormal">?attr/colorPrimary</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
     </style>
 
     <style name="Widget.Watts.Button.WideElevatedButton" parent="Widget.Watts.Button.ElevatedButton">
@@ -51,7 +54,7 @@
     </style>
 
     <style name="Widget.Watts.Card.SelectableLargeCardOutlined" parent="Widget.Watts.Card.SelectableLargeCard">
-        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeColor">?attr/colorOutline</item>
         <item name="strokeWidth">@dimen/default_outline_size</item>
     </style>
 
@@ -155,6 +158,15 @@
         <item name="android:textColor">@color/app_dark_grey</item>
         <item name="android:layout_marginLeft">6dp</item>
         <item name="android:layout_marginRight">6dp</item>
+    </style>
+
+    <style name="Widget.Watts.TextAppearance.BodyMedium" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <!-- MISC -->

@@ -18,8 +18,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:title="Room Name"
+        app:menu="@menu/top_app_bar_room"
         app:titleCentered="true"
-        app:navigationIcon="@drawable/ic_arrow_back_24px" />
+        app:navigationIcon="@drawable/ic_arrow_back_24px">
+
+        <Button
+            android:id="@+id/openBottomSheet"
+            style="@style/Widget.Watts.Button.IconButton"
+            app:icon="@drawable/ic_baseline_more_vert_24"
+            android:layout_gravity="end"/>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -119,42 +127,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/addSceneBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginLeft="24dp"
-                android:backgroundTint="?colorPrimary"
-                android:layout_marginBottom="10dp"
-                app:icon="@drawable/ic_add_48px"
-                android:text="Add Scene"
-                android:textSize="14sp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
             android:gravity="end">
 
             <Button
-                android:id="@+id/deletRoomButton"
-                style="@style/Widget.Watts.Button.ElevatedButton"
-                android:layout_width="@dimen/default_btn_width"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:backgroundTint="@color/app_red_error"
-                android:text="@string/button_delete_room"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="24dp"
-                android:textColor="#fff"
-                android:textSize="14sp"/>
+                android:id="@+id/addSceneBtn"
+                android:layout_gravity="start"
+                style="@style/Widget.Watts.Button.PrimaryElevatedButton"
+                android:backgroundTint="?colorPrimary"
+                app:icon="@drawable/ic_add_48px"
+                android:text="Add Scene"
+                />
         </LinearLayout>
+
+
 
 
 

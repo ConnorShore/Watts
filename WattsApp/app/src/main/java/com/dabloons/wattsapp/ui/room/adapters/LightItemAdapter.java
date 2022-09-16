@@ -131,7 +131,10 @@ public class LightItemAdapter<T> extends RecyclerView.Adapter<LightItemAdapter.V
 
     @Override
     public int getItemCount() {
-        return lightItems.size();
+        if(lightItems != null)
+            return lightItems.size();
+        else
+            return 0;
     }
 
     public void setLights(List<T> lights) {

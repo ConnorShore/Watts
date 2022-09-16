@@ -13,6 +13,9 @@ import com.dabloons.wattsapp.repository.RoomRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -205,6 +208,20 @@ public class RoomManager
         roomRepository.deleteRoomsForUser(callback);
     }
 
+    public void updateRoomName(Room room, String name)
+    {
+        roomRepository.updateRoomName(room, name).addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+            {
+                Log.i(LOG_TAG, "Successfully updated room name to "+ name);
+            }
+            else
+            {
+                Log.e(LOG_TAG, "Problem updating room name to "+ name);
+            }
+        }).addOnFailureListener(e -> Log.i(LOG_TAG, e.getMessage()));
+    }
+
     /*
      * HELPERS
      */
@@ -277,6 +294,8 @@ public class RoomManager
             lightManager.updateMultipleLights(lights, callback);
         });
     }
+
+
 
     private void updateLightStatesForLights(List<Light> lights, LightState state) {
         for(Light l : lights) {

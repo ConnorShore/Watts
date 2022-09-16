@@ -1,6 +1,7 @@
 package com.dabloons.wattsapp.ui.room;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +10,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ import com.dabloons.wattsapp.ui.room.adapters.LightAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneAdapter;
 import com.dabloons.wattsapp.ui.room.adapters.SceneDropdownAdapter;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -50,17 +53,21 @@ import util.UIUtil;
 import util.WattsCallback;
 import util.WattsCallbackStatus;
 
+
 public class RoomActivity extends AppCompatActivity {
 
     private final String LOG_TAG = "RoomActivity";
 
-    private Button deleteRoomBtn;
     private Button addSceneBtn;
+    private Button openBottomSheetBtn;
+
     private Room currentRoom;
     private MaterialToolbar toolbar;
 
     private MaterialAlertDialogBuilder alertDialogBuilder;
     private View customDialogView;
+
+
 
     private RecyclerView lightRV;
     private LightAdapter lightAdapter;
@@ -85,8 +92,8 @@ public class RoomActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_room);
 
-        deleteRoomBtn = findViewById(R.id.deletRoomButton);
         addSceneBtn = findViewById(R.id.addSceneBtn);
+        openBottomSheetBtn = findViewById(R.id.openBottomSheet);
         toolbar = findViewById(R.id.topAppBarRoomActivity);
 
         Bundle extras = getIntent().getExtras();
@@ -98,6 +105,13 @@ public class RoomActivity extends AppCompatActivity {
 
         //tool bar back button listener
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        openBottomSheetBtn.setOnClickListener(v -> {
+
+            launchBottomSheet();
+        });
+
+
 
         lightManager.getLightsForIds(currentRoom.getLightIds(), (lights, status) -> {
             lightAdapter = new LightAdapter(WattsApplication.getAppContext(), lights);
@@ -149,6 +163,19 @@ public class RoomActivity extends AppCompatActivity {
                 initializeListeners();
             });
         });
+    }
+
+    private void launchBottomSheet()
+    {
+        ModalBottomSheet bottomSheet = new ModalBottomSheet();
+        bottomSheet.setOnLightAddedCallback((lights, status) -> {
+            lightAdapter.lights.addAll(lights);
+            RoomManager.getInstance().addLightsToRoom(currentRoom, lights, (var, status1) -> updateUI());
+        });
+        Bundle roomParcel = new Bundle();
+        roomParcel.putParcelable("currRoom", currentRoom);
+        bottomSheet.setArguments(roomParcel);
+        bottomSheet.show(getSupportFragmentManager(), "ModalBottomSheet");
     }
 
     @Override
@@ -210,12 +237,6 @@ public class RoomActivity extends AppCompatActivity {
             customDialogView = LayoutInflater.from(RoomActivity.this).inflate(R.layout.create_scene_dialog, null, false);
             launchCustomAlertDialog();
         });
-
-        deleteRoomBtn.setOnClickListener(v -> {
-            RoomManager.getInstance().deleteRoom(currentRoom, (var, status) -> {
-                finish();
-            });
-        });
     }
 
     private void launchCustomAlertDialog() {
@@ -226,7 +247,7 @@ public class RoomActivity extends AppCompatActivity {
         sceneDropdownRV.setLayoutManager(linearLayoutManager);
         sceneDropdownRV.addItemDecoration(new ItemOffsetDecoration(this.getApplicationContext(),R.dimen.light_card_offset));
         sceneDropdownRV.setAdapter(sceneDropdownAdapter);
-
+        alertDialogBuilder.setTitle("Create Scene");
         alertDialogBuilder.setPositiveButton("Add", (dialog, which) -> {
             addSceneToUser();
         }).setNegativeButton("Cancel", (dialog, which) -> {
@@ -256,7 +277,7 @@ public class RoomActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUI()
+    public void updateUI()
     {
         new Handler(Looper.getMainLooper()).post(() -> {
             sceneAdapter.notifyDataSetChanged();

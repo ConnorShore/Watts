@@ -14,6 +14,7 @@ import com.dabloons.wattsapp.repository.UserRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -91,21 +92,6 @@ public class RoomManager
             callback.apply(null, new WattsCallbackStatus(task.getMessage()));
         });
     }
-
-//    public void addLightToRoom(Room room, Light light, WattsCallback<Void> callback) {
-//
-//
-//        roomRepository.addLightToRoom(room, light.getUid()).addOnCompleteListener(task -> {
-//                    // Lights have been added to room in DB
-//                    if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
-//                        createPhillipsHueGroup(room, callback);
-//                    else
-//                        callback.apply(null, new WattsCallbackStatus(true));
-//                })
-//                .addOnFailureListener(task -> {
-//                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
-//                });
-//    }
 
     public void turnOnRoomLights(Room room, WattsCallback<Void> callback) {
         LightState state = new LightState(true, 1.0f);
@@ -227,13 +213,13 @@ public class RoomManager
         roomRepository.updateRoomName(room, name).addOnCompleteListener(task -> {
             if(task.isSuccessful())
             {
-
+                Log.i(LOG_TAG, "Successfully updated room name to "+ name);
             }
             else
             {
-
+                Log.e(LOG_TAG, "Problem updating room name to "+ name);
             }
-        });
+        }).addOnFailureListener(e -> Log.i(LOG_TAG, e.getMessage()));
     }
 
     /*

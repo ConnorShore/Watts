@@ -212,25 +212,6 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         }
     }
 
-//    public void updateUIChips()
-//    {
-//        new Handler(Looper.getMainLooper()).post(() -> mLightItemAdapter.notifyDataSetChanged());
-//    }
-
-//    private void addIntegrationChips(ChipGroup chipGroup)
-//    {
-//
-//        UserManager.getInstance().getUserIntegrations((integrationTypes, status) -> {
-//            for(IntegrationType type : integrationTypes)
-//            {
-//                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.integration_chip, chipGroup, false);
-//                chip.setText(type.name());
-//                chip.setId(type.ordinal());
-//                chipGroup.addView(chip);
-//            }
-//        });
-//    }
-
     @Override
     public void onClick(View view, int position)
     {

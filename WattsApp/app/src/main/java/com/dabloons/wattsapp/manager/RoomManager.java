@@ -13,6 +13,8 @@ import com.dabloons.wattsapp.repository.RoomRepository;
 import com.dabloons.wattsapp.repository.UserRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -89,6 +91,21 @@ public class RoomManager
             callback.apply(null, new WattsCallbackStatus(task.getMessage()));
         });
     }
+
+//    public void addLightToRoom(Room room, Light light, WattsCallback<Void> callback) {
+//
+//
+//        roomRepository.addLightToRoom(room, light.getUid()).addOnCompleteListener(task -> {
+//                    // Lights have been added to room in DB
+//                    if(light.getIntegrationType() == IntegrationType.PHILLIPS_HUE)
+//                        createPhillipsHueGroup(room, callback);
+//                    else
+//                        callback.apply(null, new WattsCallbackStatus(true));
+//                })
+//                .addOnFailureListener(task -> {
+//                    callback.apply(null, new WattsCallbackStatus(false, task.getMessage()));
+//                });
+//    }
 
     public void turnOnRoomLights(Room room, WattsCallback<Void> callback) {
         LightState state = new LightState(true, 1.0f);
@@ -205,6 +222,20 @@ public class RoomManager
         roomRepository.deleteRoomsForUser(callback);
     }
 
+    public void updateRoomName(Room room, String name)
+    {
+        roomRepository.updateRoomName(room, name).addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+            {
+
+            }
+            else
+            {
+
+            }
+        });
+    }
+
     /*
      * HELPERS
      */
@@ -277,6 +308,8 @@ public class RoomManager
             lightManager.updateMultipleLights(lights, callback);
         });
     }
+
+
 
     private void updateLightStatesForLights(List<Light> lights, LightState state) {
         for(Light l : lights) {

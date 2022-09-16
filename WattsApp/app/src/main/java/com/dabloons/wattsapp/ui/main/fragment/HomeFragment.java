@@ -118,7 +118,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
     {
         TextInputLayout roomName = customDialogView.findViewById(R.id.roomNameTextLayout);
         ChipGroup integrationChipGroup = customDialogView.findViewById(R.id.integrationChipGroup);
-        addIntegrationChips(integrationChipGroup);
+        UIUtil.addIntegrationChips(customDialogView, integrationChipGroup);
         LightManager.getInstance().getLights((lights, success) -> {
             LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(WattsApplication.getAppContext(), LinearLayoutManager.VERTICAL, false);
             mLightItemAdapter = new LightItemAdapter(WattsApplication.getAppContext(), (ArrayList<Light>) lights);
@@ -131,7 +131,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
             if(checkedIds.size() == 0)
             {
                 mLightItemAdapter.setLights(new ArrayList());
-                updateUIChips();
+                UIUtil.updateUIChips(mLightItemAdapter);
             }
             else if(checkedIds.size() == group.getChildCount())
             {
@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         }
                     }
                     mLightItemAdapter.setLights(lights);
-                    updateUIChips();
+                    UIUtil.updateUIChips(mLightItemAdapter);
                 });
             }
             else {
@@ -158,7 +158,7 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
                         }
                     }
                     mLightItemAdapter.setLights(integrationlights);
-                    updateUIChips();
+                    UIUtil.updateUIChips(mLightItemAdapter);
                 }
             }
         });
@@ -212,24 +212,24 @@ public class HomeFragment extends Fragment implements OnItemClickListener {
         }
     }
 
-    public void updateUIChips()
-    {
-        new Handler(Looper.getMainLooper()).post(() -> mLightItemAdapter.notifyDataSetChanged());
-    }
+//    public void updateUIChips()
+//    {
+//        new Handler(Looper.getMainLooper()).post(() -> mLightItemAdapter.notifyDataSetChanged());
+//    }
 
-    private void addIntegrationChips(ChipGroup chipGroup)
-    {
-
-        UserManager.getInstance().getUserIntegrations((integrationTypes, status) -> {
-            for(IntegrationType type : integrationTypes)
-            {
-                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.integration_chip, chipGroup, false);
-                chip.setText(type.name());
-                chip.setId(type.ordinal());
-                chipGroup.addView(chip);
-            }
-        });
-    }
+//    private void addIntegrationChips(ChipGroup chipGroup)
+//    {
+//
+//        UserManager.getInstance().getUserIntegrations((integrationTypes, status) -> {
+//            for(IntegrationType type : integrationTypes)
+//            {
+//                Chip chip = (Chip) getLayoutInflater().inflate(R.layout.integration_chip, chipGroup, false);
+//                chip.setText(type.name());
+//                chip.setId(type.ordinal());
+//                chipGroup.addView(chip);
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(View view, int position)

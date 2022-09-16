@@ -20,7 +20,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import util.FirestoreUtil;
@@ -38,6 +40,7 @@ public final class RoomRepository {
     private final String ROOM_COLLECTION_NAME = WattsApplication.getResourceString(R.string.collection_rooms);
 
     private final String USER_ID_FIELD = WattsApplication.getResourceString(R.string.field_userId);
+    private final String ROOM_NAME_FIELD = WattsApplication.getResourceString(R.string.field_name);
     private final String LIGHT_IDS_FIELD = WattsApplication.getResourceString(R.string.field_light_ids);
     private final String INTEGRATION_ID_FIELD = WattsApplication.getResourceString(R.string.field_integrationId);
 
@@ -64,14 +67,28 @@ public final class RoomRepository {
         return getRoomCollection().document(room.getUid()).update(LIGHT_IDS_FIELD, room.getLightIds());
     }
 
+    public Task<Void> updateRoomName(Room room, String name) {
+        return getRoomCollection().document(room.getUid()).update(ROOM_NAME_FIELD, name);
+    }
+
     public Task<Void> setRoomIntegrationId(String roomUid, String id) {
         return getRoomCollection().document(roomUid).update(INTEGRATION_ID_FIELD, id);
     }
 
     public Task<Void> setRoomLights(Room room, List<String> lightIds) {
-        room.setLightIds(lightIds);
+        Set<String> ids = new HashSet<>();
+        ids.addAll(room.getLightIds());
+        ids.addAll(lightIds);
+        List<String> finalIds = new ArrayList<>(ids);
+        room.setLightIds(finalIds);
         return updateRoom(room);
     }
+
+    public Task<Void> addLightToRoom(Room room, String lightId) {
+        room.appendLightId(lightId);
+        return updateRoom(room);
+    }
+
 
     public void getUserDefinedRooms(WattsCallback<ArrayList<Room>> callback){
         ArrayList<Room> ret = new ArrayList<>();

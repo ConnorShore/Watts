@@ -82,6 +82,8 @@ public class Room implements Parcelable {
 
     public void setLightIds(List<String> lightIds) { this.lightIds = lightIds; }
 
+    public void appendLightId(String id) {this.lightIds.add(id);}
+
     public String getIntegrationId() {
         return integrationId;
     }

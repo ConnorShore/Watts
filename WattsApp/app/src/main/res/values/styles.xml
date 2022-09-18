@@ -38,6 +38,12 @@
         <item name="android:statusBarColor">#F67707</item>
     </style>
 
+    <style name="Widget.Watts.Button.IconButton" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@null</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
     <!-- CARDS -->
     <style name="Widget.Watts.Card.SelectableLargeCardElevated" parent="Widget.Watts.Card.SelectableLargeCard">
         <item name="cardElevation">@dimen/default_card_elevation</item>
@@ -158,6 +164,14 @@
         <item name="android:textColor">@color/app_dark_grey</item>
         <item name="android:layout_marginLeft">6dp</item>
         <item name="android:layout_marginRight">6dp</item>
+    </style>
+
+    <!-- Icon Button Text View -->
+    <style name="Widget.Watts.TextView.IconButton" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">10dp</item>
     </style>
 
     <style name="Widget.Watts.TextAppearance.BodyMedium" parent="">

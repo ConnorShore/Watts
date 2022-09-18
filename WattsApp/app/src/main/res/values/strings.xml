@@ -5,7 +5,7 @@
     <string name="button_sign_out_account">Sign Out</string>
     <string name="button_delete_account">Delete Account</string>
     <string name="button_add_integration">Add Integration</string>
-    <string name="button_delete_integration">Delete Integration</string>
+    <string name="button_delete_integration">Disconnect</string>
     <string name="button_delete_room">Delete Room</string>
 
     <!-- PHILLIPS HUE API -->
@@ -50,6 +50,7 @@
     <string name="no_room_lights_place_holder_body">Add a light to appear here</string>
     <string name="no_integration_place_holder_header">No integrations</string>
     <string name="no_integration_place_holder_body">Your integrations will appear here</string>
+    <string name="number_lights_integration">Lights in integration: %d</string>
 
     <!-- NUMERIC VALUES -->
     <string name="splash_screen_time">1000</string>

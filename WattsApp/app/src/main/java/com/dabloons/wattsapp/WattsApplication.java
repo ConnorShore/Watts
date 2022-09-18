@@ -19,7 +19,10 @@ public class WattsApplication extends Application {
     }
 
     public static String getResourceString(int resId) {
-        String ret = context.getString(resId);
-        return ret;
+        return context.getString(resId);
+    }
+
+    public static int getColorInt(int resId) {
+        return context.getColor(resId);
     }
 }

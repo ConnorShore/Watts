@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -192,18 +193,19 @@ public class LightManager {
     }
 
     private void getNanoleafPanelLightStates(NanoleafPanelAuthCollection collection, WattsCallback<Map<String, LightState>> callback) {
-        List<NanoleafPanelIntegrationAuth> panels = collection.getPanelAuths();
-        getNanoleafPanelLightState(panels, 0, new HashMap<>(), callback);
+        Stack<NanoleafPanelIntegrationAuth> panels = new Stack<>();
+        panels.addAll(collection.getPanelAuths());
+        getNanoleafPanelLightState(panels, new HashMap<>(), callback);
     }
 
-    private void getNanoleafPanelLightState(List<NanoleafPanelIntegrationAuth> panels, int index,
+    private void getNanoleafPanelLightState(Stack<NanoleafPanelIntegrationAuth> panels,
                                             Map<String, LightState> states, WattsCallback<Map<String, LightState>> callback) {
-        if(index >= panels.size()) {
+        if(panels.isEmpty()) {
             callback.apply(states);
             return;
         }
 
-        NanoleafPanelIntegrationAuth panel = panels.get(index);
+        NanoleafPanelIntegrationAuth panel = panels.pop();
         nanoleafService.getLightState(panel, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -222,8 +224,7 @@ public class LightManager {
                 String responseBody = response.body().string();
                 LightState state = getNanoleafPanelLightStateFromResponse(responseBody);
                 states.put(panel.getName(), state);
-                int nextIndex = index + 1;
-                getNanoleafPanelLightState(panels, nextIndex, states, callback);
+                getNanoleafPanelLightState(panels, states, callback);
             }
         });
     }
@@ -298,6 +299,7 @@ public class LightManager {
                         List<Light> lights = getPhillipsHueLightsFromResponse(responseObject);
                         updateAndCreateLightsInDatabase(lights, existingLights, callback);
                     } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.getMessage());
                         callback.apply(null, new WattsCallbackStatus(e.getMessage()));
                     }
                 }
@@ -306,7 +308,6 @@ public class LightManager {
     }
 
     private void syncNanoleafLightsToDatabase(WattsCallback<Void> callback) {
-        // Todo: get current light panel states and sync to database
         UserManager.getInstance().getIntegrationAuthData(IntegrationType.NANOLEAF, (auth, status) -> {
             if(!status.success || auth == null) {
                 callback.apply(null, new WattsCallbackStatus(status.message));

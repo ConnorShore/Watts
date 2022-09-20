@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -71,7 +72,9 @@ public class IntegrationSceneManager {
 
 
     public void getIntegrationScenesMap(List<IntegrationType> integrations, WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>> callback) {
-        buildIntegrationSceneMap(integrations, 0, new HashMap<>(), callback);
+        Stack<IntegrationType> integrationStack = new Stack<>();
+        integrationStack.addAll(integrations);
+        buildIntegrationSceneMap(integrationStack, new HashMap<>(), callback);
     }
 
     public void syncNanoleafEffectsToDatabase(WattsCallback<Void> callback) {
@@ -126,15 +129,15 @@ public class IntegrationSceneManager {
 
 
 
-    private void buildIntegrationSceneMap(List<IntegrationType> integrations, int index,
+    private void buildIntegrationSceneMap(Stack<IntegrationType> integrations,
                                           Map<IntegrationAuth, List<IntegrationScene>> map,
                                           WattsCallback<Map<IntegrationAuth, List<IntegrationScene>>> callback) {
-        if(index >= integrations.size()) {
+        if(integrations.isEmpty()) {
             callback.apply(map);
             return;
         }
 
-        IntegrationType type = integrations.get(index);
+        IntegrationType type = integrations.pop();
         getIntegrationScenes(type, (scenes, status) -> {
             if(!status.success) {
                 callback.apply(null, new WattsCallbackStatus(status.message));
@@ -159,8 +162,7 @@ public class IntegrationSceneManager {
                         break;
                 }
 
-                int nextIndex = index + 1;
-                buildIntegrationSceneMap(integrations, nextIndex, map, callback);
+                buildIntegrationSceneMap(integrations, map, callback);
             });
         });
     }

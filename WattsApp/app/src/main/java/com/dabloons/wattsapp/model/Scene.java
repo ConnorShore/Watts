@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
+import com.dabloons.wattsapp.model.integration.IntegrationType;
 
 import java.util.List;
 import java.util.UUID;

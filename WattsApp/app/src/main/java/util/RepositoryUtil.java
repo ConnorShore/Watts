@@ -35,7 +35,7 @@ public class RepositoryUtil {
             if(state == null)
                 state = new LightState();
 
-            Light light = new Light(userId, auth.getName(), auth.getUid(), IntegrationType.NANOLEAF, state);
+            Light light = new Light(userId, auth.getName(), auth.getModel(), auth.getUid(), IntegrationType.NANOLEAF, state);
             ret.add(light);
         }
         return ret;

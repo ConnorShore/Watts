@@ -132,7 +132,7 @@ public class RoomActivity extends AppCompatActivity {
 
         sceneManager.getAllScenes(currentRoom.getUid(), (scenes, status) -> {
 
-            sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), scenes);
+            sceneAdapter = new SceneAdapter(WattsApplication.getAppContext(), this, scenes);
             GridLayoutManager gridLayoutManager1 = new GridLayoutManager(WattsApplication.getAppContext(), 2, GridLayoutManager.HORIZONTAL, false);
             sceneRV = findViewById(R.id.roomSceneRV);
             scenePlaceHolderHeader = findViewById(R.id.emptyRoomSceneListTextHeader);
@@ -274,6 +274,8 @@ public class RoomActivity extends AppCompatActivity {
             UIUtil.toggleViews(scenes.size(), scenePlaceHolderHeader, sceneRV);
             UIUtil.toggleViews(scenes.size(), scenePlaceHolderBody, sceneRV);
             updateUI();
+
+            sceneDropdownAdapter.getSelectedScenes().clear();
         });
     }
 

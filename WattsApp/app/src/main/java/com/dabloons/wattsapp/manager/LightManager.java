@@ -329,6 +329,7 @@ public class LightManager {
 
             // TODO: Add more fields of state (i.e. on, color, brightness, etc)
             String name = nextLight.get("name").getAsString();
+            String model = nextLight.get("modelid").getAsString();
 
             JsonObject state = nextLight.get("state").getAsJsonObject();
             boolean reachable = state.get("reachable").getAsBoolean();
@@ -348,7 +349,7 @@ public class LightManager {
             brightness /= PHILLIPS_HUE_BRIGHTNESS_MAX;
 
             LightState lightState = new LightState(on, brightness, hue, saturation);
-            Light light = new Light(userId, name, integrationId, IntegrationType.PHILLIPS_HUE, lightState);
+            Light light = new Light(userId, name, model, integrationId, IntegrationType.PHILLIPS_HUE, lightState);
             ret.add(light);
             currentLight++;
         }

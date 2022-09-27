@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
 
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
@@ -13,7 +12,6 @@ import com.dabloons.wattsapp.model.Room;
 import com.dabloons.wattsapp.model.Scene;
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
 import com.dabloons.wattsapp.model.integration.IntegrationType;
-import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.repository.SceneRepository;
 import com.dabloons.wattsapp.service.NanoleafService;
 import com.dabloons.wattsapp.service.PhillipsHueService;
@@ -42,9 +40,13 @@ public class SceneManager {
 
     private static volatile  SceneManager instance;
 
+    private final int ANDROID_HUE_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.color_picker_hue_max));
+
     private final int PHILLIPS_HUE_HUE_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_hue_max));
     private final int PHILLIPS_HUE_SATURATION_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_saturation_max));
     private final int PHILLIPS_HUE_BRIGHTNESS_MAX = Integer.parseInt(WattsApplication.getResourceString(R.string.phillips_hue_brightness_max));
+
+    private final int COLOR_TEMPERATURE_ADJUSTMENT = 2000;
 
     private SceneRepository sceneRepository;
     private PhillipsHueService phillipsHueService;
@@ -175,10 +177,6 @@ public class SceneManager {
         });
     }
 
-    public void storeSceneColorsInDB(Scene scene, WattsCallback<Void> callback) {
-
-    }
-
     public void getSceneColors(List<IntegrationScene> integrationScenes, WattsCallback<Set<Integer>> callback) {
         Stack<IntegrationScene> scenes = new Stack<>();
         scenes.addAll(integrationScenes);
@@ -249,12 +247,13 @@ public class SceneManager {
                         hueVal /= PHILLIPS_HUE_HUE_MAX;
                         satVal /= PHILLIPS_HUE_SATURATION_MAX;
 
-                        color = Color.HSVToColor(new float[] {hueVal * 360.0f, satVal, 1.0f});
+                        color = Color.HSVToColor(new float[] {hueVal * ANDROID_HUE_MAX, satVal, 1.0f});
                     }
                     else if(ct != null) {
                         float ctVal = ct.getAsFloat();
+                        // Convert Mired Colored Temperature to normal temperature
                         int kTemp = (int)(1000000.0f / ctVal);
-                        kTemp += 2000;
+                        kTemp += COLOR_TEMPERATURE_ADJUSTMENT;  // Adjustment to make color appear more accurate
                         color = PHUtilities.getRGBFromK(kTemp);
                     }
                     else if(xy != null) {

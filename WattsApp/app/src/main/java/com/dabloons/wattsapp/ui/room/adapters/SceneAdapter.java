@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -14,11 +12,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,19 +22,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dabloons.wattsapp.R;
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.SceneManager;
-import com.dabloons.wattsapp.model.Light;
 import com.dabloons.wattsapp.model.Scene;
 import com.google.android.material.card.MaterialCardView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import util.UIMessageUtil;
-import util.WattsCallback;
-import util.WattsCallbackStatus;
 
 public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
 {
@@ -197,14 +186,12 @@ public class SceneAdapter extends RecyclerView.Adapter<SceneAdapter.Viewholder>
 
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         private TextView sceneName;
-//        private Button setScene;
         private MaterialCardView sceneCard;
         private LinearLayout sceneCardCanvas;
         private LinearLayout scenePreview;
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             sceneName = itemView.findViewById(R.id.sceneName);
-//            setScene = itemView.findViewById(R.id.set_scene);
             sceneCard = itemView.findViewById(R.id.sceneCard);
             sceneCardCanvas = itemView.findViewById(R.id.sceneCardCanvas);
             scenePreview = itemView.findViewById(R.id.scenePreview);

@@ -4,10 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.dabloons.wattsapp.model.integration.IntegrationScene;
-import com.dabloons.wattsapp.model.integration.IntegrationType;
+
 import com.google.firebase.firestore.Exclude;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -115,8 +114,6 @@ public class Scene implements Parcelable {
     public int[] getSceneColorsArray() {
         return sceneColors.stream().mapToInt(Integer::intValue).toArray();
     }
-
-    public void addIntegrationSceneToList(IntegrationScene scene) { this.integrationScenes.add(scene); }
 
     @Override
     public int describeContents() {

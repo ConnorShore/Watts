@@ -49,46 +49,10 @@
                     android:clickable="false"
                     android:src="@drawable/ic_power_settings_new_30px"
                     app:tint="@color/white" />
-<!--                    <Button-->
-<!--                        style="@style/Widget.Material3.Button.IconButton"-->
-<!--                        android:visibility="visible"-->
-<!--                        android:id="@+id/set_scene"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:clickable="false"-->
-<!--                        app:iconSize="25dp"-->
-<!--                        app:iconTint="@color/white"-->
-<!--                        app:icon="@drawable/ic_power_settings_new_24px"-->
-<!--                        />-->
 
             </LinearLayout>
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="40dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:background="@color/black"-->
-<!--                    android:gravity="center">-->
-
-<!--                    <Button-->
-<!--                        style="@style/Widget.Material3.Button.IconButton"-->
-<!--                        android:id="@+id/set_scene"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:gravity="center"-->
-<!--                        android:layout_marginLeft="10dp"-->
-<!--                        android:backgroundTint="?colorPrimary"-->
-<!--                        android:layout_marginBottom="1dp"-->
-<!--                        android:layout_marginTop="1dp"-->
-<!--                        app:icon="@drawable/ic_power_settings_new_24px"-->
-<!--                        android:textSize="10sp"-->
-<!--                        />-->
-
-
-<!--                </LinearLayout>-->
-
 
         </LinearLayout>
-
 
     </com.google.android.material.card.MaterialCardView>
 

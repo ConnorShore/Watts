@@ -50,7 +50,11 @@
 
     </style>
 
-    <style name="Widget.Watts.Card.SelectableTileCardElevated" parent="Widget.Watts.Card.SelectableTileCard">
+    <style name="Widget.Watts.Card.SelectableTileCardElevatedSmall" parent="Widget.Watts.Card.SelectableTileCardSmall">
+        <item name="cardElevation">@dimen/low_card_elevation</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCardElevatedMedium" parent="Widget.Watts.Card.SelectableTileCardMedium">
         <item name="cardElevation">@dimen/low_card_elevation</item>
     </style>
 
@@ -102,9 +106,18 @@
         <item name="cardUseCompatPadding">true</item>
     </style>
 
-    <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">
+    <style name="Widget.Watts.Card.SelectableTileCardSmall" parent="Widget.Watts.Card.SelectableTileCard">
         <item name="android:layout_width">120dp</item>
         <item name="android:layout_height">120dp</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCardMedium" parent="Widget.Watts.Card.SelectableTileCard">
+        <item name="android:layout_width">220dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">
         <item name="android:padding">2dp</item>
         <item name="android:backgroundTint">?attr/colorSurfaceVariant</item>
         <item name="android:layout_marginLeft">@dimen/default_card_margin_horz</item>

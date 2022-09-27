@@ -83,6 +83,17 @@ public class PhillipsHueService extends HttpService {
         });
     }
 
+    public void getScene(IntegrationScene scene, Callback callback) {
+        userManager.getIntegrationAuthData(IntegrationType.PHILLIPS_HUE, (var, status) -> {
+            PhillipsHueIntegrationAuth auth = (PhillipsHueIntegrationAuth)var;
+            String accessToken = auth.getAccessToken();
+            String username = auth.getUsername();
+
+            String url = username + "/scenes/" + scene.getIntegrationId();
+            makeRequestAsync(url, RequestType.GET, getStandardHeaders(accessToken), callback);
+        });
+    }
+
     public void activateScene(IntegrationScene scene, Room room, Callback callback) {
         if(scene.getIntegrationType() != IntegrationType.PHILLIPS_HUE)
             return;

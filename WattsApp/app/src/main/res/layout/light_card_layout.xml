@@ -8,7 +8,7 @@
         style="@style/Widget.Watts.Card.BackgroundGlowCardTile">
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/lightCard"
-            style="@style/Widget.Watts.Card.SelectableTileCardElevated">
+            style="@style/Widget.Watts.Card.SelectableTileCardElevatedSmall">
 
             <LinearLayout
                 android:layout_width="match_parent"

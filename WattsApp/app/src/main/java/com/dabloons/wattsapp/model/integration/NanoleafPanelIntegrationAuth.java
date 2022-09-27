@@ -12,15 +12,17 @@ public class NanoleafPanelIntegrationAuth extends IntegrationAuth implements Par
     private String name;
     private String baseUrl;
     private String authToken;
+    private String model;
 
     @Exclude
     public boolean isSelected;
 
-    public NanoleafPanelIntegrationAuth(String name, String baseUrl, String authToken) {
+    public NanoleafPanelIntegrationAuth(String name, String baseUrl, String authToken, String model) {
         super(UUID.randomUUID().toString(), IntegrationType.NANOLEAF);
         this.name = name;
         this.baseUrl = baseUrl;
         this.authToken = authToken;
+        this.model = model;
     }
 
     public NanoleafPanelIntegrationAuth() {
@@ -31,6 +33,7 @@ public class NanoleafPanelIntegrationAuth extends IntegrationAuth implements Par
         name = in.readString();
         baseUrl = in.readString();
         authToken = in.readString();
+        model = in.readString();
         isSelected = in.readByte() != 0;
     }
 
@@ -58,6 +61,14 @@ public class NanoleafPanelIntegrationAuth extends IntegrationAuth implements Par
         this.authToken = authToken;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
     @Exclude
     public boolean isSelected() {
         return isSelected;
@@ -75,6 +86,9 @@ public class NanoleafPanelIntegrationAuth extends IntegrationAuth implements Par
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(name);
+        parcel.writeString(baseUrl);
+        parcel.writeString(authToken);
+        parcel.writeString(model);
         parcel.writeByte((byte) (isSelected ? 1 : 0));
     }
 

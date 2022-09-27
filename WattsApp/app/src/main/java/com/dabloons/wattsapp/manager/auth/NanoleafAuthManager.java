@@ -2,6 +2,8 @@ package com.dabloons.wattsapp.manager.auth;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.dabloons.wattsapp.WattsApplication;
 import com.dabloons.wattsapp.manager.LightManager;
 import com.dabloons.wattsapp.manager.UserManager;
@@ -11,12 +13,18 @@ import com.dabloons.wattsapp.model.integration.IntegrationType;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelAuthCollection;
 import com.dabloons.wattsapp.model.integration.NanoleafPanelIntegrationAuth;
 import com.dabloons.wattsapp.service.NanoleafService;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 import util.NSDServiceUtil;
 import util.UIMessageUtil;
 import util.WattsCallback;
@@ -76,7 +84,7 @@ public class NanoleafAuthManager {
             String url = String.format(URL_FORMAT,
                     service.getHost().getHostName(), service.getPort());
 
-            NanoleafPanelIntegrationAuth auth = new NanoleafPanelIntegrationAuth(service.getName(), url, null);
+            NanoleafPanelIntegrationAuth auth = new NanoleafPanelIntegrationAuth(service.getName(), url, null, null);
             nanoleafPanelConnections.add(auth);
         });
     }
@@ -114,8 +122,30 @@ public class NanoleafAuthManager {
             else
                 auth.setAuthToken(authToken);
 
-            int nextInd = index+1;
-            getAuthTokenForProps(authProps, nextInd, callback);
+            nanoleafService.getLightProperties(auth, new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                    int nextInd = index+1;
+                    getAuthTokenForProps(authProps, nextInd, callback);
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if(response.isSuccessful()) {
+                        JsonObject responseObj = JsonParser.parseString(response.body().string())
+                                .getAsJsonObject();
+                        String modelId = responseObj.get("model").getAsString();
+                        auth.setModel(modelId);
+                    }
+                    else {
+                        Log.e(LOG_TAG, response.message());
+                    }
+
+                    int nextInd = index+1;
+                    getAuthTokenForProps(authProps, nextInd, callback);
+                }
+            });
         });
     }
 

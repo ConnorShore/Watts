@@ -36,6 +36,8 @@
     <string name="field_scenes">scenes</string>
     <string name="field_integrationId">integrationId</string>
     <string name="field_integration_type">integrationType</string>
+    <string name="field_room_id">roomId</string>
+    <string name="field_scene_on">on</string>
     <string name="connect_to_integration">Connect</string>
     <string name="phillips_hue">Phillips Hue</string>
     <string name="nanoleaf">Nanoleaf</string>

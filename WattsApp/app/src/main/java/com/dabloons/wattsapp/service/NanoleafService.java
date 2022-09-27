@@ -68,6 +68,11 @@ public class NanoleafService extends HttpService {
         });
     }
 
+    public void getLightProperties(NanoleafPanelIntegrationAuth panel, Callback callback) {
+        setBaseUrl(panel.getBaseUrl());
+        makeRequestAsync("", RequestType.GET, getStandardHeaders(), callback);
+    }
+
     public void getLightState(NanoleafPanelIntegrationAuth panel, Callback callback) {
         setBaseUrl(panel.getBaseUrl());
         String path = String.format("%s/state", panel.getAuthToken());
@@ -134,6 +139,21 @@ public class NanoleafService extends HttpService {
         setBaseUrl(integrationAuth.getBaseUrl());
         String path = String.format("%s/effects/effectsList", integrationAuth.getAuthToken());
         makeRequestAsync(path, RequestType.GET, getStandardHeaders(), callback);
+    }
+
+    public void getEffectDetails(NanoleafPanelIntegrationAuth integrationAuth, String effectName, Callback callback) {
+        setBaseUrl(integrationAuth.getBaseUrl());
+        String path = String.format("%s/effects/", integrationAuth.getAuthToken());
+
+        JsonObject bodyObj = new JsonObject();
+        bodyObj.addProperty("command", "request");
+        bodyObj.addProperty("animName", effectName);
+
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.add("write", bodyObj);
+        RequestBody body = createRequestBody(jsonObj);
+
+        makeRequestWithBodyAsync(path, RequestType.PUT, body, getStandardHeaders(), callback);
     }
 
     public void activateEffectForLight(NanoleafPanelIntegrationAuth panel, IntegrationScene effect, Callback callback) {

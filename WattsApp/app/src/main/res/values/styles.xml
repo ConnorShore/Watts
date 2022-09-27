@@ -114,6 +114,7 @@
     <style name="Widget.Watts.Card.SelectableTileCardMedium" parent="Widget.Watts.Card.SelectableTileCard">
         <item name="android:layout_width">220dp</item>
         <item name="android:layout_height">120dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="Widget.Watts.Card.SelectableTileCard" parent="Widget.Watts.Card.Selectable">

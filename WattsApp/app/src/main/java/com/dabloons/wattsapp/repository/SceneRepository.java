@@ -51,14 +51,15 @@ public final class SceneRepository
         }
     }
 
-    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene> callback) {
+    public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList,
+                            List<Integer> sceneColors, WattsCallback<Scene> callback) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null)
             return;
 
         String userId = user.getUid();
 
-        Scene sceneToCreate = new Scene(userId, roomID, sceneName, sceneList);
+        Scene sceneToCreate = new Scene(userId, roomID, sceneName, false, sceneList, sceneColors);
         getSceneCollection().document(sceneToCreate.getUid()).set(sceneToCreate)
             .addOnCompleteListener(task -> {
                 if(task.isComplete())
@@ -96,6 +97,14 @@ public final class SceneRepository
            }
             callback.apply(ret);
         });
+    }
+
+    public Task<Void> activateScene(Scene scene) {
+        return getSceneCollection().document(scene.getUid()).update("on", true);
+    }
+
+    public Task<Void> deactivateScene(Scene scene) {
+        return getSceneCollection().document(scene.getUid()).update("on", false);
     }
 
     public Task<Void> deleteScene(Scene scene) {

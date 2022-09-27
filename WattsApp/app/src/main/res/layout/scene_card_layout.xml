@@ -16,52 +16,75 @@
         android:checkable="true" >
 
         <LinearLayout
+            android:id="@+id/sceneCardCanvas"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
+            android:padding="5dp"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/sceneCardCanvas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="5dp"
-                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/sceneName"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="PLACE_HOLDER"
                     android:textStyle="bold"
-                    android:layout_weight="1"
                     />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center">
 
-                    <Button
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:id="@+id/set_scene"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:layout_marginLeft="10dp"
-                        android:backgroundTint="?colorPrimary"
-                        android:layout_marginBottom="1dp"
-                        android:layout_marginTop="1dp"
-                        app:icon="@drawable/ic_power_settings_new_24px"
-                        android:textSize="10sp"
-                        />
+            <LinearLayout
+                android:id="@+id/scenePreview"
+                android:layout_marginTop="10dp"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:gravity="center">
 
 
-                </LinearLayout>
+                <ImageView
+                    android:id="@+id/sceneOnIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:src="@drawable/ic_power_settings_new_30px"
+                    app:tint="@color/white" />
+<!--                    <Button-->
+<!--                        style="@style/Widget.Material3.Button.IconButton"-->
+<!--                        android:visibility="visible"-->
+<!--                        android:id="@+id/set_scene"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:clickable="false"-->
+<!--                        app:iconSize="25dp"-->
+<!--                        app:iconTint="@color/white"-->
+<!--                        app:icon="@drawable/ic_power_settings_new_24px"-->
+<!--                        />-->
 
             </LinearLayout>
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:background="@color/black"-->
+<!--                    android:gravity="center">-->
+
+<!--                    <Button-->
+<!--                        style="@style/Widget.Material3.Button.IconButton"-->
+<!--                        android:id="@+id/set_scene"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center"-->
+<!--                        android:layout_marginLeft="10dp"-->
+<!--                        android:backgroundTint="?colorPrimary"-->
+<!--                        android:layout_marginBottom="1dp"-->
+<!--                        android:layout_marginTop="1dp"-->
+<!--                        app:icon="@drawable/ic_power_settings_new_24px"-->
+<!--                        android:textSize="10sp"-->
+<!--                        />-->
+
+
+<!--                </LinearLayout>-->
 
 
         </LinearLayout>

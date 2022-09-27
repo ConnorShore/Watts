@@ -62,7 +62,10 @@ public class SceneManager {
 
     public void createScene(String roomID, String sceneName, List<IntegrationScene> sceneList, WattsCallback<Scene> callback)
     {
-        sceneRepository.createScene(roomID, sceneName, sceneList, callback);
+        this.getSceneColors(sceneList, (sceneColors, status) -> {
+            List<Integer> colors = new ArrayList<>(sceneColors);
+            sceneRepository.createScene(roomID, sceneName, sceneList, colors, callback);
+        });
     }
 
     public void getAllScenes(String roomID, WattsCallback<List<Scene>> callback)
@@ -85,6 +88,7 @@ public class SceneManager {
     }
 
     public void activateScene(Scene scene, WattsCallback<Void> callback) {
+        scene.setOn(true);
         List<IntegrationScene> scenes = scene.getIntegrationScenes();
         roomManager.getRoomForId(scene.getRoomId(), (room, status) -> {
             activateIntegrationScenes(room, scenes, 0, (var, status1) -> {
@@ -94,9 +98,18 @@ public class SceneManager {
                     return;
                 }
 
-                callback.apply(null);
+                sceneRepository.activateScene(scene)
+                        .addOnCompleteListener(task -> callback.apply(null))
+                        .addOnFailureListener(task -> callback.apply(null, new WattsCallbackStatus(task.getMessage())));
             });
         });
+    }
+
+    public void deactivateScene(Scene scene, WattsCallback<Void> callback) {
+        scene.setOn(false);
+        sceneRepository.deactivateScene(scene)
+                .addOnCompleteListener(task -> callback.apply(null))
+                .addOnFailureListener(task -> callback.apply(null, new WattsCallbackStatus(task.getMessage())));
     }
 
     private void activateIntegrationScenes(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void> callback) {
@@ -162,9 +175,13 @@ public class SceneManager {
         });
     }
 
-    public void getSceneColors(Scene scene, WattsCallback<Set<Integer>> callback) {
+    public void storeSceneColorsInDB(Scene scene, WattsCallback<Void> callback) {
+
+    }
+
+    public void getSceneColors(List<IntegrationScene> integrationScenes, WattsCallback<Set<Integer>> callback) {
         Stack<IntegrationScene> scenes = new Stack<>();
-        scenes.addAll(scene.getIntegrationScenes());
+        scenes.addAll(integrationScenes);
         getSceneColorsHelper(scenes, new HashSet<>(), callback);
     }
 

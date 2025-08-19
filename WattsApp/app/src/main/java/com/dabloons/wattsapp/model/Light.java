@@ -14,6 +14,7 @@ public class Light implements Parcelable {
     private String uid;
     private String userId;
     private String name;
+    private String lightModel;
     private String integrationId;
     private IntegrationType integrationType;
     private LightState lightState;
@@ -22,6 +23,7 @@ public class Light implements Parcelable {
         uid = in.readString();
         userId = in.readString();
         name = in.readString();
+        lightModel = in.readString();
         integrationId = in.readString();
         integrationType = IntegrationType.valueOf(in.readString());
         lightState = in.readParcelable(LightState.class.getClassLoader());
@@ -50,6 +52,7 @@ public class Light implements Parcelable {
         dest.writeString(uid);
         dest.writeString(userId);
         dest.writeString(name);
+        dest.writeString(lightModel);
         dest.writeString(integrationId);
         dest.writeString(integrationType.name());
         dest.writeParcelable(lightState, flags);
@@ -61,10 +64,11 @@ public class Light implements Parcelable {
 
     public Light(){ }
 
-    public Light(String userId, String name, String integrationId, IntegrationType integrationType, LightState lightState) {
+    public Light(String userId, String name, String lightModel, String integrationId, IntegrationType integrationType, LightState lightState) {
         this.uid = UUID.randomUUID().toString();
         this.userId = userId;
         this.name = name;
+        this.lightModel = lightModel;
         this.integrationId = integrationId;
         this.integrationType = integrationType;
         this.isSelected = false;
@@ -101,6 +105,14 @@ public class Light implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLightModel() {
+        return lightModel;
+    }
+
+    public void setLightModel(String lightModel) {
+        this.lightModel = lightModel;
     }
 
     public IntegrationType getIntegrationType() {

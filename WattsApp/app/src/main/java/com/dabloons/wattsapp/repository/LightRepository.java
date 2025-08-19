@@ -39,13 +39,13 @@ public final class LightRepository {
     private final String INTEGRATION_TYPE_FIELD = WattsApplication.getResourceString(R.string.field_integration_type);
 
     // Create User in Firestore
-    public Task<Void> createLight(String integrationId, IntegrationType type, String name, LightState lightState) {
+    public Task<Void> createLight(String integrationId, IntegrationType type, String name, String model, LightState lightState) {
         FirebaseUser user = UserManager.getInstance().getCurrentUser();
         if(user == null) return null;
 
         String userId = user.getUid();
 
-        Light lightToCreate = new Light(userId, name, integrationId, type, lightState);
+        Light lightToCreate = new Light(userId, name, model, integrationId, type, lightState);
         return getLightCollection().document(lightToCreate.getUid()).set(lightToCreate);
     }
 

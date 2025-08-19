@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -90,10 +89,15 @@ public class SceneManager {
     }
 
     public void activateScene(Scene scene, WattsCallback<Void> callback) {
+
+        Stack<IntegrationScene> scenes = new Stack<>();
+        scenes.addAll(scene.getIntegrationScenes());
+
         scene.setOn(true);
         List<IntegrationScene> scenes = scene.getIntegrationScenes();
+
         roomManager.getRoomForId(scene.getRoomId(), (room, status) -> {
-            activateIntegrationScenes(room, scenes, 0, (var, status1) -> {
+            activateIntegrationScenes(room, scenes, (var, status1) -> {
                 if(!status1.success) {
                     Log.e(LOG_TAG, status1.message);
                     callback.apply(null, new WattsCallbackStatus(status1.message));
@@ -106,27 +110,27 @@ public class SceneManager {
             });
         });
     }
-
+  
     public void deactivateScene(Scene scene, WattsCallback<Void> callback) {
         scene.setOn(false);
         sceneRepository.deactivateScene(scene)
                 .addOnCompleteListener(task -> callback.apply(null))
                 .addOnFailureListener(task -> callback.apply(null, new WattsCallbackStatus(task.getMessage())));
     }
-
     private void activateIntegrationScenes(Room room, List<IntegrationScene> scenes, int index, WattsCallback<Void> callback) {
         if(index >= scenes.size()) {
+
             callback.apply(null);
             return;
         }
 
-        IntegrationScene scene = scenes.get(index);
+        IntegrationScene scene = scenes.pop();
         switch(scene.getIntegrationType()) {
             case PHILLIPS_HUE:
-                activatePhillipsHueScene(scene, room, index, scenes, callback);
+                activatePhillipsHueScene(scene, room, scenes, callback);
                 break;
             case NANOLEAF:
-                activateNanoleafScene(scene, room, index, scenes, callback);
+                activateNanoleafScene(scene, room, scenes, callback);
                 break;
             default:
                 Log.e(LOG_TAG, "Cannot activate scene for integration: " + scene.getIntegrationType());
@@ -134,7 +138,7 @@ public class SceneManager {
         }
     }
 
-    private void activatePhillipsHueScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void> callback) {
+    private void activatePhillipsHueScene(IntegrationScene scene, Room room, Stack<IntegrationScene> scenes, WattsCallback<Void> callback) {
         phillipsHueService.activateScene(scene, room, new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
@@ -148,13 +152,12 @@ public class SceneManager {
                     return;
                 }
 
-                int next = index + 1;
-                activateIntegrationScenes(room, scenes, next, callback);
+                activateIntegrationScenes(room, scenes, callback);
             }
         });
     }
 
-    private void activateNanoleafScene(IntegrationScene scene, Room room, int index, List<IntegrationScene> scenes, WattsCallback<Void> callback) {
+    private void activateNanoleafScene(IntegrationScene scene, Room room, Stack<IntegrationScene> scenes, WattsCallback<Void> callback) {
         String lightId = scene.getParentLightId();
         userManager.getNanoleafPanelIntegrationAuth(lightId, (panel, status) -> {
             nanoleafService.activateEffectForLight(panel, scene, new Callback() {
@@ -170,8 +173,7 @@ public class SceneManager {
                         return;
                     }
 
-                    int next = index + 1;
-                    activateIntegrationScenes(room, scenes, next, callback);
+                    activateIntegrationScenes(room, scenes, callback);
                 }
             });
         });

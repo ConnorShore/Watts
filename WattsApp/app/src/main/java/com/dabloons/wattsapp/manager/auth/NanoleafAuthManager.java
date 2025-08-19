@@ -19,6 +19,7 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -95,7 +96,9 @@ public class NanoleafAuthManager {
     }
 
     public void connectToPanels(List<NanoleafPanelIntegrationAuth> panels, WattsCallback<Integer> callback) {
-        getAuthTokenForProps(panels, 0, (auths, status) -> {
+        Stack<NanoleafPanelIntegrationAuth> panelStack = new Stack<>();
+        panelStack.addAll(panels);
+        getAuthTokenForProps(panelStack, (auths, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
                 callback.apply(null, status);
@@ -106,14 +109,13 @@ public class NanoleafAuthManager {
         });
     }
 
-    private void getAuthTokenForProps(List<NanoleafPanelIntegrationAuth> authProps,
-                                      int index, WattsCallback<List<NanoleafPanelIntegrationAuth>> callback) {
-        if(index >= authProps.size()) {
+    private void getAuthTokenForProps(Stack<NanoleafPanelIntegrationAuth> authProps, WattsCallback<List<NanoleafPanelIntegrationAuth>> callback) {
+        if(authProps.isEmpty()) {
             callback.apply(authProps);
             return;
         }
 
-        NanoleafPanelIntegrationAuth auth = authProps.get(index);
+        NanoleafPanelIntegrationAuth auth = authProps.pop();
         nanoleafService.addNanoleafUser(auth, (authToken, status) -> {
             if(!status.success) {
                 Log.e(LOG_TAG, status.message);
@@ -122,6 +124,7 @@ public class NanoleafAuthManager {
             else
                 auth.setAuthToken(authToken);
 
+            getAuthTokenForProps(authProps, callback);
             nanoleafService.getLightProperties(auth, new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
